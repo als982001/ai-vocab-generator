@@ -14,7 +14,7 @@ export function WordCard({
   // showRomaji = false,
 }: WordCardProps) {
   return (
-    <div className="bg-white border border-border-color rounded-2xl p-4 hover:border-primary/50 transition-colors group cursor-pointer relative overflow-hidden shadow-sm">
+    <div className="bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm">
       <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <Edit className="text-text-secondary hover:text-text-primary w-4 h-4" />
       </div>

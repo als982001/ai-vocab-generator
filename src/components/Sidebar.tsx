@@ -18,7 +18,7 @@ export function Sidebar({
   const jlptLevels: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
 
   return (
-    <aside className="w-72 flex flex-col bg-white shrink-0 overflow-y-auto z-20">
+    <aside className="w-72 flex flex-col bg-white shrink-0 overflow-y-auto z-20 shadow-sm">
       <div className="p-6 pb-2">
         <div className="flex flex-col">
           <h1 className="text-text-primary text-2xl font-bold leading-normal tracking-tight">
@@ -49,7 +49,6 @@ export function Sidebar({
           </p>
         </div>
       </div>
-      <div className="h-px w-full bg-border-color my-2"></div>
       <div className="px-4 py-4">
         <h3 className="tracking-wide text-xs uppercase font-bold px-2 mb-4 text-text-secondary">
           JLPT Level

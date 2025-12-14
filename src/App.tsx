@@ -1,7 +1,7 @@
-import { DashboardLayout } from './components/DashboardLayout';
+import { DashboardContainer } from './containers/DashboardContainer';
 
 function App() {
-  return <DashboardLayout />;
+  return <DashboardContainer />;
 }
 
 export default App;
