@@ -2,7 +2,21 @@
 
 - 프로젝트명: Snap-Voca (AI 일본어 단어장 생성기)
 - 목표: 프론트엔드 취업 포트폴리오용 MVP 개발. 클린 코드와 사용자 경험(UX) 최우선.
-- 기술 스택: React (Vite), TypeScript, Tailwind CSS, Lucide React (아이콘)
+- 기술 스택: React (Vite), TypeScript, Tailwind CSS (v4), Lucide React
+
+# 이 프로젝트의 기능
+
+## MVP(Minimum Viable Product) 플로우
+
+1. 첫 화면은 세로로 3개로 나누어진 영역(Sidebar, Main, Result)으로 구성됨.
+2. 가운데 영역(Main)에서 사진을 드래그 앤 드롭으로 업로드함.
+3. (Mocking 단계) 업로드 시 로딩 후 분석된 결과가 나타나는 UI 시뮬레이션.
+4. 우측 영역(Result)에서 추출된 단어와 뜻을 리스트로 보여주고 txt 다운로드 가능.
+
+## 추가 개발 사항
+
+- PDF 파일 업로드
+- 추출할 언어 및 번역 언어 선택 기능
 
 # 코딩 규칙 (엄격 준수)
 
