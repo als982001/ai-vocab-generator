@@ -35,8 +35,10 @@ _예상 완성 디자인_
 
 ## 📂 Directory Structure
 
+```
 /src
-├── components # UI 컴포넌트 (Presentational)
-├── containers # 비즈니스 로직 (Container)
-├── pages # 페이지 단위
-└── mockData.ts # 테스트용 데이터
+├── components/      # UI 컴포넌트 (Presentational)
+├── containers/      # 비즈니스 로직 (Container)
+├── types/           # TypeScript 타입 정의
+└── mockData.ts      # 테스트용 데이터
+```
