@@ -1,73 +1,28 @@
-# React + TypeScript + Vite
+# 📸 Snap-Voca (AI 다국어 단어장 생성기)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+이미지를 업로드하면 AI가 이미지 내의 단어를 추출하여, 번역과 발음 정보가 포함된 단어장을 자동으로 생성해주는 서비스입니다.
 
-Currently, two official plugins are available:
+**📌 언어 선택 기능**: 추출할 언어와 번역할 언어를 선택할 수 있습니다.
+**🚧 현재 상태**: MVP 구현 중 (일본어 → 한국어 단어장 생성)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠 Tech Stack
 
-## React Compiler
+- **Framework:** React (Vite)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Prototyping:** Stitch (Initial UI Composition)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features (Current Status)
 
-## Expanding the ESLint configuration
+- **Image Upload:** Drag & Drop을 통한 직관적인 이미지 업로드
+- **Mock Analysis:** 실제 AI 연동 전, 로딩 및 결과 화면 시뮬레이션 구현
+- **Result View:** 추출된 단어 카드 리스트 뷰 (반응형 디자인 적용)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📂 Directory Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+/src
+├── components # UI 컴포넌트 (Presentational)
+├── containers # 비즈니스 로직 (Container)
+├── pages # 페이지 단위
+└── mockData.ts # 테스트용 데이터
