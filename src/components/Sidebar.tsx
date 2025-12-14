@@ -73,43 +73,39 @@ export function Sidebar({
         <h3 className="tracking-wide text-xs uppercase font-bold px-2 mb-2 text-text-secondary">
           Display Options
         </h3>
-        <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-dark p-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-dark p-4">
           <div className="flex flex-col">
-            <p className="text-text-primary text-sm font-bold">Show Furigana</p>
+            <p className="text-text-primary text-base font-bold">
+              Show Furigana
+            </p>
           </div>
-          <label className="relative flex h-6 w-10 cursor-pointer items-center rounded-full border-none bg-surface-highlight p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
-            <div className="h-5 w-5 rounded-full bg-white shadow-sm border border-gray-200"></div>
-            <input
-              checked={displayOptions.showFurigana}
-              onChange={(e) =>
-                onDisplayOptionsChange({
-                  ...displayOptions,
-                  showFurigana: e.target.checked,
-                })
-              }
-              className="invisible absolute"
-              type="checkbox"
-            />
-          </label>
+          <button
+            onClick={() => {
+              onDisplayOptionsChange({
+                ...displayOptions,
+                showFurigana: !displayOptions.showFurigana,
+              });
+            }}
+            className="w-12 h-12 rounded-full bg-white shadow-sm border-2 border-gray-200 hover:border-primary transition-colors font-bold text-lg"
+          >
+            {displayOptions.showFurigana ? "O" : "X"}
+          </button>
         </div>
-        <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-dark p-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-dark p-4">
           <div className="flex flex-col">
-            <p className="text-text-primary text-sm font-bold">Show Romaji</p>
+            <p className="text-text-primary text-base font-bold">Show Romaji</p>
           </div>
-          <label className="relative flex h-6 w-10 cursor-pointer items-center rounded-full border-none bg-surface-highlight p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
-            <div className="h-5 w-5 rounded-full bg-white shadow-sm border border-gray-200"></div>
-            <input
-              checked={displayOptions.showRomaji}
-              onChange={(e) =>
-                onDisplayOptionsChange({
-                  ...displayOptions,
-                  showRomaji: e.target.checked,
-                })
-              }
-              className="invisible absolute"
-              type="checkbox"
-            />
-          </label>
+          <button
+            onClick={() => {
+              onDisplayOptionsChange({
+                ...displayOptions,
+                showRomaji: !displayOptions.showRomaji,
+              });
+            }}
+            className="w-12 h-12 rounded-full bg-white shadow-sm border-2 border-gray-200 hover:border-primary transition-colors font-bold text-lg"
+          >
+            {displayOptions.showRomaji ? "O" : "X"}
+          </button>
         </div>
       </div>
       <div className="mt-auto p-4">
