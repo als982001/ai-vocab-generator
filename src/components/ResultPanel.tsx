@@ -10,8 +10,8 @@ interface ResultPanelProps {
 
 export function ResultPanel({ words, displayOptions }: ResultPanelProps) {
   return (
-    <aside className="w-96 flex flex-col border-l border-border-color bg-surface-dark shrink-0 relative">
-      <div className="p-6 border-b border-border-color flex items-center justify-between bg-surface-dark z-10 shrink-0">
+    <aside className="w-96 flex flex-col bg-surface-dark shrink-0 relative">
+      <div className="p-6 flex items-center justify-between bg-surface-dark z-10 shrink-0">
         <div>
           <h2 className="text-text-primary text-lg font-bold">
             Extracted Words
@@ -36,7 +36,7 @@ export function ResultPanel({ words, displayOptions }: ResultPanelProps) {
           />
         ))}
       </div>
-      <div className="p-6 border-t border-border-color bg-surface-dark absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <div className="p-6 bg-surface-dark absolute bottom-0 w-full">
         <button className="w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-gray-800 text-white text-base font-bold transition-all shadow-lg hover:shadow-xl">
           <Download className="w-5 h-5" />
           <span>Download .txt</span>

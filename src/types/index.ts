@@ -14,3 +14,8 @@ export interface DisplayOptions {
   showFurigana: boolean;
   showRomaji: boolean;
 }
+
+export interface UploadedImage {
+  file: File;
+  preview: string;
+}

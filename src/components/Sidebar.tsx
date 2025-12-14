@@ -18,7 +18,7 @@ export function Sidebar({
   const jlptLevels: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
 
   return (
-    <aside className="w-72 flex flex-col border-r border-border-color bg-surface-dark shrink-0 overflow-y-auto z-20">
+    <aside className="w-72 flex flex-col bg-white shrink-0 overflow-y-auto z-20">
       <div className="p-6 pb-2">
         <div className="flex flex-col">
           <h1 className="text-text-primary text-2xl font-bold leading-normal tracking-tight">
@@ -74,7 +74,7 @@ export function Sidebar({
         <h3 className="tracking-wide text-xs uppercase font-bold px-2 mb-2 text-text-secondary">
           Display Options
         </h3>
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-border-color bg-white p-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-dark p-3">
           <div className="flex flex-col">
             <p className="text-text-primary text-sm font-bold">Show Furigana</p>
           </div>
@@ -93,7 +93,7 @@ export function Sidebar({
             />
           </label>
         </div>
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-border-color bg-white p-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl bg-surface-dark p-3">
           <div className="flex flex-col">
             <p className="text-text-primary text-sm font-bold">Show Romaji</p>
           </div>
@@ -114,7 +114,7 @@ export function Sidebar({
         </div>
       </div>
       <div className="mt-auto p-4">
-        <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-white border border-border-color">
+        <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-surface-dark">
           <div className="h-10 w-10 rounded-full bg-text-primary flex items-center justify-center text-white font-bold">
             JD
           </div>

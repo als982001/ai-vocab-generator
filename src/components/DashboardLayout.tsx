@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { MOCK_WORDS } from "../mockData";
-import type { DisplayOptions, JlptLevel } from "../types";
+import type { DisplayOptions, JlptLevel, UploadedImage } from "../types";
 import { ImageUploader } from "./ImageUploader";
 import { ResultPanel } from "./ResultPanel";
 import { Sidebar } from "./Sidebar";
@@ -12,9 +12,10 @@ export function DashboardLayout() {
     showFurigana: true,
     showRomaji: false,
   });
+  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
 
   return (
-    <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
+    <div className="bg-background-light text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
           selectedLevel={selectedLevel}
@@ -22,7 +23,10 @@ export function DashboardLayout() {
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
         />
-        <ImageUploader />
+        <ImageUploader
+          uploadedImage={uploadedImage}
+          onImageUpload={setUploadedImage}
+        />
         <ResultPanel words={MOCK_WORDS} displayOptions={displayOptions} />
       </div>
     </div>
