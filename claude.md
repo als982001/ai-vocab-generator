@@ -12,9 +12,15 @@
 4. **모킹 (Mocking):** 실제 API를 연동하기 전에는 반드시 `@/mockDatas/mockData.json` 파일을 import하여 UI를 테스트할 것. (TypeScript에서 JSON import 시 `resolveJsonModule` 설정 필요)
 5. **언어 설정:** 변수명과 함수명은 영어로, 사용자에게 보여지는 UI 텍스트는 한국어로 작성할 것.
 
-# 디렉토리 구조
+# 디렉토리 구조 (Directory Structure)
 
-- `/src/components`: 재사용 가능한 UI 컴포넌트 (예: Header, UploadArea, WordCard, FloatingButton)
-- `/src/pages`: 페이지 단위 컴포넌트 (예: Dashboard)
-- `/src/types`: TypeScript 타입 정의 파일 모음
-- `/src/mockData.ts`: UI 테스트용 가짜 데이터
+- `/src/pages`: 라우팅의 단위가 되는 페이지. 주로 Container를 호출하여 화면을 그림. (예: `DashboardPage.tsx`)
+- `/src/containers`: 페이지의 핵심 비즈니스 로직(State, Effect, API 호출)을 수행하고 Presentation 컴포넌트를 감싸는 곳. (예: `DashboardContainer.tsx`)
+- `/src/components`: 컨테이너에서 렌더링되는 순수 UI(Presentational) 컴포넌트들.
+  - `/src/components/shared`: 앱 전반에서 재사용되는 공용 UI (예: `Header`, `Button`, `Layout`)
+  - `/src/components/[feature]`: 특정 기능에 종속된 UI (예: `/dashboard/ResultPanel`, `/dashboard/ImageUploader`)
+- `/src/types`: TypeScript 인터페이스 및 타입 정의 (`.d.ts` 또는 `.ts`)
+- `/src/mockDatas`: 개발 및 테스트용 리소스 폴더
+  - `mockData.json`: API 응답 시뮬레이션을 위한 JSON 데이터
+  - `mockDesign.html`: 디자인 참고용 HTML 스니펫
+  - `screen.png`: 디자인 참고용 이미지
