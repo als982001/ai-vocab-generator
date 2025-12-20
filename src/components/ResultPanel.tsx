@@ -44,7 +44,7 @@ export function ResultPanel({ words, displayOptions }: ResultPanelProps) {
         ) : (
           words.map((word) => (
             <WordCard
-              key={word.id}
+              key={word.word}
               word={word}
               showFurigana={displayOptions.showFurigana}
               showRomaji={displayOptions.showRomaji}
