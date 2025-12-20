@@ -2,8 +2,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 1. API 키 불러오기
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-console.log("Current API Key:", apiKey); // 여기에 키가 출력되나요? 아니면 undefined?
 
 // 2. 이미지를 AI가 이해할 수 있는 포맷(Base64)으로 변환하는 헬퍼 함수
 const fileToGenerativePart = async (file: File) => {
@@ -50,8 +48,6 @@ export const analyzeImage = async (file: File) => {
 
     // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거
     const cleanJson = text.replace(/```json|```/g, "").trim();
-
-    console.log({ response, text, cleanJson });
 
     return JSON.parse(cleanJson);
   } catch (error) {

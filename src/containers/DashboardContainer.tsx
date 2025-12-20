@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ImageUploader } from "../components/ImageUploader";
 import { ResultPanel } from "../components/ResultPanel";
@@ -35,8 +35,6 @@ export function DashboardContainer() {
         // 실제 Gemini API 호출
         const analyzedWords = await analyzeImage(image.file);
 
-        console.log("analyzedWords", analyzedWords);
-
         setWords(analyzedWords);
       } catch (error) {
         console.error("이미지 분석 중 오류가 발생했습니다:", error);
@@ -50,10 +48,6 @@ export function DashboardContainer() {
       setWords([]);
     }
   };
-
-  useEffect(() => {
-    console.log("words", words);
-  }, [words]);
 
   return (
     <div className="bg-gray-50 text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
