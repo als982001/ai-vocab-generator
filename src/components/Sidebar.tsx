@@ -252,7 +252,6 @@ export function Sidebar({
                 : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
               display: "flex",
               alignItems: "center",
-              justifyContent: displayOptions.showFurigana ? "end" : "start",
               padding: "2px",
               borderRadius: "9999px",
               cursor: "pointer",
@@ -270,6 +269,8 @@ export function Sidebar({
                 height: "20px",
                 backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
                 borderRadius: "9999px",
+                marginLeft: displayOptions.showFurigana ? "16px" : "0",
+                transition: "margin-left 0.2s ease",
               }}
             ></div>
           </div>
@@ -306,7 +307,6 @@ export function Sidebar({
                 : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
               display: "flex",
               alignItems: "center",
-              justifyContent: displayOptions.showRomaji ? "end" : "start",
               padding: "2px",
               borderRadius: "9999px",
               cursor: "pointer",
@@ -324,6 +324,8 @@ export function Sidebar({
                 height: "20px",
                 backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
                 borderRadius: "9999px",
+                marginLeft: displayOptions.showRomaji ? "16px" : "0",
+                transition: "margin-left 0.2s ease",
               }}
             ></div>
           </div>
