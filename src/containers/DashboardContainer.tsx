@@ -6,6 +6,51 @@ import { Sidebar } from "../components/Sidebar";
 import { analyzeImage } from "../services/gemini";
 import type { DisplayOptions, JlptLevel, UploadedImage, Word } from "../types";
 
+const TEMP_WORDS: Word[] = [
+  {
+    word: "被疑者",
+    reading: "ひぎしゃ",
+    meaning: "피의자",
+    level: "N1",
+  },
+  {
+    word: "かたくなに",
+    reading: "かたくなに",
+    meaning: "완강하게, 고집스럽게",
+    level: "N2",
+  },
+  {
+    word: "供述",
+    reading: "きょうじゅつ",
+    meaning: "진술, 공술",
+    level: "N1",
+  },
+  {
+    word: "拒む",
+    reading: "こばむ",
+    meaning: "거부하다, 물리치다",
+    level: "N2",
+  },
+  {
+    word: "営む",
+    reading: "いとなむ",
+    meaning: "경영하다, 운영하다, 영위하다",
+    level: "N2",
+  },
+  {
+    word: "歩む",
+    reading: "あゆむ",
+    meaning: "걷다, 나아가다",
+    level: "N3",
+  },
+  {
+    word: "慎む",
+    reading: "つつしむ",
+    meaning: "삼가다, 조심하다",
+    level: "N2",
+  },
+];
+
 export function DashboardContainer() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
   const [displayOptions, setDisplayOptions] = useState<DisplayOptions>({
@@ -16,7 +61,7 @@ export function DashboardContainer() {
     null
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [words, setWords] = useState<Word[]>([]);
+  const [words, setWords] = useState<Word[]>(TEMP_WORDS);
 
   const handleDownloadTxt = () => {
     if (words.length === 0) return;
@@ -24,7 +69,7 @@ export function DashboardContainer() {
     // 현재 날짜 생성
     const today = new Date().toLocaleDateString("ko-KR");
 
-    // 텍스트 파일 내용 생성
+    // 1. 파일 내용 생성
     const header = `================================\nSnap-Voca 단어장 (${today})\n================================\n\n`;
     const wordList = words
       .map(
@@ -34,10 +79,18 @@ export function DashboardContainer() {
       .join("\n");
     const content = header + wordList;
 
-    // Blob 생성 및 다운로드 (UTF-8 BOM 추가로 Windows 호환성 확보)
-    const blob = new Blob(["\uFEFF" + content], {
-      type: "text/plain;charset=utf-8",
-    });
+    // 2. [핵심] 문자열을 확실한 UTF-8 바이트 배열로 변환
+    const encoder = new TextEncoder();
+    const rawData = encoder.encode(content);
+
+    // 3. [핵심] UTF-8임을 알리는 3바이트 BOM(Byte Order Mark) 강제 추가
+    // (0xEF, 0xBB, 0xBF 이 세 개의 바이트가 파일 맨 앞에 있으면 무조건 UTF-8로 인식함)
+    const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
+
+    // 4. BOM과 데이터를 합쳐서 Blob 생성
+    const blob = new Blob([bom, rawData], { type: "text/plain;charset=utf-8" });
+
+    // 5. 다운로드 실행
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -80,7 +133,7 @@ export function DashboardContainer() {
   };
 
   return (
-    <div className="bg-gray-50 text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
+    <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
           selectedLevel={selectedLevel}
