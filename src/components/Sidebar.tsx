@@ -18,244 +18,74 @@ export function Sidebar({
   const jlptLevels: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
 
   return (
-    <aside
-      style={{
-        width: "287px",
-        height: "100%",
-        backgroundColor: "rgb(249 249 249 / var(--tw-bg-opacity, 1))",
-        overflowY: "auto",
-        flexShrink: 0,
-      }}
-    >
-      <div style={{ padding: "24px 24px 8px 24px" }}>
-        <div className="flex flex-col" style={{ height: "57px" }}>
-          <h1
-            style={{
-              lineHeight: "1.5",
-              fontSize: "1.5rem",
-              fontWeight: "700",
-              letterSpacing: "-0.025rem",
-            }}
-          >
+    <aside className="w-72 h-full bg-surface-dark overflow-y-auto shrink-0 border-r border-border-color flex flex-col">
+      <div className="p-6 pb-2">
+        <div className="flex flex-col h-[57px]">
+          <h1 className="text-2xl font-bold leading-normal tracking-tight">
             Snap Voca
           </h1>
-          <p
-            style={{
-              color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
-              lineHeight: "1.5",
-              fontWeight: "400",
-              fontSize: "0.875rem",
-            }}
-          >
+          <p className="text-text-secondary text-sm font-normal leading-normal">
             Vocab Generator
           </p>
         </div>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          padding: "16px",
-          gap: "0.5rem",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            cursor: "pointer",
-            height: "48px",
-            padding: "12px 16px",
-
-            // 현재 클릭된 메뉴
-            backgroundColor: "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
-            borderRadius: "9999px",
-          }}
-        >
+      <div className="flex flex-col p-4 gap-2">
+        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 bg-surface-highlight rounded-full">
           <LayoutDashboard className="text-text-primary w-5 h-5" />
-          <p
-            style={{
-              color: "rgb(23 23 23 / var(--tw-text-opacity, 1))", // 현재 메뉴
-              lineHeight: "1.5",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-            }}
-          >
+          <p className="text-text-primary leading-normal font-bold text-sm">
             Dashboard
           </p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            cursor: "pointer",
-            height: "48px",
-            padding: "12px 16px",
-          }}
-        >
+        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 transition-colors group">
           <History className="text-text-secondary group-hover:text-text-primary w-5 h-5" />
-          <p
-            style={{
-              color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
-              lineHeight: "1.5",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-            }}
-          >
+          <p className="text-text-secondary group-hover:text-text-primary leading-normal font-bold text-sm">
             History
           </p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            cursor: "pointer",
-            height: "48px",
-            padding: "12px 16px",
-          }}
-        >
+        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 transition-colors group">
           <Settings className="text-text-secondary group-hover:text-text-primary w-5 h-5" />
-          <p
-            style={{
-              color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
-              lineHeight: "1.5",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-            }}
-          >
+          <p className="text-text-secondary group-hover:text-text-primary leading-normal font-bold text-sm">
             Settings
           </p>
         </div>
       </div>
-      {/* 구분선 */}
-      <div
-        style={{
-          backgroundColor: "rgb(224 224 224 / var(--tw-bg-opacity, 1))",
-          width: "100%",
-          height: "1px",
-          margin: "8px 0px",
-        }}
-      />
+      <div className="h-px w-full bg-border-color my-2"></div>
 
-      <div style={{ padding: "16px" }}>
-        <h3
-          style={{
-            color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
-            letterSpacing: "0.025rem",
-            textTransform: "uppercase",
-            fontWeight: "700",
-            fontSize: "0.75rem",
-            lineHeight: "1rem",
-            padding: "0px 8px",
-            marginBottom: "16px",
-          }}
-        >
+      <div className="p-4">
+        <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-4">
           JLPT Level
         </h3>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "0.5rem",
-            padding: "0px 8px",
-          }}
-        >
+        <div className="flex flex-wrap gap-2 px-2">
           {jlptLevels.map((level) => (
             <button
               key={level}
               onClick={() => onLevelChange(level)}
-              style={{
-                padding: "0px 16px",
-                backgroundColor:
-                  level === "N3"
-                    ? "rgb(0 0 0 / var(--tw-bg-opacity, 1))"
-                    : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
-                border: "none",
-                borderRadius: "9999px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "2rem",
-              }}
+              className={`px-4 rounded-full flex items-center justify-center h-8 border transition-colors ${
+                selectedLevel === level
+                  ? "bg-primary text-white border-primary"
+                  : "bg-surface-highlight text-black border-transparent hover:bg-primary hover:text-white hover:border-primary"
+              }`}
             >
-              <p
-                style={{
-                  color:
-                    level === "N3"
-                      ? "rgb(255 255 255 / var(--tw-text-opacity, 1))"
-                      : "rgb(0 0 0 / var(--tw-text-opacity, 1))",
-                  lineHeight: "1.5",
-                  fontWeight: "700",
-                }}
-              >
-                {level}
-              </p>
+              <p className="leading-normal font-bold text-xs">{level}</p>
             </button>
           ))}
         </div>
       </div>
 
-      <div
-        style={{
-          padding: "8px 16px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.75rem",
-        }}
-      >
-        <h3
-          style={{
-            color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
-            letterSpacing: "0.025em",
-            textTransform: "uppercase",
-            fontWeight: "700",
-            fontSize: "0.75rem",
-            lineHeight: "1rem",
-            padding: "0px 8px",
-            marginBottom: "8px",
-          }}
-        >
+      <div className="px-4 py-2 flex flex-col gap-3">
+        <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-2">
           Display Options
         </h3>
-        <div
-          style={{
-            padding: "12px",
-            border: "1px solid rgb(224 224 224 / var(--tw-border-opacity, 1))",
-            display: "flex",
-            backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
-            borderRadius: "3rem",
-            gap: "1rem",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className="p-3 border border-border-color flex bg-white rounded-xl gap-4 justify-between items-center">
           <div className="flex flex-col">
-            <p
-              style={{
-                color: "rgb(23 23 23 / var(--tw-text-opacity, 1))",
-                fontWeight: "700",
-                fontSize: "0.875rem",
-                lineHeight: "1.25rem",
-              }}
-            >
+            <p className="text-text-primary font-bold text-sm leading-5">
               Show Furigana
             </p>
           </div>
           <div
-            style={{
-              width: "40px",
-              height: "24px",
-              backgroundColor: displayOptions.showFurigana
-                ? "rgb(0 0 0 / var(--tw-bg-opacity, 1))"
-                : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
-              display: "flex",
-              alignItems: "center",
-              padding: "2px",
-              borderRadius: "9999px",
-              cursor: "pointer",
-            }}
+            className={`w-10 h-6 flex items-center p-0.5 rounded-full cursor-pointer ${
+              displayOptions.showFurigana ? "bg-primary" : "bg-surface-highlight"
+            }`}
             onClick={() => {
               onDisplayOptionsChange({
                 ...displayOptions,
@@ -264,53 +94,24 @@ export function Sidebar({
             }}
           >
             <div
+              className="w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm"
               style={{
-                width: "20px",
-                height: "20px",
-                backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
-                borderRadius: "9999px",
                 marginLeft: displayOptions.showFurigana ? "16px" : "0",
                 transition: "margin-left 0.2s ease",
               }}
             ></div>
           </div>
         </div>
-        <div
-          style={{
-            padding: "12px",
-            border: "1px solid rgb(224 224 224 / var(--tw-border-opacity, 1))",
-            display: "flex",
-            backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
-            borderRadius: "3rem",
-            gap: "1rem",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className="p-3 border border-border-color flex bg-white rounded-xl gap-4 justify-between items-center">
           <div className="flex flex-col">
-            <p
-              style={{
-                color: "rgb(23 23 23 / var(--tw-text-opacity, 1))",
-                fontWeight: "700",
-                fontSize: "0.875rem",
-                lineHeight: "1.25rem",
-              }}
-            >
+            <p className="text-text-primary font-bold text-sm leading-5">
               Show Romaji
             </p>
           </div>
           <div
-            style={{
-              width: "40px",
-              height: "24px",
-              backgroundColor: displayOptions.showRomaji
-                ? "rgb(0 0 0 / var(--tw-bg-opacity, 1))"
-                : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
-              display: "flex",
-              alignItems: "center",
-              padding: "2px",
-              borderRadius: "9999px",
-              cursor: "pointer",
-            }}
+            className={`w-10 h-6 flex items-center p-0.5 rounded-full cursor-pointer ${
+              displayOptions.showRomaji ? "bg-primary" : "bg-surface-highlight"
+            }`}
             onClick={() => {
               onDisplayOptionsChange({
                 ...displayOptions,
@@ -319,11 +120,8 @@ export function Sidebar({
             }}
           >
             <div
+              className="w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm"
               style={{
-                width: "20px",
-                height: "20px",
-                backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
-                borderRadius: "9999px",
                 marginLeft: displayOptions.showRomaji ? "16px" : "0",
                 transition: "margin-left 0.2s ease",
               }}
@@ -332,63 +130,16 @@ export function Sidebar({
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: "auto",
-          padding: "16px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "end",
-          height: "calc(100vh - 600px)",
-        }}
-      >
-        <div
-          style={{
-            padding: "12px",
-            backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
-            border: "1px solid rgb(224 224 224 / var(--tw-border-opacity, 1))",
-            display: "flex",
-            gap: "0.75rem",
-            alignItems: "center",
-            borderRadius: "3rem",
-          }}
-        >
-          <div
-            style={{
-              color: "rgb(255 255 255 / var(--tw-text-opacity, 1))",
-              fontWeight: "700",
-              backgroundColor: "rgb(23 23 23 / var(--tw-bg-opacity, 1))",
-              borderRadius: "9999px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "2.5rem",
-              height: "2.5rem",
-            }}
-          >
+      <div className="mt-auto p-4">
+        <div className="p-3 bg-white border border-border-color flex gap-3 items-center rounded-xl">
+          <div className="text-white font-bold bg-text-primary rounded-full flex items-center justify-center w-10 h-10">
             JD
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <p
-              style={{
-                color: "rgb(23 23 23 / var(--tw-text-opacity, 1))",
-                fontWeight: "700",
-                fontSize: "0.875rem",
-                lineHeight: "1.25rem",
-              }}
-            >
+          <div className="flex flex-col">
+            <p className="text-text-primary font-bold text-sm leading-5">
               Jane Doe
             </p>
-            <p
-              style={{
-                color: "rgb(107 114 128 / var(--tw-text-opacity, 1))",
-                fontWeight: "700",
-                fontSize: "0.75rem",
-                lineHeight: "1rem",
-              }}
-            >
-              Free Plan
-            </p>
+            <p className="text-text-secondary text-xs leading-4">Free Plan</p>
           </div>
         </div>
       </div>
