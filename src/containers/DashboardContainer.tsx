@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ImageUploader } from "../components/ImageUploader";
 import { ResultPanel } from "../components/ResultPanel";
 import { Sidebar } from "../components/Sidebar";
-import { MOCK_WORDS } from "../mockData";
+import { analyzeImage } from "../services/gemini";
 import type { DisplayOptions, JlptLevel, UploadedImage, Word } from "../types";
 
 export function DashboardContainer() {
@@ -18,19 +18,7 @@ export function DashboardContainer() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
 
-  // 분석 중일 때 2초 후 완료 처리
-  useEffect(() => {
-    if (isAnalyzing) {
-      const timer = setTimeout(() => {
-        setIsAnalyzing(false);
-        setWords(MOCK_WORDS);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isAnalyzing]);
-
-  const handleImageUpload = (image: UploadedImage | null) => {
+  const handleImageUpload = async (image: UploadedImage | null) => {
     // 이전 이미지의 preview URL 정리
     if (uploadedImage?.preview) {
       URL.revokeObjectURL(uploadedImage.preview);
@@ -42,6 +30,17 @@ export function DashboardContainer() {
     if (image) {
       setIsAnalyzing(true);
       setWords([]); // 분석 시작 시 결과 초기화
+
+      try {
+        // 실제 Gemini API 호출
+        const analyzedWords = await analyzeImage(image.file);
+        setWords(analyzedWords);
+      } catch (error) {
+        console.error("이미지 분석 중 오류가 발생했습니다:", error);
+        alert("이미지 분석에 실패했습니다. 다시 시도해주세요.");
+      } finally {
+        setIsAnalyzing(false);
+      }
     } else {
       // 이미지가 제거되면 상태 초기화
       setIsAnalyzing(false);
