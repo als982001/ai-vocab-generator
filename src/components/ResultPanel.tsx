@@ -6,9 +6,14 @@ import { WordCard } from "./WordCard";
 interface ResultPanelProps {
   words: Word[];
   displayOptions: DisplayOptions;
+  onDownload: () => void;
 }
 
-export function ResultPanel({ words, displayOptions }: ResultPanelProps) {
+export function ResultPanel({
+  words,
+  displayOptions,
+  onDownload,
+}: ResultPanelProps) {
   return (
     <aside className="w-96 flex flex-col bg-gray-50 shrink-0 relative shadow-sm">
       <div className="p-6 flex items-center justify-between bg-white z-10 shrink-0 shadow-sm">
@@ -52,10 +57,17 @@ export function ResultPanel({ words, displayOptions }: ResultPanelProps) {
           ))
         )}
       </div>
-      <div className="p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <button className="w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-gray-800 text-white text-base font-bold transition-all shadow-lg hover:shadow-xl">
+      <div
+        className="p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
+        style={{ zIndex: 5000 }}
+      >
+        <button
+          onClick={onDownload}
+          disabled={words.length === 0}
+          className="w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-gray-800 text-white text-base font-bold transition-all shadow-lg hover:shadow-xl disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none"
+        >
           <Download className="w-5 h-5" />
-          <span>Download .txt</span>
+          <span>{`Download ${words.length} words.txt`}</span>
         </button>
         <div className="mt-3 text-center">
           <button className="text-text-secondary text-xs hover:text-text-primary underline">
