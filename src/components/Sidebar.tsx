@@ -243,17 +243,36 @@ export function Sidebar({
               Show Furigana
             </p>
           </div>
-          <button
+          <div
+            style={{
+              width: "40px",
+              height: "24px",
+              backgroundColor: displayOptions.showFurigana
+                ? "rgb(0 0 0 / var(--tw-bg-opacity, 1))"
+                : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: displayOptions.showFurigana ? "end" : "start",
+              padding: "2px",
+              borderRadius: "9999px",
+              cursor: "pointer",
+            }}
             onClick={() => {
               onDisplayOptionsChange({
                 ...displayOptions,
                 showFurigana: !displayOptions.showFurigana,
               });
             }}
-            className="w-12 h-12 rounded-full bg-white shadow-sm border-2 border-gray-200 hover:border-primary transition-colors font-bold text-lg"
           >
-            {displayOptions.showFurigana ? "O" : "X"}
-          </button>
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
+                borderRadius: "9999px",
+              }}
+            ></div>
+          </div>
         </div>
         <div
           style={{
@@ -278,17 +297,36 @@ export function Sidebar({
               Show Romaji
             </p>
           </div>
-          <button
+          <div
+            style={{
+              width: "40px",
+              height: "24px",
+              backgroundColor: displayOptions.showRomaji
+                ? "rgb(0 0 0 / var(--tw-bg-opacity, 1))"
+                : "rgb(229 229 229 / var(--tw-bg-opacity, 1))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: displayOptions.showRomaji ? "end" : "start",
+              padding: "2px",
+              borderRadius: "9999px",
+              cursor: "pointer",
+            }}
             onClick={() => {
               onDisplayOptionsChange({
                 ...displayOptions,
                 showRomaji: !displayOptions.showRomaji,
               });
             }}
-            className="w-12 h-12 rounded-full bg-white shadow-sm border-2 border-gray-200 hover:border-primary transition-colors font-bold text-lg"
           >
-            {displayOptions.showRomaji ? "O" : "X"}
-          </button>
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                backgroundColor: "rgb(255 255 255 / var(--tw-bg-opacity, 1))",
+                borderRadius: "9999px",
+              }}
+            ></div>
+          </div>
         </div>
       </div>
 
