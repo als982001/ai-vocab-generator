@@ -1,5 +1,4 @@
 import { History, LayoutDashboard, Settings } from "lucide-react";
-
 import type { DisplayOptions, JlptLevel } from "~/types";
 
 interface SidebarProps {
@@ -84,7 +83,9 @@ export function Sidebar({
           </div>
           <div
             className={`w-10 h-6 flex items-center p-0.5 rounded-full cursor-pointer ${
-              displayOptions.showFurigana ? "bg-primary" : "bg-surface-highlight"
+              displayOptions.showFurigana
+                ? "bg-primary"
+                : "bg-surface-highlight"
             }`}
             onClick={() => {
               onDisplayOptionsChange({

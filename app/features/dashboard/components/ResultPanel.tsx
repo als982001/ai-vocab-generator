@@ -1,7 +1,6 @@
 import { ArrowUpDown, Download, FileSearch } from "lucide-react";
-
-import type { DisplayOptions, Word } from "~/types";
 import { WordCard } from "~/features/dashboard/components/WordCard";
+import type { DisplayOptions, Word } from "~/types";
 
 interface ResultPanelProps {
   words: Word[];
