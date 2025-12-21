@@ -119,7 +119,7 @@ export default function HomePage() {
         const analyzedWords = await analyzeImage(image.file);
 
         setWords(analyzedWords);
-      } catch (error) {
+      } catch {
         alert("이미지 분석에 실패했습니다. 다시 시도해주세요.");
       } finally {
         setIsAnalyzing(false);
