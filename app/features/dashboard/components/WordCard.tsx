@@ -1,6 +1,6 @@
 import { Edit, Volume2 } from "lucide-react";
 
-import type { Word } from "../types";
+import type { Word } from "~/types";
 
 interface WordCardProps {
   word: Word;

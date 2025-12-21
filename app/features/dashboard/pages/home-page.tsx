@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { ImageUploader } from "../components/ImageUploader";
-import { ResultPanel } from "../components/ResultPanel";
-import { Sidebar } from "../components/Sidebar";
-import { analyzeImage } from "../services/gemini";
-import type { DisplayOptions, JlptLevel, UploadedImage, Word } from "../types";
+import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
+import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
+import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import { analyzeImage } from "~/services/gemini";
+import type { DisplayOptions, JlptLevel, UploadedImage, Word } from "~/types";
 
 const TEMP_WORDS: Word[] = [
   {
@@ -51,7 +51,7 @@ const TEMP_WORDS: Word[] = [
   },
 ];
 
-export function DashboardContainer() {
+export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
   const [displayOptions, setDisplayOptions] = useState<DisplayOptions>({
     showFurigana: true,

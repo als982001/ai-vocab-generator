@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 
-import type { UploadedImage } from "../types";
+import type { UploadedImage } from "~/types";
 
 interface ImageUploaderProps {
   uploadedImage: UploadedImage | null;
