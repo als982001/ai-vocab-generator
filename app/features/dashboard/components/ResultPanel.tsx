@@ -56,10 +56,7 @@ export function ResultPanel({
           ))
         )}
       </div>
-      <div
-        className="p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
-        style={{ zIndex: 5000 }}
-      >
+      <div className="p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
         <button
           onClick={onDownload}
           disabled={words.length === 0}
