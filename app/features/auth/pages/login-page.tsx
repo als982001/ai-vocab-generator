@@ -24,7 +24,7 @@ export default function LoginPage() {
       {/* Navbar */}
       <header className="flex items-center justify-between border-b border-solid border-slate-200 px-10 py-4 absolute top-0 w-full z-10 bg-[#f6f6f8]/80 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="size-8 text-[#135bec]">
+          <div className="size-8 text-black">
             <svg
               className="w-full h-full"
               fill="none"
@@ -44,7 +44,7 @@ export default function LoginPage() {
         <div className="hidden sm:flex items-center gap-4 text-sm text-[#92a4c9]">
           <span>계정이 없으신가요?</span>
           <a
-            className="text-[#135bec] hover:text-white transition-colors font-bold"
+            className="text-black hover:text-gray-800 transition-colors font-bold"
             href="#"
           >
             회원가입
@@ -56,8 +56,8 @@ export default function LoginPage() {
       <main className="flex-1 flex items-center justify-center relative w-full h-full px-4">
         {/* Background decorative elements */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#135bec]/20 rounded-full blur-[128px] pointer-events-none mix-blend-screen" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-600/20 rounded-full blur-[96px] pointer-events-none mix-blend-screen" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-black/10 rounded-full blur-[128px] pointer-events-none mix-blend-screen" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gray-800/10 rounded-full blur-[96px] pointer-events-none mix-blend-screen" />
 
         {/* Login Card */}
         <div className="relative w-full max-w-[480px] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col p-8 sm:p-10 z-20 backdrop-blur-sm">
@@ -83,7 +83,7 @@ export default function LoginPage() {
               </label>
               <div className="relative flex items-center">
                 <input
-                  className="form-input w-full rounded-lg bg-slate-50 border border-slate-300 text-slate-900 h-12 px-4 pr-12 focus:border-[#135bec] focus:ring-1 focus:ring-[#135bec] placeholder:text-slate-400 transition-all"
+                  className="form-input w-full rounded-lg bg-slate-50 border border-slate-300 text-slate-900 h-12 px-4 pr-12 focus:border-black focus:ring-1 focus:ring-black placeholder:text-slate-400 transition-all"
                   id="user-id"
                   placeholder="Enter your ID or Email"
                   type="text"
@@ -104,7 +104,7 @@ export default function LoginPage() {
                   Password
                 </label>
                 <a
-                  className="text-xs font-medium text-[#135bec] hover:text-[#1d66f0] transition-colors"
+                  className="text-xs font-medium text-black hover:text-gray-800 transition-colors"
                   href="#"
                 >
                   Forgot Password?
@@ -112,7 +112,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex items-center">
                 <input
-                  className="form-input w-full rounded-lg bg-slate-50 border border-slate-300 text-slate-900 h-12 px-4 pr-12 focus:border-[#135bec] focus:ring-1 focus:ring-[#135bec] placeholder:text-slate-400 transition-all"
+                  className="form-input w-full rounded-lg bg-slate-50 border border-slate-300 text-slate-900 h-12 px-4 pr-12 focus:border-black focus:ring-1 focus:ring-black placeholder:text-slate-400 transition-all"
                   id="password"
                   placeholder="Enter your password"
                   type={showPassword ? "text" : "password"}
@@ -129,7 +129,7 @@ export default function LoginPage() {
 
             {/* Submit Button */}
             <button
-              className="mt-2 w-full h-12 bg-[#135bec] hover:bg-[#1d66f0] text-white font-bold rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-[#135bec]/20 flex items-center justify-center gap-2"
+              className="mt-2 w-full h-12 bg-black hover:bg-gray-800 text-white font-bold rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-black/20 flex items-center justify-center gap-2"
               type="submit"
             >
               <span>Log In</span>
@@ -140,7 +140,7 @@ export default function LoginPage() {
           {/* Mobile Footer Link */}
           <div className="mt-8 text-center sm:hidden">
             <span className="text-sm text-[#92a4c9]">계정이 없으신가요? </span>
-            <a className="text-sm font-bold text-[#135bec]" href="#">
+            <a className="text-sm font-bold text-black" href="#">
               회원가입
             </a>
           </div>
