@@ -95,11 +95,9 @@ export function Sidebar({
             }}
           >
             <div
-              className="w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm"
-              style={{
-                marginLeft: displayOptions.showFurigana ? "16px" : "0",
-                transition: "margin-left 0.2s ease",
-              }}
+              className={`w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm transition-transform duration-200 ease ${
+                displayOptions.showFurigana ? "translate-x-4" : "translate-x-0"
+              }`}
             ></div>
           </div>
         </div>
@@ -121,11 +119,9 @@ export function Sidebar({
             }}
           >
             <div
-              className="w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm"
-              style={{
-                marginLeft: displayOptions.showRomaji ? "16px" : "0",
-                transition: "margin-left 0.2s ease",
-              }}
+              className={`w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm transition-transform duration-200 ease ${
+                displayOptions.showRomaji ? "translate-x-4" : "translate-x-0"
+              }`}
             ></div>
           </div>
         </div>

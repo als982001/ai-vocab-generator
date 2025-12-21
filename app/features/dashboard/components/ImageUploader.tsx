@@ -29,8 +29,6 @@ export function ImageUploader({
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
-        console.log("Uploaded file:", file);
-
         const preview = URL.createObjectURL(file);
         onImageUpload({ file, preview });
       }
