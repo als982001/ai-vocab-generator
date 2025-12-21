@@ -2,6 +2,7 @@ import { Link } from "react-router";
 
 import type { Route } from "./+types/login-page";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "로그인 | Snap-Voca" },
