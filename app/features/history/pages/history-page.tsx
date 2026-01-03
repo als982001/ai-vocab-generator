@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Edit, Filter, Search, Trash2 } from "lucide-react";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
@@ -30,7 +30,10 @@ function formatRelativeTime(dateString: string): string {
 interface WordWithDate extends Word {
   date: string;
   analysisId: string;
+  createdAt: string;
 }
+
+type SortOption = "newest" | "oldest" | "level-easy" | "level-hard";
 
 export default function HistoryPage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
@@ -40,6 +43,7 @@ export default function HistoryPage() {
   });
 
   const [allWords, setAllWords] = useState<WordWithDate[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
 
   // 로컬 스토리지에서 히스토리 불러오기
   useEffect(() => {
@@ -51,6 +55,7 @@ export default function HistoryPage() {
         analysis.words.map((word) => ({
           ...word,
           date: formatRelativeTime(analysis.createdAt),
+          createdAt: analysis.createdAt,
           analysisId: analysis.id,
         }))
       );
@@ -77,12 +82,45 @@ export default function HistoryPage() {
         analysis.words.map((word) => ({
           ...word,
           date: formatRelativeTime(analysis.createdAt),
+          createdAt: analysis.createdAt,
           analysisId: analysis.id,
         }))
       );
       setAllWords(words);
     }
   };
+
+  // JLPT 레벨을 숫자로 변환 (N5=5, N4=4, ..., N1=1)
+  const levelToNumber = (level: JlptLevel): number => {
+    return parseInt(level.substring(1));
+  };
+
+  // 정렬된 단어 목록
+  const sortedWords = useMemo(() => {
+    const words = [...allWords];
+
+    switch (sortBy) {
+      case "oldest":
+        return words.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      case "level-easy":
+        return words.sort(
+          (a, b) => levelToNumber(b.level) - levelToNumber(a.level)
+        ); // N5 -> N4 -> N3 -> N2 -> N1
+      case "level-hard":
+        return words.sort(
+          (a, b) => levelToNumber(a.level) - levelToNumber(b.level)
+        ); // N1 -> N2 -> N3 -> N4 -> N5
+      case "newest":
+      default:
+        return words.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    }
+  }, [allWords, sortBy]);
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
@@ -135,17 +173,25 @@ export default function HistoryPage() {
                   <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
                     Sort by:
                   </span>
-                  <select className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary">
-                    <option>Newest First</option>
-                    <option>Oldest First</option>
-                    <option>JLPT Level</option>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      setSortBy(e.target.value as SortOption);
+                    }}
+                    className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="level-easy">Level: N5 → N1</option>
+                    <option value="level-hard">Level: N1 → N5</option>
                   </select>
                 </div>
               </div>
 
               {/* Card Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {allWords.map((word, index) => (
+                {sortedWords.map((word, index) => (
                   <div
                     key={index}
                     className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64"

@@ -76,8 +76,6 @@ export default function HomePage() {
 
         setWords(analyzedWords);
 
-        console.log({ analyzedWords, image });
-
         // 로컬 스토리지에 분석 결과 저장
         saveAnalysis(analyzedWords, image.file.name);
       } catch {
