@@ -64,6 +64,8 @@ export default function HistoryPage() {
 
   // 필터 패널 state
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
 
   // 편집 모드 state
   const [editingWord, setEditingWord] = useState<{
@@ -157,6 +159,22 @@ export default function HistoryPage() {
     setEditedLevel("N5");
   };
 
+  // 필터 핸들러
+  const handleYearClick = (year: number) => {
+    setSelectedYear(selectedYear === year ? null : year);
+  };
+
+  const handleLevelClick = (level: JlptLevel) => {
+    setSelectedLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
+    );
+  };
+
+  const handleResetFilters = () => {
+    setSelectedYear(null);
+    setSelectedLevels([]);
+  };
+
   // JLPT 레벨을 숫자로 변환 (N5=5, N4=4, ..., N1=1)
   const levelToNumber = (level: JlptLevel): number => {
     return parseInt(level.substring(1));
@@ -188,6 +206,29 @@ export default function HistoryPage() {
         );
     }
   }, [allWords, sortBy]);
+
+  // 필터링된 단어 목록
+  const filteredWords = useMemo(() => {
+    let words = [...sortedWords];
+
+    // 연도 필터
+    if (selectedYear !== null) {
+      words = words.filter((word) => {
+        const year = new Date(word.createdAt).getFullYear();
+
+        console.log("year", year);
+
+        return year === selectedYear;
+      });
+    }
+
+    // 레벨 필터 (다중 선택)
+    if (selectedLevels.length > 0) {
+      words = words.filter((word) => selectedLevels.includes(word.level));
+    }
+
+    return words;
+  }, [sortedWords, selectedYear, selectedLevels]);
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
@@ -234,7 +275,7 @@ export default function HistoryPage() {
               {/* Stats / Summary */}
               <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
                 <p className="text-sm text-text-secondary">
-                  Showing {allWords.length} vocabulary cards
+                  Showing {filteredWords.length} vocabulary cards
                 </p>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
@@ -280,10 +321,24 @@ export default function HistoryPage() {
                             Created At
                           </h4>
                           <div className="flex gap-2">
-                            <button className="flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                            <button
+                              onClick={() => handleYearClick(2025)}
+                              className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                                selectedYear === 2025
+                                  ? "bg-primary text-white border-transparent shadow-sm"
+                                  : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                              }`}
+                            >
                               2025
                             </button>
-                            <button className="flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                            <button
+                              onClick={() => handleYearClick(2026)}
+                              className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                                selectedYear === 2026
+                                  ? "bg-primary text-white border-transparent shadow-sm"
+                                  : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                              }`}
+                            >
                               2026
                             </button>
                           </div>
@@ -299,31 +354,29 @@ export default function HistoryPage() {
                             JLPT Level
                           </h4>
                           <div className="flex flex-wrap gap-2">
-                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-white border border-transparent shadow-sm">
-                              N1
-                            </button>
-                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
-                              N2
-                            </button>
-                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
-                              N3
-                            </button>
-                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
-                              N4
-                            </button>
-                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
-                              N5
-                            </button>
+                            {JLPT_LEVELS.map((level) => (
+                              <button
+                                key={level}
+                                onClick={() => handleLevelClick(level)}
+                                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
+                                  selectedLevels.includes(level)
+                                    ? "bg-primary text-white border-transparent shadow-sm"
+                                    : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                                }`}
+                              >
+                                {level}
+                              </button>
+                            ))}
                           </div>
                         </div>
 
                         {/* Action Buttons */}
                         <div className="pt-1 flex justify-end gap-3 items-center">
-                          <button className="text-xs font-medium text-text-secondary hover:text-primary transition-colors">
+                          <button
+                            onClick={handleResetFilters}
+                            className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
+                          >
                             Reset
-                          </button>
-                          <button className="text-xs font-semibold bg-primary text-white px-4 py-1.5 rounded-md hover:opacity-90 shadow-sm transition-opacity">
-                            Apply
                           </button>
                         </div>
                       </div>
@@ -334,7 +387,7 @@ export default function HistoryPage() {
 
               {/* Card Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {sortedWords.map((word, index) => {
+                {filteredWords.map((word, index) => {
                   const isEditing =
                     editingWord?.historyId === word.analysisId &&
                     editingWord?.word === word.word;
