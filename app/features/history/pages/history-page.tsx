@@ -1,8 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Edit, Filter, Search, Trash2 } from "lucide-react";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
-import type { DisplayOptions, JlptLevel } from "~/types";
+import { deleteAnalysis, getAnalysisHistory } from "~/services/localStorage";
+import type { DisplayOptions, JlptLevel, SavedAnalysis, Word } from "~/types";
+
+// 날짜를 상대 시간으로 포맷팅하는 유틸 함수
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return "Today";
+
+  if (diffDays === 1) return "1 day ago";
+
+  if (diffDays < 7) return `${diffDays} days ago`;
+
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
+  }
+
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+// SavedAnalysis를 개별 단어로 변환 (날짜 정보 포함)
+interface WordWithDate extends Word {
+  date: string;
+  analysisId: string;
+}
 
 export default function HistoryPage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
@@ -10,52 +38,54 @@ export default function HistoryPage() {
     showFurigana: true,
     showRomaji: false,
   });
+  const [history, setHistory] = useState<SavedAnalysis[]>([]);
+  const [allWords, setAllWords] = useState<WordWithDate[]>([]);
 
-  // 임시 목 데이터 (나중에 로컬 스토리지에서 불러올 예정)
-  const mockWords = [
-    {
-      word: "先生",
-      reading: "せんせい",
-      meaning: "Teacher; Instructor; Master.",
-      level: "N5",
-      date: "2 days ago",
-    },
-    {
-      word: "学生",
-      reading: "がくせい",
-      meaning: "Student (especially a university student).",
-      level: "N5",
-      date: "1 week ago",
-    },
-    {
-      word: "会社",
-      reading: "かいしゃ",
-      meaning: "Company; Corporation; Workplace.",
-      level: "N4",
-      date: "Oct 12",
-    },
-    {
-      word: "食べる",
-      reading: "たべる",
-      meaning: "To eat.",
-      level: "N5",
-      date: "Oct 10",
-    },
-    {
-      word: "日本",
-      reading: "にほん",
-      meaning: "Japan.",
-      level: "N5",
-      date: "Sep 28",
-    },
-    {
-      word: "勉強",
-      reading: "べんきょう",
-      meaning: "Study; Diligence.",
-      level: "N4",
-      date: "Sep 25",
-    },
-  ];
+  // 로컬 스토리지에서 히스토리 불러오기
+  useEffect(() => {
+    const loadHistory = () => {
+      const savedHistory = getAnalysisHistory();
+      setHistory(savedHistory);
+
+      console.log("savedHistory", savedHistory);
+
+      // 모든 분석 결과의 단어를 플랫하게 펼치기
+      const words: WordWithDate[] = savedHistory.flatMap((analysis) =>
+        analysis.words.map((word) => ({
+          ...word,
+          date: formatRelativeTime(analysis.createdAt),
+          analysisId: analysis.id,
+        }))
+      );
+
+      console.log("words", words);
+
+      setAllWords(words);
+    };
+
+    loadHistory();
+  }, []);
+
+  const handleDeleteWord = (analysisId: string) => {
+    if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
+      deleteAnalysis(analysisId);
+
+      // 상태 업데이트
+      const updatedHistory = history.filter(
+        (analysis) => analysis.id !== analysisId
+      );
+      setHistory(updatedHistory);
+
+      const words: WordWithDate[] = updatedHistory.flatMap((analysis) =>
+        analysis.words.map((word) => ({
+          ...word,
+          date: formatRelativeTime(analysis.createdAt),
+          analysisId: analysis.id,
+        }))
+      );
+      setAllWords(words);
+    }
+  };
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
@@ -102,7 +132,7 @@ export default function HistoryPage() {
               {/* Stats / Summary */}
               <div className="mb-8 flex items-center justify-between">
                 <p className="text-sm text-text-secondary">
-                  Showing {mockWords.length} vocabulary cards
+                  Showing {allWords.length} vocabulary cards
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
@@ -118,7 +148,7 @@ export default function HistoryPage() {
 
               {/* Card Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {mockWords.map((word, index) => (
+                {allWords.map((word, index) => (
                   <div
                     key={index}
                     className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64"
@@ -156,6 +186,7 @@ export default function HistoryPage() {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => handleDeleteWord(word.analysisId)}
                         className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
                         title="Delete"
                       >
