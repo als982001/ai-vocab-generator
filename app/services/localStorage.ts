@@ -32,10 +32,32 @@ export function getAnalysisHistory(): SavedAnalysis[] {
 }
 
 // 특정 분석 결과 삭제
-export function deleteAnalysis(id: string): void {
+export function deleteAnalysis({
+  historyId,
+  targetWord,
+}: {
+  historyId: string;
+  targetWord: string;
+}): SavedAnalysis[] {
   const history = getAnalysisHistory();
-  const filtered = history.filter((item) => item.id !== id);
+
+  const filtered = history.flatMap((item) => {
+    if (item.words.length === 0) return [];
+
+    if (item.id !== historyId) return [item];
+
+    const filteredWords = item.words.filter(
+      (wordInfo) => wordInfo.word !== targetWord
+    );
+
+    if (filteredWords.length === 0) return [];
+
+    return [{ ...item, words: filteredWords }];
+  });
+
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+
+  return filtered;
 }
 
 // 전체 히스토리 삭제

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Edit, Filter, Search, Trash2 } from "lucide-react";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import { deleteAnalysis, getAnalysisHistory } from "~/services/localStorage";
-import type { DisplayOptions, JlptLevel, SavedAnalysis, Word } from "~/types";
+import type { DisplayOptions, JlptLevel, Word } from "~/types";
 
 // 날짜를 상대 시간으로 포맷팅하는 유틸 함수
 function formatRelativeTime(dateString: string): string {
@@ -38,16 +38,13 @@ export default function HistoryPage() {
     showFurigana: true,
     showRomaji: false,
   });
-  const [history, setHistory] = useState<SavedAnalysis[]>([]);
+
   const [allWords, setAllWords] = useState<WordWithDate[]>([]);
 
   // 로컬 스토리지에서 히스토리 불러오기
   useEffect(() => {
     const loadHistory = () => {
       const savedHistory = getAnalysisHistory();
-      setHistory(savedHistory);
-
-      console.log("savedHistory", savedHistory);
 
       // 모든 분석 결과의 단어를 플랫하게 펼치기
       const words: WordWithDate[] = savedHistory.flatMap((analysis) =>
@@ -66,15 +63,15 @@ export default function HistoryPage() {
     loadHistory();
   }, []);
 
-  const handleDeleteWord = (analysisId: string) => {
+  const handleDeleteWord = ({
+    historyId,
+    targetWord,
+  }: {
+    historyId: string;
+    targetWord: string;
+  }) => {
     if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
-      deleteAnalysis(analysisId);
-
-      // 상태 업데이트
-      const updatedHistory = history.filter(
-        (analysis) => analysis.id !== analysisId
-      );
-      setHistory(updatedHistory);
+      const updatedHistory = deleteAnalysis({ historyId, targetWord });
 
       const words: WordWithDate[] = updatedHistory.flatMap((analysis) =>
         analysis.words.map((word) => ({
@@ -186,7 +183,12 @@ export default function HistoryPage() {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDeleteWord(word.analysisId)}
+                        onClick={() =>
+                          handleDeleteWord({
+                            historyId: word.analysisId,
+                            targetWord: word.word,
+                          })
+                        }
                         className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
                         title="Delete"
                       >
