@@ -60,6 +60,42 @@ export function deleteAnalysis({
   return filtered;
 }
 
+// 특정 단어 업데이트
+export function updateWordInAnalysis({
+  historyId,
+  targetWord,
+  newMeaning,
+  newLevel,
+}: {
+  historyId: string;
+  targetWord: string;
+  newMeaning: string;
+  newLevel: string;
+}): SavedAnalysis[] {
+  console.log({ historyId, targetWord, newMeaning, newLevel });
+  const history = getAnalysisHistory();
+
+  const updated = history.map((item) => {
+    if (item.id !== historyId) return item;
+
+    const updatedWords = item.words.map((wordInfo) => {
+      if (wordInfo.word !== targetWord) return wordInfo;
+
+      return {
+        ...wordInfo,
+        meaning: newMeaning,
+        level: newLevel as Word["level"],
+      };
+    });
+
+    return { ...item, words: updatedWords };
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+  return updated;
+}
+
 // 전체 히스토리 삭제
 export function clearHistory(): void {
   localStorage.removeItem(STORAGE_KEY);

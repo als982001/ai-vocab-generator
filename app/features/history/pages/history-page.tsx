@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Edit, Filter, Search, Trash2 } from "lucide-react";
+import { Check, Edit, Filter, Search, Trash2, X } from "lucide-react";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
-import { deleteAnalysis, getAnalysisHistory } from "~/services/localStorage";
+import {
+  deleteAnalysis,
+  getAnalysisHistory,
+  updateWordInAnalysis,
+} from "~/services/localStorage";
 import type { DisplayOptions, JlptLevel, Word } from "~/types";
 
 // 날짜를 상대 시간으로 포맷팅하는 유틸 함수
@@ -35,6 +39,8 @@ interface WordWithDate extends Word {
 
 type SortOption = "newest" | "oldest" | "level-easy" | "level-hard";
 
+const JLPT_LEVELS: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
+
 export default function HistoryPage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
   const [displayOptions, setDisplayOptions] = useState<DisplayOptions>({
@@ -44,6 +50,14 @@ export default function HistoryPage() {
 
   const [allWords, setAllWords] = useState<WordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+
+  // 편집 모드 state
+  const [editingWord, setEditingWord] = useState<{
+    historyId: string;
+    word: string;
+  } | null>(null);
+  const [editedMeaning, setEditedMeaning] = useState("");
+  const [editedLevel, setEditedLevel] = useState<JlptLevel>("N5");
 
   // 로컬 스토리지에서 히스토리 불러오기
   useEffect(() => {
@@ -59,8 +73,6 @@ export default function HistoryPage() {
           analysisId: analysis.id,
         }))
       );
-
-      console.log("words", words);
 
       setAllWords(words);
     };
@@ -88,6 +100,47 @@ export default function HistoryPage() {
       );
       setAllWords(words);
     }
+  };
+
+  // 편집 모드 시작
+  const handleEditClick = (word: WordWithDate) => {
+    setEditingWord({
+      historyId: word.analysisId,
+      word: word.word,
+    });
+    setEditedMeaning(word.meaning);
+    setEditedLevel(word.level);
+  };
+
+  // 편집 저장
+  const handleSaveEdit = () => {
+    if (!editingWord) return;
+
+    const updatedHistory = updateWordInAnalysis({
+      historyId: editingWord.historyId,
+      targetWord: editingWord.word,
+      newMeaning: editedMeaning,
+      newLevel: editedLevel,
+    });
+
+    const words: WordWithDate[] = updatedHistory.flatMap((analysis) =>
+      analysis.words.map((word) => ({
+        ...word,
+        date: formatRelativeTime(analysis.createdAt),
+        createdAt: analysis.createdAt,
+        analysisId: analysis.id,
+      }))
+    );
+
+    setAllWords(words);
+    setEditingWord(null);
+  };
+
+  // 편집 취소
+  const handleCancelEdit = () => {
+    setEditingWord(null);
+    setEditedMeaning("");
+    setEditedLevel("N5");
   };
 
   // JLPT 레벨을 숫자로 변환 (N5=5, N4=4, ..., N1=1)
@@ -175,10 +228,7 @@ export default function HistoryPage() {
                   </span>
                   <select
                     value={sortBy}
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setSortBy(e.target.value as SortOption);
-                    }}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
                     className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary"
                   >
                     <option value="newest">Newest First</option>
@@ -191,58 +241,114 @@ export default function HistoryPage() {
 
               {/* Card Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {sortedWords.map((word, index) => (
-                  <div
-                    key={index}
-                    className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64"
-                  >
-                    {/* Card Header */}
-                    <div className="flex justify-between items-start">
-                      <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">
-                        {word.level}
-                      </span>
-                      <span className="text-[11px] text-text-secondary font-medium">
-                        {word.date}
-                      </span>
-                    </div>
+                {sortedWords.map((word, index) => {
+                  const isEditing =
+                    editingWord?.historyId === word.analysisId &&
+                    editingWord?.word === word.word;
 
-                    {/* Card Body */}
-                    <div className="flex flex-col items-center text-center my-auto w-full">
-                      <p className="text-xs text-text-secondary mb-1">
-                        {word.reading}
-                      </p>
-                      <h3 className="text-4xl font-bold text-text-primary mb-4">
-                        {word.word}
-                      </h3>
-                      <div className="w-8 h-px bg-border-color mb-4"></div>
-                      <p className="text-sm text-text-secondary font-medium line-clamp-2">
-                        {word.meaning}
-                      </p>
-                    </div>
+                  return (
+                    <div
+                      key={index}
+                      className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64"
+                    >
+                      {/* Card Header */}
+                      <div className="flex justify-between items-start">
+                        {isEditing ? (
+                          <div className="flex gap-1 flex-wrap">
+                            {JLPT_LEVELS.map((level) => (
+                              <button
+                                key={level}
+                                onClick={() => setEditedLevel(level)}
+                                className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide transition-colors ${
+                                  editedLevel === level
+                                    ? "bg-primary text-white"
+                                    : "bg-white text-black border border-gray-300 hover:bg-gray-100"
+                                }`}
+                              >
+                                {level}
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">
+                            {word.level}
+                          </span>
+                        )}
+                        <span className="text-[11px] text-text-secondary font-medium">
+                          {word.date}
+                        </span>
+                      </div>
 
-                    {/* Card Actions (Hover) */}
-                    <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <button
-                        className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
-                        title="Edit"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleDeleteWord({
-                            historyId: word.analysisId,
-                            targetWord: word.word,
-                          })
-                        }
-                        className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {/* Card Body */}
+                      <div className="flex flex-col items-center text-center my-auto w-full">
+                        <p className="text-xs text-text-secondary mb-1">
+                          {word.reading}
+                        </p>
+                        <h3 className="text-4xl font-bold text-text-primary mb-4">
+                          {word.word}
+                        </h3>
+                        <div className="w-8 h-px bg-border-color mb-4"></div>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={editedMeaning}
+                            onChange={(e) => setEditedMeaning(e.target.value)}
+                            className="w-full text-sm text-text-primary font-medium text-center border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary"
+                            placeholder="단어 뜻 입력"
+                          />
+                        ) : (
+                          <p className="text-sm text-text-secondary font-medium line-clamp-2">
+                            {word.meaning}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Card Actions (Hover) */}
+                      <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        {isEditing ? (
+                          <>
+                            <button
+                              onClick={handleSaveEdit}
+                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-green-500 hover:text-white transition-colors"
+                              title="Save"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-gray-500 hover:text-white transition-colors"
+                              title="Cancel"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEditClick(word)}
+                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
+                              title="Edit"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteWord({
+                                  historyId: word.analysisId,
+                                  targetWord: word.word,
+                                })
+                              }
+                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
