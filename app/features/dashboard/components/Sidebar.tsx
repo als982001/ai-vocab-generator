@@ -1,3 +1,5 @@
+import { Link, useLocation } from "react-router";
+
 import { History, LayoutDashboard, Settings } from "lucide-react";
 import type { DisplayOptions, JlptLevel } from "~/types";
 
@@ -15,6 +17,9 @@ export function Sidebar({
   onDisplayOptionsChange,
 }: SidebarProps) {
   const jlptLevels: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
+  const location = useLocation();
+
+  const { pathname } = location;
 
   return (
     <aside className="w-72 h-full bg-surface-dark overflow-y-auto shrink-0 border-r border-border-color flex flex-col">
@@ -29,18 +34,58 @@ export function Sidebar({
         </div>
       </div>
       <div className="flex flex-col p-4 gap-2">
-        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 bg-surface-highlight rounded-full">
-          <LayoutDashboard className="text-text-primary w-5 h-5" />
-          <p className="text-text-primary leading-normal font-bold text-sm">
-            Dashboard
-          </p>
-        </div>
-        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 transition-colors group">
-          <History className="text-text-secondary group-hover:text-text-primary w-5 h-5" />
-          <p className="text-text-secondary group-hover:text-text-primary leading-normal font-bold text-sm">
-            History
-          </p>
-        </div>
+        <Link to="/">
+          <div
+            className={`flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full transition-colors ${
+              pathname === "/"
+                ? "bg-surface-highlight"
+                : "hover:bg-surface-highlight/50 group"
+            }`}
+          >
+            <LayoutDashboard
+              className={`w-5 h-5 ${
+                pathname === "/"
+                  ? "text-text-primary"
+                  : "text-text-secondary group-hover:text-text-primary"
+              }`}
+            />
+            <p
+              className={`leading-normal font-bold text-sm ${
+                pathname === "/"
+                  ? "text-text-primary"
+                  : "text-text-secondary group-hover:text-text-primary"
+              }`}
+            >
+              Dashboard
+            </p>
+          </div>
+        </Link>
+        <Link to="/history">
+          <div
+            className={`flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full transition-colors ${
+              pathname === "/history"
+                ? "bg-surface-highlight"
+                : "hover:bg-surface-highlight/50 group"
+            }`}
+          >
+            <History
+              className={`w-5 h-5 ${
+                pathname === "/history"
+                  ? "text-text-primary"
+                  : "text-text-secondary group-hover:text-text-primary"
+              }`}
+            />
+            <p
+              className={`leading-normal font-bold text-sm ${
+                pathname === "/history"
+                  ? "text-text-primary"
+                  : "text-text-secondary group-hover:text-text-primary"
+              }`}
+            >
+              History
+            </p>
+          </div>
+        </Link>
         <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 transition-colors group">
           <Settings className="text-text-secondary group-hover:text-text-primary w-5 h-5" />
           <p className="text-text-secondary group-hover:text-text-primary leading-normal font-bold text-sm">

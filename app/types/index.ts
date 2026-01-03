@@ -16,3 +16,10 @@ export interface UploadedImage {
   file: File;
   preview: string;
 }
+
+export interface SavedAnalysis {
+  id: string;
+  words: Word[];
+  imageName: string;
+  createdAt: string;
+}

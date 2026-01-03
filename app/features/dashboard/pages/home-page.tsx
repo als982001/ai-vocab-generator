@@ -4,6 +4,7 @@ import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import { analyzeImage } from "~/services/gemini";
+import { saveAnalysis } from "~/services/localStorage";
 import type { DisplayOptions, JlptLevel, UploadedImage, Word } from "~/types";
 
 export default function HomePage() {
@@ -74,6 +75,9 @@ export default function HomePage() {
         const analyzedWords = await analyzeImage(image.file);
 
         setWords(analyzedWords);
+
+        // 로컬 스토리지에 분석 결과 저장
+        saveAnalysis(analyzedWords, image.file.name);
       } catch {
         alert("이미지 분석에 실패했습니다. 다시 시도해주세요.");
       } finally {
