@@ -1,6 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Check, Edit, Filter, Search, Trash2, X } from "lucide-react";
+import {
+  Calendar,
+  Check,
+  ChevronDown,
+  Edit,
+  Filter,
+  GraduationCap,
+  Search,
+  SlidersHorizontal,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   deleteAnalysis,
@@ -50,6 +61,9 @@ export default function HistoryPage() {
 
   const [allWords, setAllWords] = useState<WordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+
+  // 필터 패널 state
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // 편집 모드 state
   const [editingWord, setEditingWord] = useState<{
@@ -218,24 +232,103 @@ export default function HistoryPage() {
           <div className="flex-1 overflow-y-auto p-6 lg:p-8">
             <div className="max-w-[1200px] mx-auto">
               {/* Stats / Summary */}
-              <div className="mb-8 flex items-center justify-between">
+              <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
                 <p className="text-sm text-text-secondary">
                   Showing {allWords.length} vocabulary cards
                 </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
-                    Sort by:
-                  </span>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as SortOption)}
-                    className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="level-easy">Level: N5 → N1</option>
-                    <option value="level-hard">Level: N1 → N5</option>
-                  </select>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+                      Sort by:
+                    </span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as SortOption)}
+                      className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary outline-none"
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                      <option value="level-easy">Level: N5 → N1</option>
+                      <option value="level-hard">Level: N1 → N5</option>
+                    </select>
+                  </div>
+
+                  {/* Filters Dropdown */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsFilterOpen(!isFilterOpen)}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-white border border-border-color rounded-lg hover:border-gray-300 transition-colors shadow-sm select-none"
+                    >
+                      <SlidersHorizontal className="w-[18px] h-[18px] text-text-secondary" />
+                      <span className="text-sm font-medium text-text-primary">
+                        Filters
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-text-secondary transition-transform ${
+                          isFilterOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {/* Filter Panel */}
+                    {isFilterOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50">
+                        {/* Created At Section */}
+                        <div>
+                          <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-text-secondary" />
+                            Created At
+                          </h4>
+                          <div className="flex gap-2">
+                            <button className="flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                              2025
+                            </button>
+                            <button className="flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                              2026
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px bg-border-color"></div>
+
+                        {/* JLPT Level Section */}
+                        <div>
+                          <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                            <GraduationCap className="w-4 h-4 text-text-secondary" />
+                            JLPT Level
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-white border border-transparent shadow-sm">
+                              N1
+                            </button>
+                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                              N2
+                            </button>
+                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                              N3
+                            </button>
+                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                              N4
+                            </button>
+                            <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border-color text-text-secondary hover:bg-surface-highlight transition-colors">
+                              N5
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="pt-1 flex justify-end gap-3 items-center">
+                          <button className="text-xs font-medium text-text-secondary hover:text-primary transition-colors">
+                            Reset
+                          </button>
+                          <button className="text-xs font-semibold bg-primary text-white px-4 py-1.5 rounded-md hover:opacity-90 shadow-sm transition-opacity">
+                            Apply
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
