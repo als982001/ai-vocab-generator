@@ -96,6 +96,32 @@ export function updateWordInAnalysis({
   return updated;
 }
 
+// 단어를 분석 결과에 다시 추가 (삭제 취소용)
+export function addWordToAnalysis({
+  historyId,
+  deletedWord,
+}: {
+  historyId: string;
+  deletedWord: Word;
+}): SavedAnalysis[] {
+  const history = getAnalysisHistory();
+
+  const updated = history.map((item) => {
+    if (item.id !== historyId) return item;
+
+    // 이미 같은 단어가 있는지 확인
+    const exists = item.words.some((w) => w.word === deletedWord.word);
+
+    if (exists) return item;
+
+    return { ...item, words: [...item.words, deletedWord] };
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+  return updated;
+}
+
 // 전체 히스토리 삭제
 export function clearHistory(): void {
   localStorage.removeItem(STORAGE_KEY);

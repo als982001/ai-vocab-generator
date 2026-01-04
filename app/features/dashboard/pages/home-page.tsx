@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { toast } from "sonner";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
@@ -75,6 +76,8 @@ export default function HomePage() {
         const analyzedWords = await analyzeImage(image.file);
 
         setWords(analyzedWords);
+
+        toast.success("분석을 성공했습니다.");
 
         // 로컬 스토리지에 분석 결과 저장
         saveAnalysis(analyzedWords, image.file.name);
