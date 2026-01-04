@@ -19,8 +19,9 @@
 이미지에서 일본어 단어를 추출하여 단어장을 생성합니다.
 
 <div align="center">
-  <img src=".github/assets/main01.png" alt="이미지 업로드" width="45%">
-  <img src=".github/assets/main02.png" alt="단어 추출 결과" width="45%">
+  <img src=".github/assets/main01.png" alt="이미지 업로드" width="70%">
+  <br><br>
+  <img src=".github/assets/main02.png" alt="단어 추출 결과" width="70%">
 </div>
 
 - **Drag & Drop 업로드**: 이미지를 드래그앤드롭으로 간편하게 업로드
@@ -35,12 +36,6 @@
 
 <div align="center">
   <img src=".github/assets/history01.png" alt="히스토리 페이지" width="70%">
-</div>
-
-<div align="center">
-  <video src=".github/assets/history02.mov" controls width="70%">
-    Your browser does not support the video tag.
-  </video>
 </div>
 
 - **단어 카드 뷰**: 분석한 모든 단어를 깔끔한 카드 UI로 표시
