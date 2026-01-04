@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
+  addWordToAnalysis,
   deleteAnalysis,
   getAnalysisHistory,
   updateWordInAnalysis,
@@ -105,6 +106,11 @@ export default function HistoryPage() {
     targetWord: string;
   }) => {
     if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
+      // 삭제 전 백업
+      const deletedWord = allWords.find(
+        (w) => w.analysisId === historyId && w.word === targetWord
+      );
+
       const updatedHistory = deleteAnalysis({ historyId, targetWord });
 
       const words: WordWithDate[] = updatedHistory.flatMap((analysis) =>
@@ -119,7 +125,30 @@ export default function HistoryPage() {
       toast.success("단어가 삭제되었습니다.", {
         action: {
           label: "취소",
-          onClick: () => {}, // 삭제 취소 함수 추가
+          onClick: () => {
+            if (!deletedWord) return;
+
+            const { word, reading, meaning, level } = deletedWord;
+
+            // 삭제된 단어를 다시 추가
+            const restoredHistory = addWordToAnalysis({
+              historyId,
+              deletedWord: { word, reading, meaning, level },
+            });
+
+            const restoredWords: WordWithDate[] = restoredHistory.flatMap(
+              (analysis) =>
+                analysis.words.map((word) => ({
+                  ...word,
+                  date: formatRelativeTime(analysis.createdAt),
+                  createdAt: analysis.createdAt,
+                  analysisId: analysis.id,
+                }))
+            );
+
+            setAllWords(restoredWords);
+            toast.success("삭제가 취소되었습니다.");
+          },
         },
       });
 
@@ -141,6 +170,12 @@ export default function HistoryPage() {
   const handleSaveEdit = () => {
     if (!editingWord) return;
 
+    // 편집 전 원본 데이터 백업
+    const originalWord = allWords.find(
+      (w) =>
+        w.analysisId === editingWord.historyId && w.word === editingWord.word
+    );
+
     const updatedHistory = updateWordInAnalysis({
       historyId: editingWord.historyId,
       targetWord: editingWord.word,
@@ -160,7 +195,30 @@ export default function HistoryPage() {
     toast.success("단어가 저장되었습니다.", {
       action: {
         label: "취소",
-        onClick: () => {}, // 수정 취소 함수 추가
+        onClick: () => {
+          if (!originalWord) return;
+
+          // 원본 데이터로 복원
+          const restoredHistory = updateWordInAnalysis({
+            historyId: editingWord.historyId,
+            targetWord: editingWord.word,
+            newMeaning: originalWord.meaning,
+            newLevel: originalWord.level,
+          });
+
+          const restoredWords: WordWithDate[] = restoredHistory.flatMap(
+            (analysis) =>
+              analysis.words.map((word) => ({
+                ...word,
+                date: formatRelativeTime(analysis.createdAt),
+                createdAt: analysis.createdAt,
+                analysisId: analysis.id,
+              }))
+          );
+
+          setAllWords(restoredWords);
+          toast.success("수정이 취소되었습니다.");
+        },
       },
     });
 
@@ -231,8 +289,6 @@ export default function HistoryPage() {
     if (selectedYear !== null) {
       words = words.filter((word) => {
         const year = new Date(word.createdAt).getFullYear();
-
-        console.log("year", year);
 
         return year === selectedYear;
       });
