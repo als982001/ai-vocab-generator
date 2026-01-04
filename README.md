@@ -38,6 +38,12 @@
   <img src=".github/assets/history01.png" alt="히스토리 페이지" width="70%">
 </div>
 
+**인터랙티브 기능 데모 (정렬 → 필터 → 수정 → 삭제)**
+
+<div align="center">
+  <img src=".github/assets/history02.gif" alt="정렬, 필터, 수정, 삭제 기능" width="70%">
+</div>
+
 - **단어 카드 뷰**: 분석한 모든 단어를 깔끔한 카드 UI로 표시
 - **정렬 기능**: 최신순, 오래된순, 난이도순(N5→N1, N1→N5) 정렬
 - **필터 기능**: 연도별, JLPT 레벨별 필터링
