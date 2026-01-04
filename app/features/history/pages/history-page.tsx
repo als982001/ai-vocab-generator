@@ -12,6 +12,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   deleteAnalysis,
@@ -114,6 +115,14 @@ export default function HistoryPage() {
           analysisId: analysis.id,
         }))
       );
+
+      toast.success("단어가 삭제되었습니다.", {
+        action: {
+          label: "취소",
+          onClick: () => {}, // 삭제 취소 함수 추가
+        },
+      });
+
       setAllWords(words);
     }
   };
@@ -147,6 +156,13 @@ export default function HistoryPage() {
         analysisId: analysis.id,
       }))
     );
+
+    toast.success("단어가 저장되었습니다.", {
+      action: {
+        label: "취소",
+        onClick: () => {}, // 수정 취소 함수 추가
+      },
+    });
 
     setAllWords(words);
     setEditingWord(null);
