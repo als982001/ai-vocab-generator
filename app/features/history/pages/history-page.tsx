@@ -10,6 +10,7 @@ import {
   Search,
   SlidersHorizontal,
   Trash2,
+  Volume2,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ import {
   getAnalysisHistory,
   updateWordInAnalysis,
 } from "~/services/localStorage";
+import { playTTS } from "~/services/tts";
 import type { DisplayOptions, JlptLevel, Word } from "~/types";
 
 // 날짜를 상대 시간으로 포맷팅하는 유틸 함수
@@ -521,7 +523,19 @@ export default function HistoryPage() {
                         )}
                       </div>
 
-                      {/* Card Actions (Hover) */}
+                      {/* Card Actions */}
+                      {/* Listen Button - 왼쪽에 항상 표시 (수정 중이 아닐 때만) */}
+                      {!isEditing && (
+                        <button
+                          onClick={() => playTTS(word.word)}
+                          className="absolute bottom-4 left-4 size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
+                          title="듣기"
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
+                      )}
+
+                      {/* Edit/Delete or Save/Cancel - 오른쪽에 hover 시 표시 */}
                       <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         {isEditing ? (
                           <>
