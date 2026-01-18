@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import type { IWordWithDate, SortOption } from "~/features/history/types";
 import {
   addWordToAnalysis,
   deleteAnalysis,
@@ -22,39 +23,9 @@ import {
   updateWordInAnalysis,
 } from "~/services/localStorage";
 import { playTTS } from "~/services/tts";
-import type { IDisplayOptions, IWord, JlptLevel } from "~/types";
-
-// 날짜를 상대 시간으로 포맷팅하는 유틸 함수
-function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return "Today";
-
-  if (diffDays === 1) return "1 day ago";
-
-  if (diffDays < 7) return `${diffDays} days ago`;
-
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
-  }
-
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-// SavedAnalysis를 개별 단어로 변환 (날짜 정보 포함)
-interface IWordWithDate extends IWord {
-  date: string;
-  analysisId: string;
-  createdAt: string;
-}
-
-type SortOption = "newest" | "oldest" | "level-easy" | "level-hard";
-
-const JLPT_LEVELS: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
+import type { IDisplayOptions, JlptLevel } from "~/types";
+import { formatRelativeTime } from "~/utils/date";
+import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
 
 export default function HistoryPage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
@@ -249,11 +220,6 @@ export default function HistoryPage() {
   const handleResetFilters = () => {
     setSelectedYear(null);
     setSelectedLevels([]);
-  };
-
-  // JLPT 레벨을 숫자로 변환 (N5=5, N4=4, ..., N1=1)
-  const levelToNumber = (level: JlptLevel): number => {
-    return parseInt(level.substring(1));
   };
 
   // 정렬된 단어 목록
