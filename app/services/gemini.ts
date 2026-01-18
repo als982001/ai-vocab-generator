@@ -67,6 +67,8 @@ export const analyzeImage = async (file: File) => {
   // 로컬 환경 체크
   const isLocal = window.location.hostname === "localhost";
 
+  console.log(`isLocal: ${isLocal}`)
+
   if (isLocal) {
     const result = await analyzeImageLocal(imagePart);
     return result;
