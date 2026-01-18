@@ -1,1 +1,9 @@
-{}
+{
+  "outputDirectory": "build/client",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
