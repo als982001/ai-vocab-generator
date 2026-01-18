@@ -39,3 +39,16 @@
   - `mockData.json`: API 응답 시뮬레이션을 위한 JSON 데이터
   - `mockDesign.html`: 디자인 참고용 HTML 스니펫
   - `screen.png`: 디자인 참고용 이미지
+
+# 깃 & 배포 전략 (Git & Deployment Strategy)
+
+1. **브랜치 정의**
+   - **`main`**: 배포용 브랜치 (Production). `dev`에서 PR 머지 시 Vercel이 감지하여 자동 배포 수행.
+   - **`dev`**: 개발용 브랜치 (Development). 모든 기능 개발의 기준점이자 통합 브랜치.
+
+2. **작업 흐름 (Workflow)**
+   - **Step 1 (Branching):** 항상 `dev` 브랜치를 기준으로 작업 브랜치(`feature/기능명`)를 생성하여 작업한다.
+   - **Step 2 (Feature Merge):** 작업 브랜치 → `dev` 머지 시 **스쿼시 머지 (Squash Merge)** 사용.
+     - *Rule:* 개별 작업의 자잘한 커밋 내역보다는 기능 단위의 완성이 중요하므로 커밋을 하나로 압축한다.
+   - **Step 3 (Deployment):** `dev` → `main` 머지 시 **머지 커밋 (Merge Commit)** 사용.
+     - *Rule:* `dev`에서 완성된 기능들의 히스토리를 `main`에 그대로 보존하여 배포 이력을 관리한다.
