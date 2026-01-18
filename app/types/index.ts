@@ -1,4 +1,4 @@
-export interface Word {
+export interface IWord {
   level: JlptLevel;
   meaning: string;
   reading: string;
@@ -7,19 +7,19 @@ export interface Word {
 
 export type JlptLevel = "N5" | "N4" | "N3" | "N2" | "N1";
 
-export interface DisplayOptions {
+export interface IDisplayOptions {
   showFurigana: boolean;
   showRomaji: boolean;
 }
 
-export interface UploadedImage {
+export interface IUploadedImage {
   file: File;
   preview: string;
 }
 
-export interface SavedAnalysis {
+export interface ISavedAnalysis {
   id: string;
-  words: Word[];
+  words: IWord[];
   imageName: string;
   createdAt: string;
 }

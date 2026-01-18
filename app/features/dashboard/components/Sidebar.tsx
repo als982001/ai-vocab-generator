@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router";
 
 import { History, LayoutDashboard, Settings } from "lucide-react";
-import type { DisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions, JlptLevel } from "~/types";
 
-interface SidebarProps {
+interface ISidebarProps {
   selectedLevel: JlptLevel;
   onLevelChange: (level: JlptLevel) => void;
-  displayOptions: DisplayOptions;
-  onDisplayOptionsChange: (options: DisplayOptions) => void;
+  displayOptions: IDisplayOptions;
+  onDisplayOptionsChange: (options: IDisplayOptions) => void;
 }
 
 export function Sidebar({
@@ -15,7 +15,7 @@ export function Sidebar({
   onLevelChange,
   displayOptions,
   onDisplayOptionsChange,
-}: SidebarProps) {
+}: ISidebarProps) {
   const jlptLevels: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
   const location = useLocation();
 

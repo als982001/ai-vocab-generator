@@ -1,10 +1,10 @@
 import { ArrowUpDown, Download, FileSearch } from "lucide-react";
 import { WordCard } from "~/features/dashboard/components/WordCard";
-import type { DisplayOptions, Word } from "~/types";
+import type { IDisplayOptions, IWord } from "~/types";
 
-interface ResultPanelProps {
-  words: Word[];
-  displayOptions: DisplayOptions;
+interface IResultPanelProps {
+  words: IWord[];
+  displayOptions: IDisplayOptions;
   onDownload: () => void;
 }
 
@@ -12,7 +12,7 @@ export function ResultPanel({
   words,
   displayOptions,
   onDownload,
-}: ResultPanelProps) {
+}: IResultPanelProps) {
   return (
     <aside className="w-96 flex flex-col bg-gray-50 shrink-0 relative shadow-sm">
       <div className="p-6 flex items-center justify-between bg-white z-10 shrink-0 shadow-sm">

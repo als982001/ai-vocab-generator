@@ -1,6 +1,6 @@
-import type { Word } from "./types";
+import type { IWord } from "./types";
 
-export const TEMP_WORDS: Word[] = [
+export const TEMP_WORDS: IWord[] = [
   {
     word: "被疑者",
     reading: "ひぎしゃ",
