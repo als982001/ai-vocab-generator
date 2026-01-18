@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import { useWordEdit } from "~/features/history/hooks/useWordEdit";
+import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
 import {
   addWordToAnalysis,
@@ -37,18 +39,29 @@ export default function HistoryPage() {
   const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
 
-  // 필터 패널 state
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
+  // 필터 패널 상태 및 핸들러
+  const {
+    isFilterOpen,
+    selectedYear,
+    selectedLevels,
+    toggleFilter,
+    handleYearClick,
+    handleLevelClick,
+    resetFilters,
+  } = useWordFilter();
 
-  // 편집 모드 state
-  const [editingWord, setEditingWord] = useState<{
-    historyId: string;
-    word: string;
-  } | null>(null);
-  const [editedMeaning, setEditedMeaning] = useState("");
-  const [editedLevel, setEditedLevel] = useState<JlptLevel>("N5");
+  // 단어 편집 모드 상태 및 핸들러
+  const {
+    editingWord,
+    editedMeaning,
+    editedLevel,
+    setEditedMeaning,
+    setEditedLevel,
+    startEdit,
+    cancelEdit,
+    clearEditingWord,
+    checkIsEditing,
+  } = useWordEdit();
 
   // 로컬 스토리지에서 히스토리 불러오기
   useEffect(() => {
@@ -129,16 +142,6 @@ export default function HistoryPage() {
     }
   };
 
-  // 편집 모드 시작
-  const handleEditClick = (word: IWordWithDate) => {
-    setEditingWord({
-      historyId: word.analysisId,
-      word: word.word,
-    });
-    setEditedMeaning(word.meaning);
-    setEditedLevel(word.level);
-  };
-
   // 편집 저장
   const handleSaveEdit = () => {
     if (!editingWord) return;
@@ -146,7 +149,8 @@ export default function HistoryPage() {
     // 편집 전 원본 데이터 백업
     const originalWord = allWords.find(
       (w) =>
-        w.analysisId === editingWord.historyId && w.word === editingWord.word
+        w.analysisId === editingWord!.historyId &&
+        w.word === editingWord!.word
     );
 
     const updatedHistory = updateWordInAnalysis({
@@ -169,7 +173,7 @@ export default function HistoryPage() {
       action: {
         label: "취소",
         onClick: () => {
-          if (!originalWord) return;
+          if (!originalWord || !editingWord) return;
 
           // 원본 데이터로 복원
           const restoredHistory = updateWordInAnalysis({
@@ -196,30 +200,7 @@ export default function HistoryPage() {
     });
 
     setAllWords(words);
-    setEditingWord(null);
-  };
-
-  // 편집 취소
-  const handleCancelEdit = () => {
-    setEditingWord(null);
-    setEditedMeaning("");
-    setEditedLevel("N5");
-  };
-
-  // 필터 핸들러
-  const handleYearClick = (year: number) => {
-    setSelectedYear(selectedYear === year ? null : year);
-  };
-
-  const handleLevelClick = (level: JlptLevel) => {
-    setSelectedLevels((prev) =>
-      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
-    );
-  };
-
-  const handleResetFilters = () => {
-    setSelectedYear(null);
-    setSelectedLevels([]);
+    clearEditingWord();
   };
 
   // 정렬된 단어 목록
@@ -264,7 +245,9 @@ export default function HistoryPage() {
 
     // 레벨 필터 (다중 선택)
     if (selectedLevels.length > 0) {
-      words = words.filter((word) => selectedLevels.includes(word.level));
+      words = words.filter((word) =>
+        selectedLevels.includes(word.level)
+      );
     }
 
     return words;
@@ -337,7 +320,7 @@ export default function HistoryPage() {
                   {/* Filters Dropdown */}
                   <div className="relative">
                     <button
-                      onClick={() => setIsFilterOpen(!isFilterOpen)}
+                      onClick={toggleFilter}
                       className="flex items-center gap-2 px-3 py-1.5 bg-white border border-border-color rounded-lg hover:border-gray-300 transition-colors shadow-sm select-none"
                     >
                       <SlidersHorizontal className="w-[18px] h-[18px] text-text-secondary" />
@@ -413,7 +396,7 @@ export default function HistoryPage() {
                         {/* Action Buttons */}
                         <div className="pt-1 flex justify-end gap-3 items-center">
                           <button
-                            onClick={handleResetFilters}
+                            onClick={resetFilters}
                             className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
                           >
                             Reset
@@ -428,9 +411,7 @@ export default function HistoryPage() {
               {/* Card Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredWords.map((word, index) => {
-                  const isEditing =
-                    editingWord?.historyId === word.analysisId &&
-                    editingWord?.word === word.word;
+                  const isEditing = checkIsEditing(word);
 
                   return (
                     <div
@@ -478,7 +459,9 @@ export default function HistoryPage() {
                           <input
                             type="text"
                             value={editedMeaning}
-                            onChange={(e) => setEditedMeaning(e.target.value)}
+                            onChange={(e) =>
+                              setEditedMeaning(e.target.value)
+                            }
                             className="w-full text-sm text-text-primary font-medium text-center border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary"
                             placeholder="단어 뜻 입력"
                           />
@@ -513,7 +496,7 @@ export default function HistoryPage() {
                               <Check className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={handleCancelEdit}
+                              onClick={cancelEdit}
                               className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-gray-500 hover:text-white transition-colors"
                               title="Cancel"
                             >
@@ -523,7 +506,7 @@ export default function HistoryPage() {
                         ) : (
                           <>
                             <button
-                              onClick={() => handleEditClick(word)}
+                              onClick={() => startEdit(word)}
                               className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
                               title="Edit"
                             >
