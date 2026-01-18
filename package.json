@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "react-router build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "serve ./build/client",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
