@@ -2,8 +2,6 @@
 
 이미지에서 일본어 단어를 추출하여 한국어 번역과 발음(후리가나)이 포함된 단어장을 자동으로 생성합니다.
 
-### 🚀 배포 링크 (Live Demo)
-👉 **지금 바로 사용해보기:** [https://ai-vocab-generator.vercel.app](https://ai-vocab-generator.vercel.app)
 
 | Type | Link |
 | :--- | :--- |
