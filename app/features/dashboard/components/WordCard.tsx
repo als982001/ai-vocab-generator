@@ -1,9 +1,9 @@
 import { Edit, Volume2 } from "lucide-react";
 
-import type { Word } from "~/types";
+import type { IWord } from "~/types";
 
-interface WordCardProps {
-  word: Word;
+interface IWordCardProps {
+  word: IWord;
   showFurigana?: boolean;
   showRomaji?: boolean;
 }
@@ -12,7 +12,7 @@ export function WordCard({
   word,
   showFurigana = true,
   // showRomaji = false,
-}: WordCardProps) {
+}: IWordCardProps) {
   return (
     <div className="bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm">
       <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">

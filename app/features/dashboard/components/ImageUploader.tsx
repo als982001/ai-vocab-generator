@@ -12,11 +12,11 @@ import {
   X,
 } from "lucide-react";
 
-import type { UploadedImage } from "~/types";
+import type { IUploadedImage } from "~/types";
 
-interface ImageUploaderProps {
-  uploadedImage: UploadedImage | null;
-  onImageUpload: (image: UploadedImage | null) => void;
+interface IImageUploaderProps {
+  uploadedImage: IUploadedImage | null;
+  onImageUpload: (image: IUploadedImage | null) => void;
   isAnalyzing: boolean;
 }
 
@@ -24,7 +24,7 @@ export function ImageUploader({
   uploadedImage,
   onImageUpload,
   isAnalyzing,
-}: ImageUploaderProps) {
+}: IImageUploaderProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {

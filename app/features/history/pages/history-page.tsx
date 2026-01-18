@@ -22,7 +22,7 @@ import {
   updateWordInAnalysis,
 } from "~/services/localStorage";
 import { playTTS } from "~/services/tts";
-import type { DisplayOptions, JlptLevel, Word } from "~/types";
+import type { IDisplayOptions, IWord, JlptLevel } from "~/types";
 
 // 날짜를 상대 시간으로 포맷팅하는 유틸 함수
 function formatRelativeTime(dateString: string): string {
@@ -46,7 +46,7 @@ function formatRelativeTime(dateString: string): string {
 }
 
 // SavedAnalysis를 개별 단어로 변환 (날짜 정보 포함)
-interface WordWithDate extends Word {
+interface IWordWithDate extends IWord {
   date: string;
   analysisId: string;
   createdAt: string;
@@ -58,12 +58,12 @@ const JLPT_LEVELS: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
 
 export default function HistoryPage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
-  const [displayOptions, setDisplayOptions] = useState<DisplayOptions>({
+  const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
   });
 
-  const [allWords, setAllWords] = useState<WordWithDate[]>([]);
+  const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
 
   // 필터 패널 state
@@ -85,7 +85,7 @@ export default function HistoryPage() {
       const savedHistory = getAnalysisHistory();
 
       // 모든 분석 결과의 단어를 플랫하게 펼치기
-      const words: WordWithDate[] = savedHistory.flatMap((analysis) =>
+      const words: IWordWithDate[] = savedHistory.flatMap((analysis) =>
         analysis.words.map((word) => ({
           ...word,
           date: formatRelativeTime(analysis.createdAt),
@@ -115,7 +115,7 @@ export default function HistoryPage() {
 
       const updatedHistory = deleteAnalysis({ historyId, targetWord });
 
-      const words: WordWithDate[] = updatedHistory.flatMap((analysis) =>
+      const words: IWordWithDate[] = updatedHistory.flatMap((analysis) =>
         analysis.words.map((word) => ({
           ...word,
           date: formatRelativeTime(analysis.createdAt),
@@ -138,7 +138,7 @@ export default function HistoryPage() {
               deletedWord: { word, reading, meaning, level },
             });
 
-            const restoredWords: WordWithDate[] = restoredHistory.flatMap(
+            const restoredWords: IWordWithDate[] = restoredHistory.flatMap(
               (analysis) =>
                 analysis.words.map((word) => ({
                   ...word,
@@ -159,7 +159,7 @@ export default function HistoryPage() {
   };
 
   // 편집 모드 시작
-  const handleEditClick = (word: WordWithDate) => {
+  const handleEditClick = (word: IWordWithDate) => {
     setEditingWord({
       historyId: word.analysisId,
       word: word.word,
@@ -185,7 +185,7 @@ export default function HistoryPage() {
       newLevel: editedLevel,
     });
 
-    const words: WordWithDate[] = updatedHistory.flatMap((analysis) =>
+    const words: IWordWithDate[] = updatedHistory.flatMap((analysis) =>
       analysis.words.map((word) => ({
         ...word,
         date: formatRelativeTime(analysis.createdAt),
@@ -208,7 +208,7 @@ export default function HistoryPage() {
             newLevel: originalWord.level,
           });
 
-          const restoredWords: WordWithDate[] = restoredHistory.flatMap(
+          const restoredWords: IWordWithDate[] = restoredHistory.flatMap(
             (analysis) =>
               analysis.words.map((word) => ({
                 ...word,

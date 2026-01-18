@@ -1,12 +1,12 @@
-import type { SavedAnalysis, Word } from "~/types";
+import type { ISavedAnalysis, IWord } from "~/types";
 
 const STORAGE_KEY = "snap-voca-history";
 
 // 로컬 스토리지에 분석 결과 저장
-export function saveAnalysis(words: Word[], imageName: string): void {
+export function saveAnalysis(words: IWord[], imageName: string): void {
   const history = getAnalysisHistory();
 
-  const newAnalysis: SavedAnalysis = {
+  const newAnalysis: ISavedAnalysis = {
     id: crypto.randomUUID(),
     words,
     imageName,
@@ -18,13 +18,13 @@ export function saveAnalysis(words: Word[], imageName: string): void {
 }
 
 // 로컬 스토리지에서 전체 히스토리 불러오기
-export function getAnalysisHistory(): SavedAnalysis[] {
+export function getAnalysisHistory(): ISavedAnalysis[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
 
     if (!stored) return [];
 
-    return JSON.parse(stored) as SavedAnalysis[];
+    return JSON.parse(stored) as ISavedAnalysis[];
   } catch (error) {
     console.error("Failed to load history from localStorage:", error);
     return [];
@@ -38,7 +38,7 @@ export function deleteAnalysis({
 }: {
   historyId: string;
   targetWord: string;
-}): SavedAnalysis[] {
+}): ISavedAnalysis[] {
   const history = getAnalysisHistory();
 
   const filtered = history.flatMap((item) => {
@@ -71,7 +71,7 @@ export function updateWordInAnalysis({
   targetWord: string;
   newMeaning: string;
   newLevel: string;
-}): SavedAnalysis[] {
+}): ISavedAnalysis[] {
   console.log({ historyId, targetWord, newMeaning, newLevel });
   const history = getAnalysisHistory();
 
@@ -84,7 +84,7 @@ export function updateWordInAnalysis({
       return {
         ...wordInfo,
         meaning: newMeaning,
-        level: newLevel as Word["level"],
+        level: newLevel as IWord["level"],
       };
     });
 
@@ -102,8 +102,8 @@ export function addWordToAnalysis({
   deletedWord,
 }: {
   historyId: string;
-  deletedWord: Word;
-}): SavedAnalysis[] {
+  deletedWord: IWord;
+}): ISavedAnalysis[] {
   const history = getAnalysisHistory();
 
   const updated = history.map((item) => {

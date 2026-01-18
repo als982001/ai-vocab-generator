@@ -6,19 +6,19 @@ import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import { analyzeImage } from "~/services/gemini";
 import { saveAnalysis } from "~/services/localStorage";
-import type { DisplayOptions, JlptLevel, UploadedImage, Word } from "~/types";
+import type { IDisplayOptions, IUploadedImage, IWord, JlptLevel } from "~/types";
 
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
-  const [displayOptions, setDisplayOptions] = useState<DisplayOptions>({
+  const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
   });
-  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(
+  const [uploadedImage, setUploadedImage] = useState<IUploadedImage | null>(
     null
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [words, setWords] = useState<Word[]>([]);
+  const [words, setWords] = useState<IWord[]>([]);
 
   const handleDownloadTxt = () => {
     if (words.length === 0) return;
@@ -58,7 +58,7 @@ export default function HomePage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleImageUpload = async (image: UploadedImage | null) => {
+  const handleImageUpload = async (image: IUploadedImage | null) => {
     // 이전 이미지의 preview URL 정리
     if (uploadedImage?.preview) {
       URL.revokeObjectURL(uploadedImage.preview);
