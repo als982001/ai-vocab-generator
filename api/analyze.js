@@ -2,8 +2,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(request, response) {
-  console.log("handler 시작");
-  
   // CORS 설정 (다른 곳에서 내 API 못 쓰게 막음)
   response.setHeader("Access-Control-Allow-Credentials", true);
   response.setHeader("Access-Control-Allow-Origin", "*");
