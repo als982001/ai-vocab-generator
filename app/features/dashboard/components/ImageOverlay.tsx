@@ -21,7 +21,10 @@ export function ImageOverlay({
   onHover,
 }: IImageOverlayProps) {
   const imgRef = useRef<HTMLImageElement>(null);
-  const [imageSize, setImageSize] = useState<IImageSize>({ width: 0, height: 0 });
+  const [imageSize, setImageSize] = useState<IImageSize>({
+    width: 0,
+    height: 0,
+  });
 
   const handleImageLoad = () => {
     if (imgRef.current) {
