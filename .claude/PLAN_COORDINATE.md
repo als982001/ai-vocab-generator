@@ -28,7 +28,7 @@
 
 ### Step 2: Bounding Box 오버레이 컴포넌트 제작
 
-- [ ] **`app/components/dashboard/ImageOverlay.tsx` 생성 (신규)**
+- [x] **`app/features/dashboard/components/ImageOverlay.tsx` 생성 (신규)** ✅ 완료
   - **Props**: `imageSrc` (string), `words` (IWord[]), `hoveredIndex` (number | null), `onHover` (function).
   - **구현 로직**:
     - 이미지를 배경으로 깔고, 그 위에 `relative` 부모와 `absolute` 자식 `div`들을 배치.
