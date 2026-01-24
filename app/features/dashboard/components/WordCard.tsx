@@ -18,7 +18,7 @@ export function WordCard({
 }: IWordCardProps) {
   return (
     <div
-      className={`bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
+      className={`shrink-0 bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
         isHovered ? "ring-2 ring-red-500 shadow-lg" : ""
       }`}
       onMouseEnter={() => onHover?.(true)}
