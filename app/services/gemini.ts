@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+import { ANALYZE_IMAGE_PROMPT } from "../../shared/constants/prompt";
+
 const analyzeImageLocal = async (imagePart: {
   inlineData: {
     data: string;
@@ -13,20 +15,7 @@ const analyzeImageLocal = async (imagePart: {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // 프롬프트 (명령어)
-    const prompt = `
-Analyze this image and extract Japanese vocabulary.
-Return the result as a STRICT JSON array without markdown code blocks.
-
-Each item should have:
-- word: The Japanese word (Kanji or Kana)
-- reading: Furigana reading in Hiragana/Katakana
-- meaning: Meaning in Korean (한국어 뜻)
-- level: Estimated JLPT level (e.g., N5, N4, N3, N2, N1)
-- box_2d: Bounding box coordinates in [ymin, xmin, ymax, xmax] format, scaled 0 to 1000.
-
-Example format:
-[{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "box_2d": [150, 200, 300, 400]}]
-`;
+    const prompt = ANALYZE_IMAGE_PROMPT;
 
     // AI에게 요청 전송
     const result = await model.generateContent([prompt, imagePart]);
