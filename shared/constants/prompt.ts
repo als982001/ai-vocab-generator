@@ -14,3 +14,5 @@ Each item should have:
 Example format:
 [{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "box_2d": [150, 200, 300, 400]}]
 `;
+
+export const GEMINI_MODEL = "gemini-3-flash-preview";

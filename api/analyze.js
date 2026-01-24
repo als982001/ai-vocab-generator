@@ -1,7 +1,10 @@
 // api/analyze.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { ANALYZE_IMAGE_PROMPT } from "../shared/constants/prompt.js";
+import {
+  ANALYZE_IMAGE_PROMPT,
+  GEMINI_MODEL,
+} from "../shared/constants/prompt.js";
 
 export default async function handler(request, response) {
   // CORS 설정 (다른 곳에서 내 API 못 쓰게 막음)
@@ -17,7 +20,7 @@ export default async function handler(request, response) {
 
     // 서버 환경변수는 VITE_ 안 붙여도 됨 (보안 안전)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 
     const prompt = ANALYZE_IMAGE_PROMPT;
 

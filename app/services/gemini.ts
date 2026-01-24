@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { ANALYZE_IMAGE_PROMPT } from "../../shared/constants/prompt";
+import {
+  ANALYZE_IMAGE_PROMPT,
+  GEMINI_MODEL,
+} from "../../shared/constants/prompt";
 
 const analyzeImageLocal = async (imagePart: {
   inlineData: {
@@ -12,14 +15,14 @@ const analyzeImageLocal = async (imagePart: {
 
   try {
     // Gemini 1.5 Flash 모델 선택 (빠르고 저렴함)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 
     // 프롬프트 (명령어)
     const prompt = ANALYZE_IMAGE_PROMPT;
 
     // AI에게 요청 전송
     const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
 
     // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거

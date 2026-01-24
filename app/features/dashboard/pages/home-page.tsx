@@ -48,14 +48,17 @@ export default function HomePage() {
         // 실제 Gemini API 호출
         const analyzedWords = await analyzeImage(image.file);
 
+        console.log(analyzedWords);
+
         setWords(analyzedWords);
 
         toast.success("분석을 성공했습니다.");
 
         // 로컬 스토리지에 분석 결과 저장
         saveAnalysis(analyzedWords, image.file.name);
-      } catch {
-        alert("이미지 분석에 실패했습니다. 다시 시도해주세요.");
+      } catch (error) {
+        console.error("이미지 분석 실패:", error);
+        toast.error("이미지 분석에 실패했습니다. 다시 시도해주세요.");
       } finally {
         setIsAnalyzing(false);
       }
