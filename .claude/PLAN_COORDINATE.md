@@ -37,10 +37,15 @@
 
 ### Step 3: 컨테이너 상태 관리 및 통합
 
-- [ ] **`app/containers/DashboardContainer.tsx` (또는 해당 페이지) 수정**
+- [x] **`app/features/dashboard/pages/home-page.tsx` 수정** ✅ 완료
   - `hoveredWordIndex` 상태 추가 (`useState<number | null>(null)`).
-  - 기존의 단순 `img` 태그를 새로 만든 `ImageOverlay` 컴포넌트로 교체.
-  - 단어 리스트 컴포넌트(`WordList` 등)에 `onHover` 이벤트를 전달하여, 리스트에 마우스를 올렸을 때도 `hoveredWordIndex`가 업데이트되도록 연결.
+  - `ImageUploader`, `ResultPanel`에 hover 관련 props 전달.
+- [x] **`app/features/dashboard/components/ImageUploader.tsx` 수정** ✅ 완료
+  - `<img>` 태그를 `ImageOverlay` 컴포넌트로 교체.
+- [x] **`app/features/dashboard/components/ResultPanel.tsx` 수정** ✅ 완료
+  - `WordCard`에 hover 관련 props 전달.
+- [x] **`app/features/dashboard/components/WordCard.tsx` 수정** ✅ 완료
+  - hover 이벤트 및 하이라이트 스타일 추가.
 
 ### Step 4: UI 디테일 및 모바일 대응
 

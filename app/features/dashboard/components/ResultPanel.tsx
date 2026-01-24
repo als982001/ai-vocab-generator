@@ -6,12 +6,16 @@ interface IResultPanelProps {
   words: IWord[];
   displayOptions: IDisplayOptions;
   onDownload: () => void;
+  hoveredWordIndex: number | null;
+  onHover: (index: number | null) => void;
 }
 
 export function ResultPanel({
   words,
   displayOptions,
   onDownload,
+  hoveredWordIndex,
+  onHover,
 }: IResultPanelProps) {
   return (
     <aside className="w-96 flex flex-col bg-gray-50 shrink-0 relative shadow-sm">
@@ -46,12 +50,14 @@ export function ResultPanel({
             </div>
           </div>
         ) : (
-          words.map((word) => (
+          words.map((word, index) => (
             <WordCard
               key={word.word}
               word={word}
               showFurigana={displayOptions.showFurigana}
               showRomaji={displayOptions.showRomaji}
+              isHovered={hoveredWordIndex === index}
+              onHover={(hovered) => onHover(hovered ? index : null)}
             />
           ))
         )}

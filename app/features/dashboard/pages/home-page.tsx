@@ -25,6 +25,7 @@ export default function HomePage() {
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [words, setWords] = useState<IWord[]>([]);
+  const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
@@ -78,11 +79,16 @@ export default function HomePage() {
           uploadedImage={uploadedImage}
           onImageUpload={handleImageUpload}
           isAnalyzing={isAnalyzing}
+          words={words}
+          hoveredWordIndex={hoveredWordIndex}
+          onHover={setHoveredWordIndex}
         />
         <ResultPanel
           words={words}
           displayOptions={displayOptions}
           onDownload={handleDownloadTxt}
+          hoveredWordIndex={hoveredWordIndex}
+          onHover={setHoveredWordIndex}
         />
       </div>
     </div>
