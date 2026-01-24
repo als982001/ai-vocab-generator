@@ -21,6 +21,7 @@ interface IImageUploaderProps {
   words: IWord[];
   hoveredWordIndex: number | null;
   onHover: (index: number | null) => void;
+  onWordClick: (index: number) => void;
 }
 
 export function ImageUploader({
@@ -30,6 +31,7 @@ export function ImageUploader({
   words,
   hoveredWordIndex,
   onHover,
+  onWordClick,
 }: IImageUploaderProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -106,6 +108,7 @@ export function ImageUploader({
                     words={words}
                     hoveredIndex={hoveredWordIndex}
                     onHover={onHover}
+                    onClick={onWordClick}
                   />
                   <p className="text-text-secondary text-sm">
                     {uploadedImage.file.name} (

@@ -31,6 +31,14 @@ export default function HomePage() {
     downloadWordsAsTxt(words);
   };
 
+  const handleWordClick = (index: number) => {
+    const element = document.getElementById(`word-card-${index}`);
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const handleImageUpload = async (image: IUploadedImage | null) => {
     // 이전 이미지의 preview URL 정리
     if (uploadedImage?.preview) {
@@ -85,6 +93,7 @@ export default function HomePage() {
           words={words}
           hoveredWordIndex={hoveredWordIndex}
           onHover={setHoveredWordIndex}
+          onWordClick={handleWordClick}
         />
         <ResultPanel
           words={words}

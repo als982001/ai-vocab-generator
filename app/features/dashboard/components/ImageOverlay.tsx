@@ -7,6 +7,7 @@ interface IImageOverlayProps {
   words: IWord[];
   hoveredIndex: number | null;
   onHover: (index: number | null) => void;
+  onClick: (index: number) => void;
 }
 
 interface IImageSize {
@@ -19,6 +20,7 @@ export function ImageOverlay({
   words,
   hoveredIndex,
   onHover,
+  onClick,
 }: IImageOverlayProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [imageSize, setImageSize] = useState<IImageSize>({
@@ -74,6 +76,7 @@ export function ImageOverlay({
                 }`}
                 onMouseEnter={() => onHover(index)}
                 onMouseLeave={() => onHover(null)}
+                onClick={() => onClick(index)}
               />
             );
           })}

@@ -51,14 +51,15 @@ export function ResultPanel({
           </div>
         ) : (
           words.map((word, index) => (
-            <WordCard
-              key={word.word}
-              word={word}
-              showFurigana={displayOptions.showFurigana}
-              showRomaji={displayOptions.showRomaji}
-              isHovered={hoveredWordIndex === index}
-              onHover={(hovered) => onHover(hovered ? index : null)}
-            />
+            <div key={word.word} id={`word-card-${index}`}>
+              <WordCard
+                word={word}
+                showFurigana={displayOptions.showFurigana}
+                showRomaji={displayOptions.showRomaji}
+                isHovered={hoveredWordIndex === index}
+                onHover={(hovered) => onHover(hovered ? index : null)}
+              />
+            </div>
           ))
         )}
       </div>
