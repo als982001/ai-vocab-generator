@@ -19,7 +19,7 @@
 
 ### Step 1: 데이터 타입 정의 및 프롬프트 수정
 
-- [ ] **`app/types/index.ts` (또는 word.ts) 수정**
+- [x] **`app/types/index.ts` 수정** ✅ 완료
   - `IWord` 인터페이스에 `box_2d?: number[]` 속성 추가.
 - [x] **`app/services/gemini.ts` 수정** (로컬 환경용) ✅ 완료
   - Gemini 프롬프트를 수정하여 `box_2d` (0~1000 scale) 데이터를 JSON 응답에 포함하도록 요청. (JSON 파싱 로직 확인)

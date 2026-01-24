@@ -7,7 +7,12 @@ import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import { downloadWordsAsTxt } from "~/features/dashboard/utils/download";
 import { analyzeImage } from "~/services/gemini";
 import { saveAnalysis } from "~/services/localStorage";
-import type { IDisplayOptions, IUploadedImage, IWord, JlptLevel } from "~/types";
+import type {
+  IDisplayOptions,
+  IUploadedImage,
+  IWord,
+  JlptLevel,
+} from "~/types";
 
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
