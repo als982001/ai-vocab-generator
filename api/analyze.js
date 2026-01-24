@@ -18,17 +18,19 @@ export default async function handler(request, response) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
-      Analyze this image and extract Japanese vocabulary.
-      Return the result as a STRICT JSON array without markdown code blocks.
-      Each item should have:
-      - word: The Japanese word (Kanji or Kana)
-      - reading: Furigana reading in Hiragana/Katakana
-      - meaning: Meaning in Korean (한국어 뜻)
-      - level: Estimated JLPT level (e.g., N5, N4, N3, N2, N1)
-      
-      Example format:
-      [{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5"}]
-    `;
+Analyze this image and extract Japanese vocabulary.
+Return the result as a STRICT JSON array without markdown code blocks.
+
+Each item should have:
+- word: The Japanese word (Kanji or Kana)
+- reading: Furigana reading in Hiragana/Katakana
+- meaning: Meaning in Korean (한국어 뜻)
+- level: Estimated JLPT level (e.g., N5, N4, N3, N2, N1)
+- box_2d: Bounding box coordinates in [ymin, xmin, ymax, xmax] format, scaled 0 to 1000.
+
+Example format:
+[{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "box_2d": [150, 200, 300, 400]}]
+`;
 
     // 이미지 객체 생성
     const imagePart = {
