@@ -14,6 +14,12 @@ import type {
   JlptLevel,
 } from "~/types";
 
+// 샘플 데이터 (반응형 테스트용)
+import sampleResponse from "../../../../mockDatas/sampleResponse.json";
+
+const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image.png";
+const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
+
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
@@ -21,10 +27,14 @@ export default function HomePage() {
     showRomaji: false,
   });
   const [uploadedImage, setUploadedImage] = useState<IUploadedImage | null>(
-    null
+    USE_SAMPLE_DATA
+      ? { file: new File([], "sample_image.png"), preview: SAMPLE_IMAGE_PATH }
+      : null
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [words, setWords] = useState<IWord[]>([]);
+  const [words, setWords] = useState<IWord[]>(
+    USE_SAMPLE_DATA ? (sampleResponse as IWord[]) : []
+  );
   const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
 
   const handleDownloadTxt = () => {
