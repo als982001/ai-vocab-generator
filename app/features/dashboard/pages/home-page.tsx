@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { sampleData2 } from "shared/constants/prompt";
 import { toast } from "sonner";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
