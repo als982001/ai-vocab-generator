@@ -8,6 +8,7 @@ interface ISidebarProps {
   onLevelChange: (level: JlptLevel) => void;
   displayOptions: IDisplayOptions;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
+  className?: string;
 }
 
 export function Sidebar({
@@ -15,6 +16,7 @@ export function Sidebar({
   onLevelChange,
   displayOptions,
   onDisplayOptionsChange,
+  className = "",
 }: ISidebarProps) {
   const jlptLevels: JlptLevel[] = ["N5", "N4", "N3", "N2", "N1"];
   const location = useLocation();
@@ -22,7 +24,9 @@ export function Sidebar({
   const { pathname } = location;
 
   return (
-    <aside className="w-72 h-full bg-surface-dark overflow-y-auto shrink-0 border-r border-border-color flex flex-col">
+    <aside
+      className={`w-72 h-full bg-surface-dark overflow-y-auto shrink-0 border-r border-border-color flex flex-col ${className}`}
+    >
       <div className="p-6 pb-2">
         <div className="flex flex-col h-[57px]">
           <h1 className="text-2xl font-bold leading-normal tracking-tight">
