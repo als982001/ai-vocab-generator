@@ -18,8 +18,13 @@ export function ResultPanel({
   onHover,
 }: IResultPanelProps) {
   return (
-    <aside className="w-96 flex flex-col bg-gray-50 shrink-0 relative shadow-sm">
-      <div className="h-24 p-6 flex items-center justify-between bg-white z-10 shrink-0 shadow-sm">
+    <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10 overflow-hidden">
+      {/* 모바일 드래그 핸들 */}
+      <div className="md:hidden flex justify-center py-3">
+        <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+      </div>
+
+      <div className="h-24 p-6 pt-0 md:pt-6 flex items-center justify-between bg-white z-10 shrink-0 shadow-sm">
         <div>
           <h2 className="text-text-primary text-lg font-bold">
             Extracted Words
@@ -34,7 +39,7 @@ export function ResultPanel({
           </button>
         </div>
       </div>
-      <div className="h-[calc(100vh-226px)] overflow-y-auto p-4 flex flex-col gap-3">
+      <div className="flex-1 md:h-[calc(100vh-226px)] overflow-y-auto p-4 flex flex-col gap-3">
         {words.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-6">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
@@ -63,7 +68,7 @@ export function ResultPanel({
           ))
         )}
       </div>
-      <div className="h-[130px] p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+      <div className="hidden md:block h-[130px] p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
         <button
           onClick={onDownload}
           disabled={words.length === 0}
