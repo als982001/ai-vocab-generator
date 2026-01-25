@@ -73,7 +73,7 @@ export default function HomePage() {
         // 로컬 스토리지에 분석 결과 저장
         saveAnalysis(analyzedWords, image.file.name);
       } catch (error) {
-        console.error("이미지 분석 실패:", error);
+        console.error(error);
         toast.error("이미지 분석에 실패했습니다. 다시 시도해주세요.");
       } finally {
         setIsAnalyzing(false);

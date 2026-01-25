@@ -26,7 +26,7 @@ export function getAnalysisHistory(): ISavedAnalysis[] {
 
     return JSON.parse(stored) as ISavedAnalysis[];
   } catch (error) {
-    console.error("Failed to load history from localStorage:", error);
+    console.error(error);
     return [];
   }
 }

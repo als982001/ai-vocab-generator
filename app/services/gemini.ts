@@ -30,7 +30,7 @@ const analyzeImageLocal = async (imagePart: {
 
     return JSON.parse(cleanJson);
   } catch (error) {
-    console.error("AI Analysis Failed:", error);
+    console.error(error);
     throw error;
   }
 };

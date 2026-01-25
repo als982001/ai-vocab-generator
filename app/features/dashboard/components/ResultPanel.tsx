@@ -51,7 +51,7 @@ export function ResultPanel({
           </div>
         ) : (
           words.map((word, index) => (
-            <div key={word.word} id={`word-card-${index}`}>
+            <div key={index} id={`word-card-${index}`}>
               <WordCard
                 word={word}
                 showFurigana={displayOptions.showFurigana}
