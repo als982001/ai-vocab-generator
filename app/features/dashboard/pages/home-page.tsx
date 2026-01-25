@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { sampleData2 } from "shared/constants/prompt";
 import { toast } from "sonner";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
@@ -15,9 +16,9 @@ import type {
 } from "~/types";
 
 // 샘플 데이터 (반응형 테스트용)
-import sampleResponse from "../../../../mockDatas/sampleResponse.json";
+import sampleResponse from "../../../../mockDatas/sampleResponse02.json";
 
-const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image.png";
+const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
 const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {

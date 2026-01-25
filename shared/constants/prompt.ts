@@ -17,3 +17,6 @@ Example format:
 
 export const GEMINI_2_DOT_5_FLASH = "gemini-2.5-flash";
 export const GEMINI_3_FLASH_PREVIEW = "gemini-3-flash-preview";
+
+export const sampleData2 =
+  '[\n  {"word": "被疑者", "reading": "ひぎしゃ", "meaning": "피의자", "level": "N1", "box_2d": [241, 9, 455, 88]},\n  {"word": "かたくなに", "reading": "かたくなに", "meaning": "완강히", "level": "N1", "box_2d": [267, 117, 461, 260]},\n  {"word": "供述", "reading": "きょうじゅつ", "meaning": "공술", "level": "N1", "box_2d": [267, 261, 478, 318]},\n  {"word": "拒んで", "reading": "こばんで", "meaning": "거부하여", "level": "N2", "box_2d": [294, 342, 542, 423]},\n  {"word": "いとなんで", "reading": "いとなんで", "meaning": "영위하여", "level": "N2", "box_2d": [662, 47, 856, 182]},\n  {"word": "こばんで", "reading": "こばんで", "meaning": "거절하여", "level": "N2", "box_2d": [671, 314, 856, 420]},\n  {"word": "あゆんで", "reading": "あゆんで", "meaning": "걸어서", "level": "N1", "box_2d": [679, 572, 863, 679]},\n  {"word": "つつしんで", "reading": "つつしんで", "meaning": "삼가", "level": "N1", "box_2d": [682, 832, 863, 966]}\n]';
