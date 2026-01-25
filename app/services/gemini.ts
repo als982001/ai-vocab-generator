@@ -1,5 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+import {
+  ANALYZE_IMAGE_PROMPT,
+  GEMINI_3_FLASH_PREVIEW,
+} from "../../shared/constants/prompt";
+
 const analyzeImageLocal = async (imagePart: {
   inlineData: {
     data: string;
@@ -10,25 +15,14 @@ const analyzeImageLocal = async (imagePart: {
 
   try {
     // Gemini 1.5 Flash 모델 선택 (빠르고 저렴함)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
 
     // 프롬프트 (명령어)
-    const prompt = `
-      Analyze this image and extract Japanese vocabulary.
-      Return the result as a STRICT JSON array without markdown code blocks.
-      Each item should have:
-      - word: The Japanese word (Kanji or Kana)
-      - reading: Furigana reading in Hiragana/Katakana
-      - meaning: Meaning in Korean (한국어 뜻)
-      - level: Estimated JLPT level (e.g., N5, N4, N3, N2, N1)
-      
-      Example format:
-      [{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5"}]
-    `;
+    const prompt = ANALYZE_IMAGE_PROMPT;
 
     // AI에게 요청 전송
     const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
 
     // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거
@@ -36,7 +30,7 @@ const analyzeImageLocal = async (imagePart: {
 
     return JSON.parse(cleanJson);
   } catch (error) {
-    console.error("AI Analysis Failed:", error);
+    console.error(error);
     throw error;
   }
 };
@@ -66,8 +60,6 @@ export const analyzeImage = async (file: File) => {
   // 2. 내 Vercel 서버로 요청 (API 키 필요 없음!)
   // 로컬 환경 체크
   const isLocal = window.location.hostname === "localhost";
-
-  console.log(`isLocal: ${isLocal}`)
 
   if (isLocal) {
     const result = await analyzeImageLocal(imagePart);

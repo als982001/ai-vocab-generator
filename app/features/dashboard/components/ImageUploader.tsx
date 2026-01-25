@@ -11,19 +11,27 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-
-import type { IUploadedImage } from "~/types";
+import { ImageOverlay } from "~/features/dashboard/components/ImageOverlay";
+import type { IUploadedImage, IWord } from "~/types";
 
 interface IImageUploaderProps {
   uploadedImage: IUploadedImage | null;
   onImageUpload: (image: IUploadedImage | null) => void;
   isAnalyzing: boolean;
+  words: IWord[];
+  hoveredWordIndex: number | null;
+  onHover: (index: number | null) => void;
+  onWordClick: (index: number) => void;
 }
 
 export function ImageUploader({
   uploadedImage,
   onImageUpload,
   isAnalyzing,
+  words,
+  hoveredWordIndex,
+  onHover,
+  onWordClick,
 }: IImageUploaderProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -95,10 +103,12 @@ export function ImageUploader({
                 </div>
               ) : (
                 <>
-                  <img
-                    src={uploadedImage.preview}
-                    alt="Uploaded preview"
-                    className="max-w-full max-h-[500px] object-contain rounded-lg"
+                  <ImageOverlay
+                    imageSrc={uploadedImage.preview}
+                    words={words}
+                    hoveredIndex={hoveredWordIndex}
+                    onHover={onHover}
+                    onClick={onWordClick}
                   />
                   <p className="text-text-secondary text-sm">
                     {uploadedImage.file.name} (

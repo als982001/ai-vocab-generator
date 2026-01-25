@@ -14,7 +14,7 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: 로그인 로직 구현
-    console.log("로그인 시도");
+    console.log("로그인 시도"); // 추후 제거할 코드
   };
 
   return (
