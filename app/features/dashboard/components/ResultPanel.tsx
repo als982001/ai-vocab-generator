@@ -18,7 +18,7 @@ export function ResultPanel({
   onHover,
 }: IResultPanelProps) {
   return (
-    <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10">
+    <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10 overflow-hidden">
       {/* 모바일 드래그 핸들 */}
       <div className="md:hidden flex justify-center py-3">
         <div className="w-10 h-1 bg-gray-300 rounded-full"></div>

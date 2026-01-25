@@ -61,7 +61,7 @@ export function ImageUploader({
   };
 
   return (
-    <main className="h-[45vh] md:h-auto md:flex-1 flex flex-col bg-gray-50 relative overflow-hidden min-w-0 shrink-0 md:shrink">
+    <main className="h-[45%] md:h-auto md:flex-1 flex flex-col bg-gray-50 relative overflow-hidden min-w-0 shrink-0 md:shrink">
       <div className="h-16 hidden md:flex items-center justify-between px-8 bg-white shrink-0 shadow-sm">
         <div className="flex items-center gap-2 text-text-secondary text-sm">
           <Home className="w-4 h-4" />
