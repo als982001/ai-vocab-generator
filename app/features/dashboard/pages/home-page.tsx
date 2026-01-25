@@ -18,7 +18,7 @@ import type {
 import sampleResponse from "../../../../mockDatas/sampleResponse.json";
 
 const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image.png";
-const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
+const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
