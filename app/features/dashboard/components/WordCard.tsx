@@ -1,20 +1,29 @@
 import { Edit, Volume2 } from "lucide-react";
-
 import type { IWord } from "~/types";
 
 interface IWordCardProps {
   word: IWord;
   showFurigana?: boolean;
   showRomaji?: boolean;
+  isHovered?: boolean;
+  onHover?: (hovered: boolean) => void;
 }
 
 export function WordCard({
   word,
   showFurigana = true,
   // showRomaji = false,
+  isHovered = false,
+  onHover,
 }: IWordCardProps) {
   return (
-    <div className="bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm">
+    <div
+      className={`shrink-0 bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
+        isHovered ? "ring-2 ring-red-500 shadow-lg" : ""
+      }`}
+      onMouseEnter={() => onHover?.(true)}
+      onMouseLeave={() => onHover?.(false)}
+    >
       <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <Edit className="text-text-secondary hover:text-text-primary w-4 h-4" />
       </div>

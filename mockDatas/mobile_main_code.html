@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#000000",
+              "background-light": "#f7f7f7",
+              "background-dark": "#191919",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .custom-glow {
+            box-shadow: 0 0 12px 2px rgba(59, 130, 246, 0.6);
+            border: 2px solid #3b82f6 !important;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-primary dark:text-white">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Top App Bar (Sticky-ish) -->
+<div class="flex items-center bg-white dark:bg-background-dark p-4 justify-between z-20 border-b border-gray-100 dark:border-gray-800">
+<div class="text-primary dark:text-white flex size-10 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined">chevron_left</span>
+</div>
+<h2 class="text-primary dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Snap Voca</h2>
+<div class="flex size-10 items-center justify-end">
+<button class="flex cursor-pointer items-center justify-center rounded-xl bg-transparent text-primary dark:text-white">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Image Viewer Section (40% Height) -->
+<div class="relative w-full h-[40vh] bg-gray-200 dark:bg-neutral-800 overflow-hidden shrink-0">
+<!-- Manga Image Placeholder -->
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Manga panel with Japanese text characters and dialogue bubbles" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCy18XFLZOQo2R-3k_SQptt4XWnNMz3NVHKMQYeN_j-hhuSlAWBuwnUqqgUICHVwAbfAcvlcmhxl4mn1H9J2BLdH_E6ShEhUHJJH80yy-3qXdGNcfWU0qO71kqna9pGsl5colvNY8nTCf8NLegBJR4Xl2Tp0h9qYqaFNX4kDNPdXyXsNdo2Ado4r61Rb81MHhtX2bpyDtGTN-ZKitvY-ySpTtCUGiAm_6btKvz-B5TLlOxoULWDDoR5LMMUYySXDoy21R4hsT0tmhZd");'>
+<!-- Bounding Box Overlays -->
+<!-- Active Box (Glow effect) -->
+<div class="absolute top-[25%] left-[60%] w-[80px] h-[120px] custom-glow rounded-sm transition-all duration-300"></div>
+<!-- Inactive Boxes -->
+<div class="absolute top-[40%] left-[15%] w-[60px] h-[140px] border-2 border-red-500 rounded-sm opacity-80"></div>
+<div class="absolute top-[10%] left-[30%] w-[100px] h-[40px] border-2 border-red-500 rounded-sm opacity-80"></div>
+</div>
+</div>
+<!-- Scrollable Content Section -->
+<div class="flex-1 overflow-y-auto bg-white dark:bg-background-dark rounded-t-xl -mt-4 z-10 shadow-2xl hide-scrollbar">
+<div class="px-4 py-2">
+<div class="w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3"></div>
+<h3 class="text-primary dark:text-white text-lg font-bold leading-tight tracking-tight pt-2 pb-4">Extracted Vocabulary</h3>
+<!-- Word List -->
+<div class="space-y-3 pb-24">
+<!-- Word Card (Active/Selected) -->
+<div class="flex items-center gap-4 bg-gray-50 dark:bg-neutral-900 border-l-4 border-black dark:border-white px-4 py-4 rounded-lg shadow-sm">
+<div class="flex flex-1 flex-col">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium">うんめい</span>
+<p class="text-primary dark:text-white text-xl font-bold leading-tight">運命</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-primary dark:border-white text-primary dark:text-white">N3</span>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Fate / 운명</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-primary dark:text-white rounded-full hover:bg-gray-200 dark:hover:bg-neutral-800">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<div class="text-primary dark:text-white flex items-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Word Card -->
+<div class="flex items-center gap-4 bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 px-4 py-4 rounded-lg">
+<div class="flex flex-1 flex-col">
+<span class="text-xs text-gray-400 dark:text-gray-500 font-medium">やくそく</span>
+<p class="text-primary dark:text-white text-xl font-bold leading-tight">約束</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-gray-300 dark:border-neutral-600 text-gray-500">N2</span>
+<p class="text-gray-500 dark:text-gray-400 text-sm">Promise / 약속</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-gray-400 dark:text-gray-500 rounded-full">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<div class="text-gray-300 dark:text-gray-700 flex items-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Word Card -->
+<div class="flex items-center gap-4 bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 px-4 py-4 rounded-lg">
+<div class="flex flex-1 flex-col">
+<span class="text-xs text-gray-400 dark:text-gray-500 font-medium">しんじつ</span>
+<p class="text-primary dark:text-white text-xl font-bold leading-tight">真実</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-gray-300 dark:border-neutral-600 text-gray-500">N2</span>
+<p class="text-gray-500 dark:text-gray-400 text-sm">Truth / 진실</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-gray-400 dark:text-gray-500 rounded-full">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<div class="text-gray-300 dark:text-gray-700 flex items-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Word Card -->
+<div class="flex items-center gap-4 bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 px-4 py-4 rounded-lg">
+<div class="flex flex-1 flex-col">
+<span class="text-xs text-gray-400 dark:text-gray-500 font-medium">せかい</span>
+<p class="text-primary dark:text-white text-xl font-bold leading-tight">世界</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-gray-300 dark:border-neutral-600 text-gray-500">N5</span>
+<p class="text-gray-500 dark:text-gray-400 text-sm">World / 세계</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-gray-400 dark:text-gray-500 rounded-full">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<div class="text-gray-300 dark:text-gray-700 flex items-center">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button -->
+<div class="fixed bottom-8 right-6 z-30">
+<button class="flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-xl active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-size: 32px;">add</span>
+</button>
+</div>
+<!-- Bottom Navigation Spacer (iOS Safe Area) -->
+<div class="h-6 bg-white dark:bg-background-dark shrink-0"></div>
+</div>
+</body></html>
