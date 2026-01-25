@@ -72,7 +72,6 @@ export function updateWordInAnalysis({
   newMeaning: string;
   newLevel: string;
 }): ISavedAnalysis[] {
-  console.log({ historyId, targetWord, newMeaning, newLevel });
   const history = getAnalysisHistory();
 
   const updated = history.map((item) => {
