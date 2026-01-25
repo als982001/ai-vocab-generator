@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import {
   ANALYZE_IMAGE_PROMPT,
-  GEMINI_MODEL,
+  GEMINI_3_FLASH_PREVIEW,
 } from "../shared/constants/prompt.js";
 
 export default async function handler(request, response) {
@@ -20,7 +20,7 @@ export default async function handler(request, response) {
 
     // 서버 환경변수는 VITE_ 안 붙여도 됨 (보안 안전)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+    const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
 
     const prompt = ANALYZE_IMAGE_PROMPT;
 

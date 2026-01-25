@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import {
   ANALYZE_IMAGE_PROMPT,
-  GEMINI_MODEL,
+  GEMINI_3_FLASH_PREVIEW,
 } from "../../shared/constants/prompt";
 
 const analyzeImageLocal = async (imagePart: {
@@ -15,7 +15,7 @@ const analyzeImageLocal = async (imagePart: {
 
   try {
     // Gemini 1.5 Flash 모델 선택 (빠르고 저렴함)
-    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+    const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
 
     // 프롬프트 (명령어)
     const prompt = ANALYZE_IMAGE_PROMPT;
