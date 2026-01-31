@@ -2,23 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   Calendar,
-  Check,
   ChevronDown,
-  Edit,
   Filter,
   GraduationCap,
   Search,
   Share,
   SlidersHorizontal,
-  Trash2,
-  Volume2,
-  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
 import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
+import { MobileWordCard } from "~/features/history/components/MobileWordCard";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
@@ -28,7 +25,6 @@ import {
   getAnalysisHistory,
   updateWordInAnalysis,
 } from "~/services/localStorage";
-import { playTTS } from "~/services/tts";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
@@ -450,145 +446,34 @@ export default function HistoryPage() {
                 </div>
               </div>
 
-              {/* Card Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {/* Desktop Card Grid */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredWords.map((word, index) => {
                   const isEditing = checkIsEditing(word);
 
                   return (
-                    <div
+                    <DesktopWordCard
                       key={index}
-                      className="group relative bg-white border border-border-color rounded-2xl md:rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between md:h-64"
-                    >
-                      {/* Card Header */}
-                      <div className="flex justify-between items-start mb-4 md:mb-0">
-                        {isEditing ? (
-                          <div className="flex gap-1 flex-wrap">
-                            {JLPT_LEVELS.map((level) => (
-                              <button
-                                key={level}
-                                onClick={() => setEditedLevel(level)}
-                                className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide transition-colors ${
-                                  editedLevel === level
-                                    ? "bg-primary text-white"
-                                    : "bg-white text-black border border-gray-300 hover:bg-gray-100"
-                                }`}
-                              >
-                                {level}
-                              </button>
-                            ))}
-                          </div>
-                        ) : (
-                          <>
-                            {/* Mobile: 원형 뱃지 */}
-                            <div className="md:hidden flex h-8 w-8 items-center justify-center bg-primary rounded-full">
-                              <span className="text-white text-xs font-bold">
-                                {word.level}
-                              </span>
-                            </div>
-                            {/* Desktop: pill 뱃지 */}
-                            <span className="hidden md:inline bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">
-                              {word.level}
-                            </span>
-                          </>
-                        )}
-                        <span className="text-[11px] text-text-secondary font-medium">
-                          {word.date}
-                        </span>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="flex flex-col items-start md:items-center text-left md:text-center md:my-auto w-full mb-4 md:mb-0">
-                        {/* Mobile: ruby 태그 */}
-                        <h3 className="md:hidden text-3xl font-bold text-text-primary mb-1">
-                          <ruby>
-                            {word.word}
-                            <rt className="text-sm text-text-secondary font-normal">
-                              {word.reading}
-                            </rt>
-                          </ruby>
-                        </h3>
-                        {/* Desktop: 분리 표시 */}
-                        <p className="hidden md:block text-xs text-text-secondary mb-1">
-                          {word.reading}
-                        </p>
-                        <h3 className="hidden md:block text-4xl font-bold text-text-primary mb-4">
-                          {word.word}
-                        </h3>
-                        <div className="hidden md:block w-8 h-px bg-border-color mb-4"></div>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editedMeaning}
-                            onChange={(e) => setEditedMeaning(e.target.value)}
-                            className="w-full text-sm text-text-primary font-medium text-center border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary"
-                            placeholder="단어 뜻 입력"
-                          />
-                        ) : (
-                          <p className="text-lg md:text-sm text-text-secondary font-medium line-clamp-2">
-                            {word.meaning}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Card Actions */}
-                      {/* Listen Button - 왼쪽에 항상 표시 (수정 중이 아닐 때만) */}
-                      {!isEditing && (
-                        <button
-                          onClick={() => playTTS(word.word)}
-                          className="md:absolute md:bottom-4 md:left-4 size-10 md:size-8 rounded-full border border-gray-200 md:border-none md:bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
-                          title="듣기"
-                        >
-                          <Volume2 className="w-5 h-5 md:w-4 md:h-4" />
-                        </button>
-                      )}
-
-                      {/* Edit/Delete or Save/Cancel - Desktop only, 오른쪽에 hover 시 표시 */}
-                      <div className="hidden md:flex absolute bottom-4 right-4 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        {isEditing ? (
-                          <>
-                            <button
-                              onClick={handleSaveEdit}
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-green-500 hover:text-white transition-colors"
-                              title="Save"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-gray-500 hover:text-white transition-colors"
-                              title="Cancel"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => startEdit(word)}
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
-                              title="Edit"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteWord({
-                                  historyId: word.analysisId,
-                                  targetWord: word.word,
-                                })
-                              }
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                      word={word}
+                      isEditing={isEditing}
+                      editedMeaning={editedMeaning}
+                      editedLevel={editedLevel}
+                      onEditedMeaningChange={setEditedMeaning}
+                      onEditedLevelChange={setEditedLevel}
+                      onSaveEdit={handleSaveEdit}
+                      onCancelEdit={cancelEdit}
+                      onStartEdit={startEdit}
+                      onDeleteWord={handleDeleteWord}
+                    />
                   );
                 })}
+              </div>
+
+              {/* Mobile Card List */}
+              <div className="md:hidden flex flex-col gap-4">
+                {filteredWords.map((word, index) => (
+                  <MobileWordCard key={index} word={word} />
+                ))}
               </div>
             </div>
           </div>
