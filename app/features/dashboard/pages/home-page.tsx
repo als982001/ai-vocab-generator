@@ -41,7 +41,6 @@ export default function HomePage() {
   const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const imageScrollContainerRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadTxt = () => {
@@ -57,40 +56,28 @@ export default function HomePage() {
   };
 
   const handleWordCardClick = (index: number) => {
-    console.log({ index, innerWidth: window.innerWidth });
     // 모바일에서만 동작 (768px 미만)
     if (window.innerWidth >= 768) return;
 
     const word = words[index];
 
-    console.log("word", word);
-
     if (!word.box_2d || word.box_2d.length !== 4) return;
 
-    const scrollContainer = imageScrollContainerRef.current;
     const imageContainer = imageContainerRef.current;
 
-    if (!scrollContainer || !imageContainer) return;
+    if (!imageContainer) return;
 
     const [ymin] = word.box_2d;
-
-    console.log("ymin", ymin);
 
     // ymin(0~1000)을 실제 픽셀로 변환
     const imageHeight = imageContainer.scrollHeight;
     const targetY = (ymin / 1000) * imageHeight;
 
-    // 스크롤 컨테이너의 중앙에 위치하도록 오프셋 계산
-    const containerHeight = scrollContainer.clientHeight;
+    // 스크롤 컨테이너의 상단 1/3 위치에 오도록 오프셋 계산
+    const containerHeight = imageContainer.clientHeight;
     const scrollTarget = targetY - containerHeight / 3;
 
-    console.log({
-      scrollTarget,
-      scrollContainer,
-      scrollTo: scrollContainer.scrollTo,
-    });
-
-    scrollContainer.scrollTo({
+    imageContainer.scrollTo({
       top: scrollTarget,
       behavior: "smooth",
     });
@@ -161,7 +148,6 @@ export default function HomePage() {
           hoveredWordIndex={hoveredWordIndex}
           onHover={setHoveredWordIndex}
           onWordClick={handleWordClick}
-          scrollContainerRef={imageScrollContainerRef}
           imageContainerRef={imageContainerRef}
         />
         <ResultPanel
