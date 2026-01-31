@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
 
 import { toast } from "sonner";
+import { MobileHeader } from "~/components/shared/MobileHeader";
+import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { FloatingActionButton } from "~/features/dashboard/components/FloatingActionButton";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
-import { MobileHeader } from "~/features/dashboard/components/MobileHeader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
-import { SidebarDrawer } from "~/features/dashboard/components/SidebarDrawer";
 import { downloadWordsAsTxt } from "~/features/dashboard/utils/download";
 import { analyzeImage } from "~/services/gemini";
 import { saveAnalysis } from "~/services/localStorage";
