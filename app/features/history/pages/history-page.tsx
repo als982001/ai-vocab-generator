@@ -8,6 +8,7 @@ import {
   Filter,
   GraduationCap,
   Search,
+  Share,
   SlidersHorizontal,
   Trash2,
   Volume2,
@@ -591,6 +592,16 @@ export default function HistoryPage() {
               </div>
             </div>
           </div>
+
+          {/* FAB - Hidden until feature is implemented */}
+          <button
+            className="hidden fixed bottom-8 right-6 h-16 w-16 items-center justify-center bg-primary rounded-full shadow-lg active:scale-95 transition-transform md:hidden"
+            onClick={() => {
+              // TODO: 내보내기 기능 구현 예정
+            }}
+          >
+            <Share className="w-7 h-7 text-white" />
+          </button>
         </main>
       </div>
     </div>
