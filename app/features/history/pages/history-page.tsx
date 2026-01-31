@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
@@ -270,6 +271,18 @@ export default function HistoryPage() {
         onDisplayOptionsChange={setDisplayOptions}
       />
 
+      <MobileFilterSheet
+        isOpen={isFilterOpen}
+        onClose={toggleFilter}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        selectedYear={selectedYear}
+        onYearChange={handleYearClick}
+        selectedLevels={selectedLevels}
+        onLevelChange={handleLevelClick}
+        onReset={resetFilters}
+      />
+
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
           selectedLevel={selectedLevel}
@@ -444,10 +457,10 @@ export default function HistoryPage() {
                   return (
                     <div
                       key={index}
-                      className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64"
+                      className="group relative bg-white border border-border-color rounded-2xl md:rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between md:h-64"
                     >
                       {/* Card Header */}
-                      <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-start mb-4 md:mb-0">
                         {isEditing ? (
                           <div className="flex gap-1 flex-wrap">
                             {JLPT_LEVELS.map((level) => (
@@ -465,9 +478,18 @@ export default function HistoryPage() {
                             ))}
                           </div>
                         ) : (
-                          <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">
-                            {word.level}
-                          </span>
+                          <>
+                            {/* Mobile: 원형 뱃지 */}
+                            <div className="md:hidden flex h-8 w-8 items-center justify-center bg-primary rounded-full">
+                              <span className="text-white text-xs font-bold">
+                                {word.level}
+                              </span>
+                            </div>
+                            {/* Desktop: pill 뱃지 */}
+                            <span className="hidden md:inline bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">
+                              {word.level}
+                            </span>
+                          </>
                         )}
                         <span className="text-[11px] text-text-secondary font-medium">
                           {word.date}
@@ -475,14 +497,24 @@ export default function HistoryPage() {
                       </div>
 
                       {/* Card Body */}
-                      <div className="flex flex-col items-center text-center my-auto w-full">
-                        <p className="text-xs text-text-secondary mb-1">
+                      <div className="flex flex-col items-start md:items-center text-left md:text-center md:my-auto w-full mb-4 md:mb-0">
+                        {/* Mobile: ruby 태그 */}
+                        <h3 className="md:hidden text-3xl font-bold text-text-primary mb-1">
+                          <ruby>
+                            {word.word}
+                            <rt className="text-sm text-text-secondary font-normal">
+                              {word.reading}
+                            </rt>
+                          </ruby>
+                        </h3>
+                        {/* Desktop: 분리 표시 */}
+                        <p className="hidden md:block text-xs text-text-secondary mb-1">
                           {word.reading}
                         </p>
-                        <h3 className="text-4xl font-bold text-text-primary mb-4">
+                        <h3 className="hidden md:block text-4xl font-bold text-text-primary mb-4">
                           {word.word}
                         </h3>
-                        <div className="w-8 h-px bg-border-color mb-4"></div>
+                        <div className="hidden md:block w-8 h-px bg-border-color mb-4"></div>
                         {isEditing ? (
                           <input
                             type="text"
@@ -492,7 +524,7 @@ export default function HistoryPage() {
                             placeholder="단어 뜻 입력"
                           />
                         ) : (
-                          <p className="text-sm text-text-secondary font-medium line-clamp-2">
+                          <p className="text-lg md:text-sm text-text-secondary font-medium line-clamp-2">
                             {word.meaning}
                           </p>
                         )}
@@ -503,15 +535,15 @@ export default function HistoryPage() {
                       {!isEditing && (
                         <button
                           onClick={() => playTTS(word.word)}
-                          className="absolute bottom-4 left-4 size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
+                          className="md:absolute md:bottom-4 md:left-4 size-10 md:size-8 rounded-full border border-gray-200 md:border-none md:bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
                           title="듣기"
                         >
-                          <Volume2 className="w-4 h-4" />
+                          <Volume2 className="w-5 h-5 md:w-4 md:h-4" />
                         </button>
                       )}
 
-                      {/* Edit/Delete or Save/Cancel - 오른쪽에 hover 시 표시 */}
-                      <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {/* Edit/Delete or Save/Cancel - Desktop only, 오른쪽에 hover 시 표시 */}
+                      <div className="hidden md:flex absolute bottom-4 right-4 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         {isEditing ? (
                           <>
                             <button
