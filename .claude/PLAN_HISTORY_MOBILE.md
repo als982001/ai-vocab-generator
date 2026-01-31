@@ -73,13 +73,13 @@
 
 ### Step 1: 공용 컴포넌트 이동
 
-- [ ] `MobileHeader.tsx`를 `app/components/shared/`로 이동
-- [ ] `SidebarDrawer.tsx`를 `app/components/shared/`로 이동
-- [ ] `app/features/dashboard/pages/home-page.tsx`의 import 경로 수정
+- [x] `MobileHeader.tsx`를 `app/components/shared/`로 이동
+- [x] `SidebarDrawer.tsx`를 `app/components/shared/`로 이동
+- [x] `app/features/dashboard/pages/home-page.tsx`의 import 경로 수정
 
 ### Step 2: 모바일 헤더 및 네비게이션 구성
 
-- [ ] **`app/features/history/pages/history-page.tsx` 수정**
+- [x] **`app/features/history/pages/history-page.tsx` 수정**
   - `MobileHeader` 추가 (우측에 Filter 아이콘 포함)
   - `SidebarDrawer` 추가
   - `isSidebarOpen` 상태 추가
@@ -87,8 +87,8 @@
 
 ### Step 3: 검색바 반응형 처리
 
-- [ ] 모바일 전용 검색바 추가 (`md:hidden`)
-- [ ] 데스크탑 검색바에 `hidden md:block` 적용
+- [x] 모바일 전용 검색바 추가 (`md:hidden`)
+- [x] 데스크탑 검색바에 `hidden md:block` 적용
 
 ### Step 4: 카드 그리드 및 UI 반응형 처리
 

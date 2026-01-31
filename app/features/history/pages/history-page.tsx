@@ -14,6 +14,8 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { MobileHeader } from "~/components/shared/MobileHeader";
+import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
@@ -38,6 +40,7 @@ export default function HistoryPage() {
 
   const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // 필터 패널 상태 및 핸들러
   const {
@@ -149,8 +152,7 @@ export default function HistoryPage() {
     // 편집 전 원본 데이터 백업
     const originalWord = allWords.find(
       (w) =>
-        w.analysisId === editingWord!.historyId &&
-        w.word === editingWord!.word
+        w.analysisId === editingWord!.historyId && w.word === editingWord!.word
     );
 
     const updatedHistory = updateWordInAnalysis({
@@ -245,9 +247,7 @@ export default function HistoryPage() {
 
     // 레벨 필터 (다중 선택)
     if (selectedLevels.length > 0) {
-      words = words.filter((word) =>
-        selectedLevels.includes(word.level)
-      );
+      words = words.filter((word) => selectedLevels.includes(word.level));
     }
 
     return words;
@@ -255,18 +255,46 @@ export default function HistoryPage() {
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
+      <MobileHeader
+        title="History"
+        onRightClick={toggleFilter}
+        rightIcon={<SlidersHorizontal className="w-6 h-6 text-text-primary" />}
+      />
+
+      <SidebarDrawer
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        selectedLevel={selectedLevel}
+        onLevelChange={setSelectedLevel}
+        displayOptions={displayOptions}
+        onDisplayOptionsChange={setDisplayOptions}
+      />
+
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
           selectedLevel={selectedLevel}
           onLevelChange={setSelectedLevel}
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
+          className="hidden md:flex"
         />
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#fafafa]">
-          {/* Header */}
-          <header className="h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-10 px-6 flex items-center justify-between shrink-0">
+          {/* Mobile Search Bar */}
+          <div className="md:hidden px-4 py-3 bg-white">
+            <label className="relative flex items-center w-full">
+              <Search className="absolute left-4 w-5 h-5 text-text-secondary" />
+              <input
+                className="w-full h-12 pl-12 pr-4 bg-gray-100 border-none rounded-full text-base focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-text-secondary"
+                placeholder="Search vocabulary..."
+                type="text"
+              />
+            </label>
+          </div>
+
+          {/* Header - Desktop only */}
+          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-10 px-6 items-center justify-between shrink-0">
             <div>
               <h2 className="text-xl font-bold tracking-tight text-text-primary">
                 History
@@ -459,9 +487,7 @@ export default function HistoryPage() {
                           <input
                             type="text"
                             value={editedMeaning}
-                            onChange={(e) =>
-                              setEditedMeaning(e.target.value)
-                            }
+                            onChange={(e) => setEditedMeaning(e.target.value)}
                             className="w-full text-sm text-text-primary font-medium text-center border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary"
                             placeholder="단어 뜻 입력"
                           />
