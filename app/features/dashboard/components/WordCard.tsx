@@ -7,6 +7,7 @@ interface IWordCardProps {
   showRomaji?: boolean;
   isHovered?: boolean;
   onHover?: (hovered: boolean) => void;
+  onClick?: () => void;
 }
 
 export function WordCard({
@@ -15,6 +16,7 @@ export function WordCard({
   // showRomaji = false,
   isHovered = false,
   onHover,
+  onClick,
 }: IWordCardProps) {
   return (
     <div
@@ -23,6 +25,7 @@ export function WordCard({
       }`}
       onMouseEnter={() => onHover?.(true)}
       onMouseLeave={() => onHover?.(false)}
+      onClick={onClick}
     >
       <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <Edit className="text-text-secondary hover:text-text-primary w-4 h-4" />

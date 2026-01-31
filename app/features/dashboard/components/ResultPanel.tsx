@@ -8,6 +8,7 @@ interface IResultPanelProps {
   onDownload: () => void;
   hoveredWordIndex: number | null;
   onHover: (index: number | null) => void;
+  onWordCardClick?: (index: number) => void;
 }
 
 export function ResultPanel({
@@ -16,6 +17,7 @@ export function ResultPanel({
   onDownload,
   hoveredWordIndex,
   onHover,
+  onWordCardClick,
 }: IResultPanelProps) {
   return (
     <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10 overflow-hidden">
@@ -63,6 +65,7 @@ export function ResultPanel({
                 showRomaji={displayOptions.showRomaji}
                 isHovered={hoveredWordIndex === index}
                 onHover={(hovered) => onHover(hovered ? index : null)}
+                onClick={() => onWordCardClick?.(index)}
               />
             </div>
           ))
