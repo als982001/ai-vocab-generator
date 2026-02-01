@@ -33,8 +33,6 @@ export function MobileFilterSheet({
   onLevelChange,
   onReset,
 }: IMobileFilterSheetProps) {
-  if (!isOpen) return null;
-
   const handleReset = () => {
     onReset();
   };
@@ -44,15 +42,25 @@ export function MobileFilterSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-50 md:hidden">
+    <div
+      className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
       {/* Overlay */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "opacity-0"
+        }`}
         onClick={onClose}
       />
 
       {/* Bottom Sheet */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] max-h-[85vh] overflow-y-auto shadow-2xl">
+      <div
+        className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] max-h-[85vh] overflow-y-auto shadow-2xl transition-transform duration-300 ease-out ${
+          isOpen ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         {/* Handle */}
         <div className="flex justify-center pt-4 pb-2">
           <div className="w-12 h-1.5 bg-gray-200 rounded-full" />
