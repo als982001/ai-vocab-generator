@@ -7,7 +7,10 @@ import { FloatingActionButton } from "~/features/dashboard/components/FloatingAc
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
-import { downloadWordsAsTxt } from "~/features/dashboard/utils/download";
+import {
+  downloadWordsAsCsv,
+  downloadWordsAsTxt,
+} from "~/features/dashboard/utils/download";
 import { analyzeImage } from "~/services/gemini";
 import { saveAnalysis } from "~/services/localStorage";
 import type {
@@ -45,6 +48,10 @@ export default function HomePage() {
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
+  };
+
+  const handleDownloadCsv = () => {
+    downloadWordsAsCsv(words);
   };
 
   const handleWordClick = (index: number) => {
@@ -153,7 +160,8 @@ export default function HomePage() {
         <ResultPanel
           words={words}
           displayOptions={displayOptions}
-          onDownload={handleDownloadTxt}
+          onDownloadTxt={handleDownloadTxt}
+          onDownloadCsv={handleDownloadCsv}
           hoveredWordIndex={hoveredWordIndex}
           onHover={setHoveredWordIndex}
           onWordCardClick={handleWordCardClick}

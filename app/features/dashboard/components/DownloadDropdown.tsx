@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-import { ChevronUp, Download, FileSpreadsheet, FileText } from "lucide-react";
+import {
+  ChevronUp,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  type LucideIcon,
+} from "lucide-react";
 
 interface IDownloadDropdownProps {
   wordCount: number;
@@ -19,6 +25,8 @@ export function DownloadDropdown({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 외부 클릭 시 메뉴 닫기
+  // mousedown 사용 이유: click보다 빠른 반응성 제공 + 버블링 순서 문제 방지
+  // 참고: mousedown은 우클릭에도 반응하므로, 필요시 event.button === 0 체크 추가
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -38,13 +46,18 @@ export function DownloadDropdown({
     };
   }, [isOpen]);
 
-  const handleDownloadTxt = () => {
-    onDownloadTxt();
-    setIsOpen(false);
-  };
+  const menuItems: { icon: LucideIcon; label: string; onClick: () => void }[] =
+    [
+      { icon: FileText, label: "TXT로 다운로드", onClick: onDownloadTxt },
+      {
+        icon: FileSpreadsheet,
+        label: "CSV로 다운로드",
+        onClick: onDownloadCsv,
+      },
+    ];
 
-  const handleDownloadCsv = () => {
-    onDownloadCsv();
+  const handleMenuItemClick = (onClick: () => void) => {
+    onClick();
     setIsOpen(false);
   };
 
@@ -53,24 +66,20 @@ export function DownloadDropdown({
       {/* Menu (위로 열림) */}
       {isOpen && (
         <div className="absolute bottom-full mb-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-          <button
-            onClick={handleDownloadTxt}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors"
-          >
-            <FileText className="w-5 h-5 text-text-secondary" />
-            <span className="text-sm font-medium text-text-primary">
-              TXT로 다운로드
-            </span>
-          </button>
-          <button
-            onClick={handleDownloadCsv}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors border-t border-gray-100"
-          >
-            <FileSpreadsheet className="w-5 h-5 text-text-secondary" />
-            <span className="text-sm font-medium text-text-primary">
-              CSV로 다운로드
-            </span>
-          </button>
+          {menuItems.map(({ icon: Icon, label, onClick }, index) => (
+            <button
+              key={label}
+              onClick={() => handleMenuItemClick(onClick)}
+              className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors ${
+                index > 0 ? "border-t border-gray-100" : ""
+              }`}
+            >
+              <Icon className="w-5 h-5 text-text-secondary" />
+              <span className="text-sm font-medium text-text-primary">
+                {label}
+              </span>
+            </button>
+          ))}
         </div>
       )}
 
