@@ -177,7 +177,12 @@ export default function HomePage() {
         />
       </div>
 
-      <FloatingActionButton onImageUpload={handleImageUpload} />
+      <FloatingActionButton
+        onImageUpload={handleImageUpload}
+        onDownloadTxt={handleDownloadTxt}
+        onDownloadCsv={handleDownloadCsv}
+        wordCount={words.length}
+      />
     </div>
   );
 }
