@@ -38,7 +38,7 @@
 
 #### v0.2.0 ~ v0.3.0 추가 기능
 
-<div align="center">
+<div>
   <img src=".github/assets/mobile_main.png" alt="모바일 메인 화면" width="30%">
   &nbsp;&nbsp;
   <img src=".github/assets/csv_feature.gif" alt="CSV 다운로드 기능" width="50%">
