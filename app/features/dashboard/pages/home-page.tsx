@@ -121,7 +121,7 @@ export default function HomePage() {
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
-      <MobileHeader onRightClick={() => setIsSidebarOpen(true)} />
+      <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
       <SidebarDrawer
         isOpen={isSidebarOpen}

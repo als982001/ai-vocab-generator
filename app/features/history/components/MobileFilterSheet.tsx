@@ -1,4 +1,5 @@
 import { Calendar, Check, GraduationCap } from "lucide-react";
+import { SORT_OPTIONS } from "~/features/history/constants/sort";
 import type { SortOption } from "~/features/history/types";
 import type { JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
@@ -14,13 +15,6 @@ interface IMobileFilterSheetProps {
   onLevelChange: (level: JlptLevel) => void;
   onReset: () => void;
 }
-
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "level-easy", label: "Level N5 → N1" },
-  { value: "level-hard", label: "Level N1 → N5" },
-];
 
 export function MobileFilterSheet({
   isOpen,

@@ -1,19 +1,15 @@
-import type { ReactNode } from "react";
-
 import { useNavigate } from "react-router";
 
 import { ChevronLeft, Menu } from "lucide-react";
 
 interface IMobileHeaderProps {
   title?: string;
-  onRightClick: () => void;
-  rightIcon?: ReactNode;
+  onMenuClick: () => void;
 }
 
 export function MobileHeader({
   title = "Snap Voca",
-  onRightClick,
-  rightIcon,
+  onMenuClick,
 }: IMobileHeaderProps) {
   const navigate = useNavigate();
 
@@ -33,10 +29,10 @@ export function MobileHeader({
       <h1 className="text-lg font-bold text-text-primary">{title}</h1>
 
       <button
-        onClick={onRightClick}
+        onClick={onMenuClick}
         className="p-2 rounded-lg hover:bg-surface-highlight transition-colors"
       >
-        {rightIcon ?? <Menu className="w-6 h-6 text-text-primary" />}
+        <Menu className="w-6 h-6 text-text-primary" />
       </button>
     </header>
   );

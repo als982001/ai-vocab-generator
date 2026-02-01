@@ -16,6 +16,7 @@ import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
 import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
 import { MobileWordCard } from "~/features/history/components/MobileWordCard";
+import { SORT_OPTIONS } from "~/features/history/constants/sort";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
@@ -255,8 +256,7 @@ export default function HistoryPage() {
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
       <MobileHeader
         title="History"
-        onRightClick={toggleFilter}
-        rightIcon={<SlidersHorizontal className="w-6 h-6 text-text-primary" />}
+        onMenuClick={() => setIsSidebarOpen(true)}
       />
 
       <SidebarDrawer
@@ -301,6 +301,41 @@ export default function HistoryPage() {
                 type="text"
               />
             </label>
+          </div>
+
+          {/* Mobile Filter Bar */}
+          <div className="md:hidden px-4 py-2 bg-white border-b border-gray-100 flex items-center gap-2">
+            {/* Selected Filters */}
+            <div className="flex-1 flex items-center gap-2 overflow-x-auto">
+              {/* Sort Option */}
+              <span className="shrink-0 px-3 py-1 bg-gray-200 text-text-primary text-xs font-medium rounded-full">
+                {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
+              </span>
+              {selectedYear && (
+                <span className="shrink-0 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
+                  {selectedYear}
+                </span>
+              )}
+              {selectedLevels.map((level) => (
+                <span
+                  key={level}
+                  className="shrink-0 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full"
+                >
+                  {level}
+                </span>
+              ))}
+            </div>
+
+            {/* Filter Button */}
+            <button
+              onClick={toggleFilter}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <SlidersHorizontal className="w-4 h-4 text-text-secondary" />
+              <span className="text-sm font-medium text-text-primary">
+                필터
+              </span>
+            </button>
           </div>
 
           {/* Header - Desktop only */}
@@ -348,10 +383,11 @@ export default function HistoryPage() {
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
                       className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary outline-none"
                     >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="level-easy">Level: N5 → N1</option>
-                      <option value="level-hard">Level: N1 → N5</option>
+                      {SORT_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
