@@ -27,14 +27,6 @@ export function MobileFilterSheet({
   onLevelChange,
   onReset,
 }: IMobileFilterSheetProps) {
-  const handleReset = () => {
-    onReset();
-  };
-
-  const handleShowResults = () => {
-    onClose();
-  };
-
   return (
     <div
       className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ${
@@ -150,13 +142,13 @@ export function MobileFilterSheet({
           {/* Action Buttons */}
           <div className="flex items-center gap-4 pt-2 pb-6">
             <button
-              onClick={handleReset}
+              onClick={onReset}
               className="flex-1 py-4 text-gray-500 font-bold hover:text-primary transition-colors"
             >
               Reset
             </button>
             <button
-              onClick={handleShowResults}
+              onClick={onClose}
               className="flex-[2] py-4 bg-primary text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-transform"
             >
               Show Results
