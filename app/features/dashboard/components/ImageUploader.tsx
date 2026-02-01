@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { useCallback } from "react";
 
 import { useDropzone } from "react-dropzone";
@@ -22,6 +23,7 @@ interface IImageUploaderProps {
   hoveredWordIndex: number | null;
   onHover: (index: number | null) => void;
   onWordClick: (index: number) => void;
+  imageContainerRef?: RefObject<HTMLDivElement | null>;
 }
 
 export function ImageUploader({
@@ -32,6 +34,7 @@ export function ImageUploader({
   hoveredWordIndex,
   onHover,
   onWordClick,
+  imageContainerRef,
 }: IImageUploaderProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -80,7 +83,10 @@ export function ImageUploader({
       <div className="flex-1 p-8 flex flex-col items-center justify-center overflow-y-auto bg-gray-50">
         <div className="w-full max-w-3xl h-full max-h-[600px] flex flex-col">
           {uploadedImage ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-6 rounded-2xl bg-white shadow-md px-6 py-14 relative overflow-hidden">
+            <div
+              ref={imageContainerRef}
+              className="flex-1 flex flex-col items-center justify-start md:justify-center gap-6 rounded-2xl bg-white shadow-md px-6 py-14 relative overflow-y-auto md:overflow-hidden"
+            >
               {!isAnalyzing && (
                 <button
                   onClick={handleRemoveImage}

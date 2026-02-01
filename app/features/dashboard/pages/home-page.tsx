@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { toast } from "sonner";
-import { FloatingActionButton } from "~/features/dashboard/components/FloatingActionButton";
+import { MobileHeader } from "~/components/shared/MobileHeader";
+import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
+import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
-import { MobileHeader } from "~/features/dashboard/components/MobileHeader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
-import { SidebarDrawer } from "~/features/dashboard/components/SidebarDrawer";
-import { downloadWordsAsTxt } from "~/features/dashboard/utils/download";
+import {
+  downloadWordsAsCsv,
+  downloadWordsAsTxt,
+} from "~/features/dashboard/utils/download";
 import { analyzeImage } from "~/services/gemini";
 import { saveAnalysis } from "~/services/localStorage";
 import type {
@@ -18,10 +21,10 @@ import type {
 } from "~/types";
 
 // 샘플 데이터 (반응형 테스트용)
-import sampleResponse from "../../../../mockDatas/sampleResponse02.json";
+import sampleResponse from "../../../../mockDatas/sample_response_01.json";
 
-const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
-const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
+const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_01.png";
+const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
@@ -41,8 +44,23 @@ export default function HomePage() {
   const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  // 컴포넌트 unmount 시 마지막 이미지의 preview URL 정리 (메모리 누수 방지)
+  useEffect(() => {
+    return () => {
+      if (uploadedImage?.preview) {
+        URL.revokeObjectURL(uploadedImage.preview);
+      }
+    };
+  }, [uploadedImage]);
+
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
+  };
+
+  const handleDownloadCsv = () => {
+    downloadWordsAsCsv(words);
   };
 
   const handleWordClick = (index: number) => {
@@ -51,6 +69,34 @@ export default function HomePage() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  };
+
+  const handleWordCardClick = (index: number) => {
+    // 모바일에서만 동작 (768px 미만)
+    if (window.innerWidth >= 768) return;
+
+    const word = words[index];
+
+    if (!word.box_2d || word.box_2d.length !== 4) return;
+
+    const imageContainer = imageContainerRef.current;
+
+    if (!imageContainer) return;
+
+    const [ymin] = word.box_2d;
+
+    // ymin(0~1000)을 실제 픽셀로 변환
+    const imageHeight = imageContainer.scrollHeight;
+    const targetY = (ymin / 1000) * imageHeight;
+
+    // 스크롤 컨테이너의 상단 1/3 위치에 오도록 오프셋 계산
+    const containerHeight = imageContainer.clientHeight;
+    const scrollTarget = targetY - containerHeight / 3;
+
+    imageContainer.scrollTo({
+      top: scrollTarget,
+      behavior: "smooth",
+    });
   };
 
   const handleImageUpload = async (image: IUploadedImage | null) => {
@@ -118,17 +164,25 @@ export default function HomePage() {
           hoveredWordIndex={hoveredWordIndex}
           onHover={setHoveredWordIndex}
           onWordClick={handleWordClick}
+          imageContainerRef={imageContainerRef}
         />
         <ResultPanel
           words={words}
           displayOptions={displayOptions}
-          onDownload={handleDownloadTxt}
+          onDownloadTxt={handleDownloadTxt}
+          onDownloadCsv={handleDownloadCsv}
           hoveredWordIndex={hoveredWordIndex}
           onHover={setHoveredWordIndex}
+          onWordCardClick={handleWordCardClick}
         />
       </div>
 
-      <FloatingActionButton onImageUpload={handleImageUpload} />
+      <FloatingActionButton
+        onImageUpload={handleImageUpload}
+        onDownloadTxt={handleDownloadTxt}
+        onDownloadCsv={handleDownloadCsv}
+        wordCount={words.length}
+      />
     </div>
   );
 }

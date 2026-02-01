@@ -2,19 +2,25 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   Calendar,
-  Check,
   ChevronDown,
-  Edit,
-  Filter,
   GraduationCap,
   Search,
   SlidersHorizontal,
-  Trash2,
-  Volume2,
-  X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
+import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
+import { MobileHeader } from "~/components/shared/MobileHeader";
+import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import {
+  downloadWordsAsCsv,
+  downloadWordsAsTxt,
+} from "~/features/dashboard/utils/download";
+import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
+import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
+import { MobileWordCard } from "~/features/history/components/MobileWordCard";
+import { SORT_OPTIONS } from "~/features/history/constants/sort";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
@@ -24,7 +30,6 @@ import {
   getAnalysisHistory,
   updateWordInAnalysis,
 } from "~/services/localStorage";
-import { playTTS } from "~/services/tts";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
@@ -38,6 +43,7 @@ export default function HistoryPage() {
 
   const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // 필터 패널 상태 및 핸들러
   const {
@@ -149,8 +155,7 @@ export default function HistoryPage() {
     // 편집 전 원본 데이터 백업
     const originalWord = allWords.find(
       (w) =>
-        w.analysisId === editingWord!.historyId &&
-        w.word === editingWord!.word
+        w.analysisId === editingWord!.historyId && w.word === editingWord!.word
     );
 
     const updatedHistory = updateWordInAnalysis({
@@ -245,28 +250,108 @@ export default function HistoryPage() {
 
     // 레벨 필터 (다중 선택)
     if (selectedLevels.length > 0) {
-      words = words.filter((word) =>
-        selectedLevels.includes(word.level)
-      );
+      words = words.filter((word) => selectedLevels.includes(word.level));
     }
 
     return words;
   }, [sortedWords, selectedYear, selectedLevels]);
 
+  const handleDownloadTxt = () => {
+    downloadWordsAsTxt(filteredWords);
+  };
+
+  const handleDownloadCsv = () => {
+    downloadWordsAsCsv(filteredWords);
+  };
+
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
+      <MobileHeader
+        title="History"
+        onMenuClick={() => setIsSidebarOpen(true)}
+      />
+
+      <SidebarDrawer
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        selectedLevel={selectedLevel}
+        onLevelChange={setSelectedLevel}
+        displayOptions={displayOptions}
+        onDisplayOptionsChange={setDisplayOptions}
+      />
+
+      <MobileFilterSheet
+        isOpen={isFilterOpen}
+        onClose={toggleFilter}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        selectedYear={selectedYear}
+        onYearChange={handleYearClick}
+        selectedLevels={selectedLevels}
+        onLevelChange={handleLevelClick}
+        onReset={resetFilters}
+      />
+
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
           selectedLevel={selectedLevel}
           onLevelChange={setSelectedLevel}
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
+          className="hidden md:flex"
         />
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#fafafa]">
-          {/* Header */}
-          <header className="h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-10 px-6 flex items-center justify-between shrink-0">
+          {/* Mobile Search Bar */}
+          <div className="md:hidden px-4 py-3 bg-white">
+            <label className="relative flex items-center w-full">
+              <Search className="absolute left-4 w-5 h-5 text-text-secondary" />
+              <input
+                className="w-full h-12 pl-12 pr-4 bg-gray-100 border-none rounded-full text-base focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-text-secondary"
+                placeholder="Search vocabulary..."
+                type="text"
+              />
+            </label>
+          </div>
+
+          {/* Mobile Filter Bar */}
+          <div className="md:hidden px-4 py-2 bg-white border-b border-gray-100 flex items-center gap-2">
+            {/* Selected Filters */}
+            <div className="flex-1 flex items-center gap-2 overflow-x-auto">
+              {/* Sort Option */}
+              <span className="shrink-0 px-3 py-1 bg-gray-200 text-text-primary text-xs font-medium rounded-full">
+                {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
+              </span>
+              {selectedYear && (
+                <span className="shrink-0 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
+                  {selectedYear}
+                </span>
+              )}
+              {selectedLevels.map((level) => (
+                <span
+                  key={level}
+                  className="shrink-0 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full"
+                >
+                  {level}
+                </span>
+              ))}
+            </div>
+
+            {/* Filter Button */}
+            <button
+              onClick={toggleFilter}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <SlidersHorizontal className="w-4 h-4 text-text-secondary" />
+              <span className="text-sm font-medium text-text-primary">
+                필터
+              </span>
+            </button>
+          </div>
+
+          {/* Header - Desktop only */}
+          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-10 px-6 items-center justify-between shrink-0">
             <div>
               <h2 className="text-xl font-bold tracking-tight text-text-primary">
                 History
@@ -282,13 +367,15 @@ export default function HistoryPage() {
                   type="text"
                 />
               </div>
-              {/* Filter Button */}
-              <button className="flex items-center gap-2 px-3 py-2 bg-white border border-border-color rounded-lg hover:bg-surface-highlight transition-colors">
-                <Filter className="w-5 h-5 text-text-secondary" />
-                <span className="text-sm font-medium text-text-secondary hidden sm:inline">
-                  Filter
-                </span>
-              </button>
+              {/* Download Dropdown */}
+              <DownloadDropdown
+                wordCount={filteredWords.length}
+                onDownloadTxt={handleDownloadTxt}
+                onDownloadCsv={handleDownloadCsv}
+                disabled={filteredWords.length === 0}
+                direction="down"
+                compact
+              />
             </div>
           </header>
 
@@ -297,10 +384,10 @@ export default function HistoryPage() {
             <div className="max-w-[1200px] mx-auto">
               {/* Stats / Summary */}
               <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
-                <p className="text-sm text-text-secondary">
+                <p className="hidden md:block text-sm text-text-secondary">
                   Showing {filteredWords.length} vocabulary cards
                 </p>
-                <div className="flex items-center gap-4">
+                <div className="hidden md:flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
                       Sort by:
@@ -310,10 +397,11 @@ export default function HistoryPage() {
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
                       className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary outline-none"
                     >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="level-easy">Level: N5 → N1</option>
-                      <option value="level-hard">Level: N1 → N5</option>
+                      {SORT_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -408,131 +496,43 @@ export default function HistoryPage() {
                 </div>
               </div>
 
-              {/* Card Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {/* Desktop Card Grid */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredWords.map((word, index) => {
                   const isEditing = checkIsEditing(word);
 
                   return (
-                    <div
+                    <DesktopWordCard
                       key={index}
-                      className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64"
-                    >
-                      {/* Card Header */}
-                      <div className="flex justify-between items-start">
-                        {isEditing ? (
-                          <div className="flex gap-1 flex-wrap">
-                            {JLPT_LEVELS.map((level) => (
-                              <button
-                                key={level}
-                                onClick={() => setEditedLevel(level)}
-                                className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide transition-colors ${
-                                  editedLevel === level
-                                    ? "bg-primary text-white"
-                                    : "bg-white text-black border border-gray-300 hover:bg-gray-100"
-                                }`}
-                              >
-                                {level}
-                              </button>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">
-                            {word.level}
-                          </span>
-                        )}
-                        <span className="text-[11px] text-text-secondary font-medium">
-                          {word.date}
-                        </span>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="flex flex-col items-center text-center my-auto w-full">
-                        <p className="text-xs text-text-secondary mb-1">
-                          {word.reading}
-                        </p>
-                        <h3 className="text-4xl font-bold text-text-primary mb-4">
-                          {word.word}
-                        </h3>
-                        <div className="w-8 h-px bg-border-color mb-4"></div>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editedMeaning}
-                            onChange={(e) =>
-                              setEditedMeaning(e.target.value)
-                            }
-                            className="w-full text-sm text-text-primary font-medium text-center border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-primary focus:border-primary"
-                            placeholder="단어 뜻 입력"
-                          />
-                        ) : (
-                          <p className="text-sm text-text-secondary font-medium line-clamp-2">
-                            {word.meaning}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Card Actions */}
-                      {/* Listen Button - 왼쪽에 항상 표시 (수정 중이 아닐 때만) */}
-                      {!isEditing && (
-                        <button
-                          onClick={() => playTTS(word.word)}
-                          className="absolute bottom-4 left-4 size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
-                          title="듣기"
-                        >
-                          <Volume2 className="w-4 h-4" />
-                        </button>
-                      )}
-
-                      {/* Edit/Delete or Save/Cancel - 오른쪽에 hover 시 표시 */}
-                      <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        {isEditing ? (
-                          <>
-                            <button
-                              onClick={handleSaveEdit}
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-green-500 hover:text-white transition-colors"
-                              title="Save"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-gray-500 hover:text-white transition-colors"
-                              title="Cancel"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => startEdit(word)}
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
-                              title="Edit"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteWord({
-                                  historyId: word.analysisId,
-                                  targetWord: word.word,
-                                })
-                              }
-                              className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                      word={word}
+                      isEditing={isEditing}
+                      editedMeaning={editedMeaning}
+                      editedLevel={editedLevel}
+                      onEditedMeaningChange={setEditedMeaning}
+                      onEditedLevelChange={setEditedLevel}
+                      onSaveEdit={handleSaveEdit}
+                      onCancelEdit={cancelEdit}
+                      onStartEdit={startEdit}
+                      onDeleteWord={handleDeleteWord}
+                    />
                   );
                 })}
               </div>
+
+              {/* Mobile Card List */}
+              <div className="md:hidden flex flex-col gap-4">
+                {filteredWords.map((word, index) => (
+                  <MobileWordCard key={index} word={word} />
+                ))}
+              </div>
             </div>
           </div>
+
+          <FloatingActionButton
+            onDownloadTxt={handleDownloadTxt}
+            onDownloadCsv={handleDownloadCsv}
+            wordCount={filteredWords.length}
+          />
         </main>
       </div>
     </div>

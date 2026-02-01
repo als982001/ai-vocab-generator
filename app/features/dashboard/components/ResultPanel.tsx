@@ -1,21 +1,26 @@
-import { ArrowUpDown, Download, FileSearch } from "lucide-react";
+import { ArrowUpDown, FileSearch } from "lucide-react";
+import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { WordCard } from "~/features/dashboard/components/WordCard";
 import type { IDisplayOptions, IWord } from "~/types";
 
 interface IResultPanelProps {
   words: IWord[];
   displayOptions: IDisplayOptions;
-  onDownload: () => void;
+  onDownloadTxt: () => void;
+  onDownloadCsv: () => void;
   hoveredWordIndex: number | null;
   onHover: (index: number | null) => void;
+  onWordCardClick?: (index: number) => void;
 }
 
 export function ResultPanel({
   words,
   displayOptions,
-  onDownload,
+  onDownloadTxt,
+  onDownloadCsv,
   hoveredWordIndex,
   onHover,
+  onWordCardClick,
 }: IResultPanelProps) {
   return (
     <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10 overflow-hidden">
@@ -63,20 +68,19 @@ export function ResultPanel({
                 showRomaji={displayOptions.showRomaji}
                 isHovered={hoveredWordIndex === index}
                 onHover={(hovered) => onHover(hovered ? index : null)}
+                onClick={() => onWordCardClick?.(index)}
               />
             </div>
           ))
         )}
       </div>
       <div className="hidden md:block h-[130px] p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
-        <button
-          onClick={onDownload}
+        <DownloadDropdown
+          wordCount={words.length}
+          onDownloadTxt={onDownloadTxt}
+          onDownloadCsv={onDownloadCsv}
           disabled={words.length === 0}
-          className="w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-gray-800 text-white text-base font-bold transition-all shadow-lg hover:shadow-xl disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none"
-        >
-          <Download className="w-5 h-5" />
-          <span>{`Download ${words.length} words.txt`}</span>
-        </button>
+        />
         <div className="mt-3 text-center">
           <button className="text-text-secondary text-xs hover:text-text-primary underline">
             Export to Anki Deck
