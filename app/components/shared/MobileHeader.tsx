@@ -3,10 +3,14 @@ import { useNavigate } from "react-router";
 import { ChevronLeft, Menu } from "lucide-react";
 
 interface IMobileHeaderProps {
+  title?: string;
   onMenuClick: () => void;
 }
 
-export function MobileHeader({ onMenuClick }: IMobileHeaderProps) {
+export function MobileHeader({
+  title = "Snap Voca",
+  onMenuClick,
+}: IMobileHeaderProps) {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -22,7 +26,7 @@ export function MobileHeader({ onMenuClick }: IMobileHeaderProps) {
         <ChevronLeft className="w-6 h-6 text-text-primary" />
       </button>
 
-      <h1 className="text-lg font-bold text-text-primary">Snap Voca</h1>
+      <h1 className="text-lg font-bold text-text-primary">{title}</h1>
 
       <button
         onClick={onMenuClick}
