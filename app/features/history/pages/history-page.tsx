@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Calendar,
   ChevronDown,
-  Filter,
   GraduationCap,
   Search,
   SlidersHorizontal,
@@ -12,6 +11,7 @@ import { toast } from "sonner";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
+import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   downloadWordsAsCsv,
@@ -367,13 +367,13 @@ export default function HistoryPage() {
                   type="text"
                 />
               </div>
-              {/* Filter Button */}
-              <button className="flex items-center gap-2 px-3 py-2 bg-white border border-border-color rounded-lg hover:bg-surface-highlight transition-colors">
-                <Filter className="w-5 h-5 text-text-secondary" />
-                <span className="text-sm font-medium text-text-secondary hidden sm:inline">
-                  Filter
-                </span>
-              </button>
+              {/* Download Dropdown */}
+              <DownloadDropdown
+                wordCount={filteredWords.length}
+                onDownloadTxt={handleDownloadTxt}
+                onDownloadCsv={handleDownloadCsv}
+                disabled={filteredWords.length === 0}
+              />
             </div>
           </header>
 

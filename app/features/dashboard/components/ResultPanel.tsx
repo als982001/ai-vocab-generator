@@ -1,5 +1,5 @@
 import { ArrowUpDown, FileSearch } from "lucide-react";
-import { DownloadDropdown } from "~/features/dashboard/components/DownloadDropdown";
+import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { WordCard } from "~/features/dashboard/components/WordCard";
 import type { IDisplayOptions, IWord } from "~/types";
 
