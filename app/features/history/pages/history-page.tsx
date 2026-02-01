@@ -6,13 +6,17 @@ import {
   Filter,
   GraduationCap,
   Search,
-  Share,
   SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
+import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import {
+  downloadWordsAsCsv,
+  downloadWordsAsTxt,
+} from "~/features/dashboard/utils/download";
 import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
 import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
 import { MobileWordCard } from "~/features/history/components/MobileWordCard";
@@ -251,6 +255,14 @@ export default function HistoryPage() {
 
     return words;
   }, [sortedWords, selectedYear, selectedLevels]);
+
+  const handleDownloadTxt = () => {
+    downloadWordsAsTxt(filteredWords);
+  };
+
+  const handleDownloadCsv = () => {
+    downloadWordsAsCsv(filteredWords);
+  };
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
@@ -514,15 +526,11 @@ export default function HistoryPage() {
             </div>
           </div>
 
-          {/* FAB - Hidden until feature is implemented */}
-          <button
-            className="hidden fixed bottom-8 right-6 h-16 w-16 items-center justify-center bg-primary rounded-full shadow-lg active:scale-95 transition-transform md:hidden"
-            onClick={() => {
-              // TODO: 내보내기 기능 구현 예정
-            }}
-          >
-            <Share className="w-7 h-7 text-white" />
-          </button>
+          <FloatingActionButton
+            onDownloadTxt={handleDownloadTxt}
+            onDownloadCsv={handleDownloadCsv}
+            wordCount={filteredWords.length}
+          />
         </main>
       </div>
     </div>
