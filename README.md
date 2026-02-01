@@ -41,7 +41,7 @@
 <div align="center">
   <img src=".github/assets/mobile_main.png" alt="모바일 메인 화면" width="30%">
   &nbsp;&nbsp;
-  <img src=".github/assets/csv_feature.png" alt="CSV 다운로드 기능" width="50%">
+  <img src=".github/assets/csv_feature.gif" alt="CSV 다운로드 기능" width="50%">
 </div>
 
 - **바운딩 박스 표시**: 추출된 단어의 위치를 이미지 위에 박스로 표시
