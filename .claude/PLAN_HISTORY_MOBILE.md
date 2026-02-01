@@ -92,8 +92,8 @@
 
 ### Step 4: 카드 그리드 및 UI 반응형 처리
 
-- [ ] 그리드 레이아웃에 반응형 클래스 적용
-- [ ] 모바일 카드 스타일 적용:
+- [x] 그리드 레이아웃에 반응형 클래스 적용
+- [x] 모바일 카드 스타일 적용:
   - 좌측 정렬
   - 원형 레벨 뱃지
   - `<ruby>` 태그로 후리가나 표시
@@ -101,15 +101,20 @@
 
 ### Step 5: 모바일 필터 Bottom Sheet 구현
 
-- [ ] `MobileFilterSheet` 컴포넌트 생성 (`app/features/history/components/`)
-- [ ] 기존 `useWordFilter` 훅과 연결
-- [ ] Sort By, Created At, JLPT Level 섹션 구현
-- [ ] Reset, Show Results 버튼 동작 구현
+- [x] `MobileFilterSheet` 컴포넌트 생성 (`app/features/history/components/`)
+- [x] 기존 `useWordFilter` 훅과 연결
+- [x] Sort By, Created At, JLPT Level 섹션 구현
+- [x] Reset, Show Results 버튼 동작 구현
 
 ### Step 6: FAB 추가 (hidden)
 
-- [ ] FAB 버튼 UI 추가 (`hidden` 클래스 적용)
-- [ ] 추후 기능 구현 시 활성화
+- [x] FAB 버튼 UI 추가 (`hidden` 클래스 적용)
+- [x] 추후 기능 구현 시 활성화
+
+### Step 7: 추가 수정 사항 (수정되면 좋을 것들)
+
+- [ ] 상단 헤더, 인풋 밑의 SORT BY 셀렉트, Filters 버튼 안 보이게 수정 (헤더 우측의 버튼으로 필터 보여줄 수 있기 때문)
+- [ ] 헤더 우측의 필터 버튼 클릭하면 필터가 보이는데, 밑에서 솟아오르는 듯한 애니메이션 추가
 
 ---
 

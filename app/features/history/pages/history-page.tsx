@@ -335,10 +335,10 @@ export default function HistoryPage() {
             <div className="max-w-[1200px] mx-auto">
               {/* Stats / Summary */}
               <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
-                <p className="text-sm text-text-secondary">
+                <p className="hidden md:block text-sm text-text-secondary">
                   Showing {filteredWords.length} vocabulary cards
                 </p>
-                <div className="flex items-center gap-4">
+                <div className="hidden md:flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
                       Sort by:
