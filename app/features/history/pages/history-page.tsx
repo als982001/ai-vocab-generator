@@ -374,6 +374,7 @@ export default function HistoryPage() {
                 onDownloadCsv={handleDownloadCsv}
                 disabled={filteredWords.length === 0}
                 direction="down"
+                compact
               />
             </div>
           </header>
