@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { FloatingActionButton } from "~/features/dashboard/components/FloatingActionButton";
+import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";

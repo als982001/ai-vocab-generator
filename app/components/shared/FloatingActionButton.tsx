@@ -4,7 +4,7 @@ import { FileSpreadsheet, FileText, ImagePlus, Plus } from "lucide-react";
 import type { IUploadedImage } from "~/types";
 
 interface IFloatingActionButtonProps {
-  onImageUpload: (image: IUploadedImage) => void;
+  onImageUpload?: (image: IUploadedImage) => void;
   onDownloadTxt: () => void;
   onDownloadCsv: () => void;
   wordCount: number;
@@ -45,7 +45,7 @@ export function FloatingActionButton({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (file) {
+    if (file && onImageUpload) {
       const preview = URL.createObjectURL(file);
       onImageUpload({ file, preview });
     }
@@ -75,23 +75,27 @@ export function FloatingActionButton({
 
   return (
     <div ref={containerRef} className="md:hidden fixed bottom-8 right-6 z-50">
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
+      {onImageUpload && (
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+      )}
 
       {/* Menu (위로 열림) */}
       {isOpen && (
         <div className="absolute bottom-full mb-3 right-0 w-44 bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
-          <button onClick={handleUploadClick} className={menuButtonClass}>
-            <ImagePlus className="w-5 h-5 text-text-secondary" />
-            <span className="text-sm font-medium text-text-primary">
-              이미지 업로드
-            </span>
-          </button>
+          {onImageUpload && (
+            <button onClick={handleUploadClick} className={menuButtonClass}>
+              <ImagePlus className="w-5 h-5 text-text-secondary" />
+              <span className="text-sm font-medium text-text-primary">
+                이미지 업로드
+              </span>
+            </button>
+          )}
           <button
             onClick={handleDownloadTxtClick}
             disabled={isDownloadDisabled}
