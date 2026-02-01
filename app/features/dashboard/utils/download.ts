@@ -37,7 +37,9 @@ export function downloadWordsAsCsv(words: IWord[]): void {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+
+  // Safari에서 DOM 제거 직후 revoke 시 다운로드 실패 방지
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 /**
@@ -73,5 +75,7 @@ export function downloadWordsAsTxt(words: IWord[]): void {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+
+  // Safari에서 DOM 제거 직후 revoke 시 다운로드 실패 방지
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { toast } from "sonner";
 import { MobileHeader } from "~/components/shared/MobileHeader";
@@ -45,6 +45,15 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  // 컴포넌트 unmount 시 마지막 이미지의 preview URL 정리 (메모리 누수 방지)
+  useEffect(() => {
+    return () => {
+      if (uploadedImage?.preview) {
+        URL.revokeObjectURL(uploadedImage.preview);
+      }
+    };
+  }, [uploadedImage]);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
