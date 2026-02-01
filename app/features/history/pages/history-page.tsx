@@ -8,10 +8,10 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
+import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   downloadWordsAsCsv,
@@ -373,6 +373,7 @@ export default function HistoryPage() {
                 onDownloadTxt={handleDownloadTxt}
                 onDownloadCsv={handleDownloadCsv}
                 disabled={filteredWords.length === 0}
+                direction="down"
               />
             </div>
           </header>

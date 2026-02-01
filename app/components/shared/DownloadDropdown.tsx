@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import {
+  ChevronDown,
   ChevronUp,
   Download,
   FileSpreadsheet,
@@ -13,6 +14,7 @@ interface IDownloadDropdownProps {
   onDownloadTxt: () => void;
   onDownloadCsv: () => void;
   disabled?: boolean;
+  direction?: "up" | "down";
 }
 
 export function DownloadDropdown({
@@ -20,6 +22,7 @@ export function DownloadDropdown({
   onDownloadTxt,
   onDownloadCsv,
   disabled = false,
+  direction = "up",
 }: IDownloadDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,11 +64,18 @@ export function DownloadDropdown({
     setIsOpen(false);
   };
 
+  const menuPositionClass =
+    direction === "up" ? "bottom-full mb-2" : "top-full mt-2";
+
+  const ChevronIcon = direction === "up" ? ChevronUp : ChevronDown;
+
   return (
     <div ref={dropdownRef} className="relative">
-      {/* Menu (위로 열림) */}
+      {/* Menu */}
       {isOpen && (
-        <div className="absolute bottom-full mb-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+        <div
+          className={`absolute ${menuPositionClass} w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden z-50`}
+        >
           {menuItems.map(({ icon: Icon, label, onClick }, index) => (
             <button
               key={label}
@@ -91,7 +101,7 @@ export function DownloadDropdown({
       >
         <Download className="w-5 h-5" />
         <span>{`Download ${wordCount} words`}</span>
-        <ChevronUp
+        <ChevronIcon
           className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
