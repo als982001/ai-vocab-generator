@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { toast } from "sonner";
+import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
 import { Sidebar } from "~/features/dashboard/components/Sidebar";
@@ -24,7 +24,7 @@ import type {
 import sampleResponse from "../../../../mockDatas/sample_response_01.json";
 
 const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_01.png";
-const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
+const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
