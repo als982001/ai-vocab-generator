@@ -360,7 +360,7 @@ export default function HistoryPage() {
           </div>
 
           {/* Header - Desktop only */}
-          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-10 px-6 items-center justify-between shrink-0">
+          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-30 px-6 items-center justify-between shrink-0">
             <div>
               <h2 className="text-xl font-bold tracking-tight text-text-primary">
                 History
