@@ -50,7 +50,7 @@ export function ResultPanel({
           </button>
         </div>
       </div>
-      <div className="flex-1 md:h-[calc(100vh-226px)] overflow-y-auto p-4 flex flex-col">
+      <div className="flex-1 md:h-[calc(100vh-226px)] overflow-y-auto p-4 md:pb-[130px] flex flex-col">
         {words.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-6">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
