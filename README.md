@@ -15,7 +15,7 @@
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **AI:** Google Gemini 2.5 Flash API
-- **UI Libraries:** Lucide React, Sonner (Toast), React Dropzone
+- **UI Libraries:** Lucide React, Sonner (Toast), React Dropzone, Framer Motion
 - **Other:** Web Speech API (TTS)
 
 ## ✨ Features
@@ -66,7 +66,8 @@
 - **반응형 리스트 뷰**: 데스크톱(Grid) ↔ 모바일(Stack) 자동 전환 레이아웃
 - **모바일 최적화**: 햄버거 메뉴, 플로팅 액션 버튼(FAB) 등 모바일 전용 UI 적용
 - **정렬 기능**: 최신순, 오래된순, 난이도순(N5→N1, N1→N5) 정렬
-- **필터 기능**: 연도별, JLPT 레벨별 필터링
+- **검색 기능**: 단어/뜻 키워드 검색
+- **필터 기능**: 연도별, JLPT 레벨별 다중 선택 필터링
 - **단어 편집/삭제**: 뜻 수정 및 불필요한 단어 삭제 (실행 취소 지원)
 - **발음 듣기**: TTS(Text-to-Speech)로 일본어 발음 청취
 
@@ -89,6 +90,7 @@
 - **TTS 음성 듣기**: Web Speech API를 활용한 일본어 발음 재생
 - **즉각적인 피드백**: Sonner를 통한 토스트 알림으로 모든 데이터 조작에 실시간 피드백 제공
 - **다운로드 옵션 제공**: Radix UI 기반 드롭다운 메뉴를 통해 TXT/CSV 포맷 선택 가능
+- **애니메이션 & 마이크로 인터랙션**: Framer Motion 기반 카드 순차 등장(stagger), 페이지 전환, hover/active 피드백 등 세밀한 인터랙션 적용
 
 ### 4. AI 이미지 분석 & 시각화
 
