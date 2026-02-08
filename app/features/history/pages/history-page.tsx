@@ -5,6 +5,7 @@ import {
   Calendar,
   ChevronDown,
   GraduationCap,
+  History,
   Search,
   SlidersHorizontal,
 } from "lucide-react";
@@ -383,11 +384,11 @@ export default function HistoryPage() {
           </div>
 
           {/* Header - Desktop only */}
-          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-30 px-6 items-center justify-between shrink-0">
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-text-primary">
-                History
-              </h2>
+          <header className="hidden md:flex h-16 bg-white shadow-sm sticky top-0 z-30 px-8 items-center justify-between shrink-0">
+            <div className="flex items-center gap-2 text-text-secondary text-sm">
+              <History className="w-4 h-4" />
+              <span>/</span>
+              <span className="text-text-primary font-medium">History</span>
             </div>
             <div className="flex items-center gap-3">
               {/* Search */}

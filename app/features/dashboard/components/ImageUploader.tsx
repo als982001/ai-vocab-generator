@@ -9,7 +9,6 @@ import {
   CheckCircle,
   CloudUpload,
   HelpCircle,
-  Home,
   Loader2,
   X,
 } from "lucide-react";
@@ -89,9 +88,9 @@ export function ImageUploader({
     <main className="h-[45%] md:h-auto md:flex-1 flex flex-col bg-gray-50 relative overflow-hidden min-w-0 shrink-0 md:shrink">
       <div className="h-16 hidden md:flex items-center justify-between px-8 bg-white shrink-0 shadow-sm">
         <div className="flex items-center gap-2 text-text-secondary text-sm">
-          <Home className="w-4 h-4" />
+          <CloudUpload className="w-4 h-4" />
           <span>/</span>
-          <span className="text-text-primary font-medium">Dashboard</span>
+          <span className="text-text-primary font-medium">Upload</span>
         </div>
         <div className="flex items-center gap-4">
           <button className="text-text-secondary hover:text-primary transition-colors">

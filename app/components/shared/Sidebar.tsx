@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 
-import { History, LayoutDashboard } from "lucide-react";
+import { CloudUpload, History } from "lucide-react";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 
 interface ISidebarProps {
@@ -48,7 +48,7 @@ export function Sidebar({
                 : "hover:bg-surface-highlight/50 hover:scale-[1.02] group"
             }`}
           >
-            <LayoutDashboard
+            <CloudUpload
               className={`w-5 h-5 ${
                 pathname === "/"
                   ? "text-text-primary"
@@ -62,7 +62,7 @@ export function Sidebar({
                   : "text-text-secondary group-hover:text-text-primary"
               }`}
             >
-              Dashboard
+              Upload
             </p>
           </div>
         </Link>
