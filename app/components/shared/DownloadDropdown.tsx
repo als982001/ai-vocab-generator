@@ -96,7 +96,7 @@ export function DownloadDropdown({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={SPRING_DROPDOWN}
             style={{ transformOrigin }}
-            className={`absolute ${menuPositionClass} w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden z-[100]`}
+            className={`absolute ${menuPositionClass} w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden z-[60]`}
           >
             {menuItems.map(
               ({ icon: Icon, label, compactLabel, onClick }, index) => (

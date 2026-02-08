@@ -48,6 +48,7 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // 컴포넌트 unmount 시 마지막 이미지의 preview URL 정리 (메모리 누수 방지)
   useEffect(() => {
@@ -57,6 +58,11 @@ export default function HomePage() {
       }
     };
   }, [uploadedImage]);
+
+  // 하이라이트 타이머 cleanup
+  useEffect(() => {
+    return () => clearTimeout(highlightTimerRef.current);
+  }, []);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
@@ -75,7 +81,8 @@ export default function HomePage() {
 
     setHighlightedIndex(index);
 
-    setTimeout(() => {
+    clearTimeout(highlightTimerRef.current);
+    highlightTimerRef.current = setTimeout(() => {
       setHighlightedIndex(null);
     }, 1500);
   };
