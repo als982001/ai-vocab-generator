@@ -1,4 +1,4 @@
-import { Edit, Volume2 } from "lucide-react";
+import { Volume2 } from "lucide-react";
 import type { IWord } from "~/types";
 
 interface IWordCardProps {
@@ -29,15 +29,14 @@ export function WordCard({
       onMouseLeave={() => onHover?.(false)}
       onClick={onClick}
     >
-      <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-        <Edit className="text-text-secondary hover:text-text-primary w-4 h-4" />
-      </div>
       <div className="flex flex-col gap-1">
-        <div className="flex items-baseline gap-2">
-          {showFurigana && (
+        <div className="flex items-baseline justify-between gap-2">
+          {showFurigana ? (
             <p className="text-text-secondary text-xs font-japanese">
               {word.reading}
             </p>
+          ) : (
+            <span />
           )}
           <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-black text-white">
             {word.level}
