@@ -1,7 +1,7 @@
 import { FileSearch } from "lucide-react";
 import {
   AnimatedList,
-  // AnimatedListItem,
+  AnimatedListItem,
 } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { WordCard } from "~/features/dashboard/components/WordCard";
@@ -16,6 +16,7 @@ interface IResultPanelProps {
   onHover: (word: string | null) => void;
   onWordCardClick?: (word: string) => void;
   highlightedWord?: string | null;
+  enableAnimation?: boolean;
 }
 
 export function ResultPanel({
@@ -27,6 +28,7 @@ export function ResultPanel({
   onHover,
   onWordCardClick,
   highlightedWord,
+  enableAnimation = true,
 }: IResultPanelProps) {
   return (
     <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10 overflow-hidden">
@@ -60,27 +62,11 @@ export function ResultPanel({
               </p>
             </div>
           </div>
-        ) : (
+        ) : enableAnimation ? (
           <AnimatedList className="flex flex-col gap-3">
-            {words.map((word) => {
-              /* return (
-                <AnimatedListItem key={word.word}>
-                  <div id={`word-card-${word.word}`}>
-                    <WordCard
-                      word={word}
-                      showFurigana={displayOptions.showFurigana}
-                      showRomaji={displayOptions.showRomaji}
-                      isHovered={hoveredWord === word.word}
-                      isHighlighted={highlightedWord === word.word}
-                      onHover={(hovered) => onHover(hovered ? word.word : null)}
-                      onClick={() => onWordCardClick?.(word.word)}
-                    />
-                  </div>
-                </AnimatedListItem>
-              ); */
-
-              return (
-                <div id={`word-card-${word.word}`} key={word.word}>
+            {words.map((word) => (
+              <AnimatedListItem key={word.word}>
+                <div id={`word-card-${word.word}`}>
                   <WordCard
                     word={word}
                     showFurigana={displayOptions.showFurigana}
@@ -91,9 +77,25 @@ export function ResultPanel({
                     onClick={() => onWordCardClick?.(word.word)}
                   />
                 </div>
-              );
-            })}
+              </AnimatedListItem>
+            ))}
           </AnimatedList>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {words.map((word) => (
+              <div id={`word-card-${word.word}`} key={word.word}>
+                <WordCard
+                  word={word}
+                  showFurigana={displayOptions.showFurigana}
+                  showRomaji={displayOptions.showRomaji}
+                  isHovered={hoveredWord === word.word}
+                  isHighlighted={highlightedWord === word.word}
+                  onHover={(hovered) => onHover(hovered ? word.word : null)}
+                  onClick={() => onWordCardClick?.(word.word)}
+                />
+              </div>
+            ))}
+          </div>
         )}
       </div>
       <div className="hidden md:block h-[130px] p-6 bg-white absolute bottom-0 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">

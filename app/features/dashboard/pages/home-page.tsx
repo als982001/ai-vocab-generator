@@ -46,6 +46,7 @@ export default function HomePage() {
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
   const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [enableResultAnimation, setEnableResultAnimation] = useState(true);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -73,6 +74,8 @@ export default function HomePage() {
   };
 
   const handleLevelToggle = (level: JlptLevel) => {
+    setEnableResultAnimation(false);
+
     setSelectedLevels((prev) =>
       prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
     );
@@ -144,6 +147,7 @@ export default function HomePage() {
         const analyzedWords = await analyzeImage(image.file);
 
         setWords(analyzedWords);
+        setEnableResultAnimation(true);
 
         toast.success("분석을 성공했습니다.");
 
@@ -209,6 +213,7 @@ export default function HomePage() {
             onHover={setHoveredWord}
             onWordCardClick={handleWordCardClick}
             highlightedWord={highlightedWord}
+            enableAnimation={enableResultAnimation}
           />
         </motion.div>
       </div>
