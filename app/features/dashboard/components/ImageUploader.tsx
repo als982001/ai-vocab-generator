@@ -1,8 +1,9 @@
 import type { RefObject } from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useDropzone } from "react-dropzone";
 
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Bell,
   CheckCircle,
@@ -14,6 +15,12 @@ import {
 } from "lucide-react";
 import { ImageOverlay } from "~/features/dashboard/components/ImageOverlay";
 import type { IUploadedImage, IWord } from "~/types";
+
+const LOADING_MESSAGES = [
+  "이미지 분석 중...",
+  "단어를 추출하는 중...",
+  "거의 다 됐어요!",
+];
 
 interface IImageUploaderProps {
   uploadedImage: IUploadedImage | null;
@@ -36,6 +43,21 @@ export function ImageUploader({
   onWordClick,
   imageContainerRef,
 }: IImageUploaderProps) {
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+
+  useEffect(() => {
+    if (!isAnalyzing) return;
+
+    const interval = setInterval(() => {
+      setLoadingMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 3000);
+
+    return () => {
+      clearInterval(interval);
+      setLoadingMessageIndex(0);
+    };
+  }, [isAnalyzing]);
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -99,9 +121,18 @@ export function ImageUploader({
                 <div className="flex flex-col items-center gap-4">
                   <Loader2 className="w-16 h-16 text-primary animate-spin" />
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-text-primary text-xl font-bold">
-                      이미지 분석 중...
-                    </p>
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={loadingMessageIndex}
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-text-primary text-xl font-bold"
+                      >
+                        {LOADING_MESSAGES[loadingMessageIndex]}
+                      </motion.p>
+                    </AnimatePresence>
                     <p className="text-text-secondary text-sm">
                       잠시만 기다려주세요
                     </p>
@@ -128,7 +159,7 @@ export function ImageUploader({
               {...getRootProps()}
               className={`flex-1 flex flex-col items-center justify-center gap-6 rounded-2xl border-2 border-dashed bg-white shadow-md px-6 py-14 transition-all cursor-pointer group relative overflow-hidden ${
                 isDragActive
-                  ? "border-primary bg-gray-50"
+                  ? "border-primary bg-gray-50 ring-2 ring-primary/30 scale-[1.02]"
                   : "border-gray-300 hover:border-primary"
               }`}
             >
@@ -136,7 +167,9 @@ export function ImageUploader({
               <div className="absolute inset-0 bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
               <div className="z-10 flex flex-col items-center gap-4">
                 <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center text-text-primary mb-2 group-hover:scale-110 transition-transform duration-300">
-                  <CloudUpload className="w-10 h-10" />
+                  <CloudUpload
+                    className={`w-10 h-10 ${isDragActive ? "animate-bounce" : ""}`}
+                  />
                 </div>
                 <div className="flex flex-col items-center gap-1">
                   <p className="text-text-primary text-xl font-bold leading-tight tracking-tight text-center">

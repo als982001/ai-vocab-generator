@@ -6,6 +6,7 @@ interface IWordCardProps {
   showFurigana?: boolean;
   showRomaji?: boolean;
   isHovered?: boolean;
+  isHighlighted?: boolean;
   onHover?: (hovered: boolean) => void;
   onClick?: () => void;
 }
@@ -15,14 +16,15 @@ export function WordCard({
   showFurigana = true,
   // showRomaji = false,
   isHovered = false,
+  isHighlighted = false,
   onHover,
   onClick,
 }: IWordCardProps) {
   return (
     <div
-      className={`shrink-0 bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
+      className={`shrink-0 bg-white rounded-xl p-4 hover:shadow-lg hover:-translate-y-1 transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
         isHovered ? "ring-2 ring-red-500 shadow-lg" : ""
-      }`}
+      } ${isHighlighted ? "animate-highlight-pulse" : ""}`}
       onMouseEnter={() => onHover?.(true)}
       onMouseLeave={() => onHover?.(false)}
       onClick={onClick}

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { motion } from "framer-motion";
 import {
   Calendar,
   ChevronDown,
@@ -8,6 +9,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
@@ -31,6 +33,7 @@ import {
   updateWordInAnalysis,
 } from "~/services/localStorage";
 import type { IDisplayOptions, JlptLevel } from "~/types";
+import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
 
@@ -302,7 +305,13 @@ export default function HistoryPage() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#fafafa]">
+        <motion.main
+          className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#fafafa]"
+          variants={PAGE_TRANSITION}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: PAGE_TRANSITION_DURATION }}
+        >
           {/* Mobile Search Bar */}
           <div className="md:hidden px-4 py-3 bg-white">
             <label className="relative flex items-center w-full">
@@ -502,19 +511,20 @@ export default function HistoryPage() {
                   const isEditing = checkIsEditing(word);
 
                   return (
-                    <DesktopWordCard
-                      key={index}
-                      word={word}
-                      isEditing={isEditing}
-                      editedMeaning={editedMeaning}
-                      editedLevel={editedLevel}
-                      onEditedMeaningChange={setEditedMeaning}
-                      onEditedLevelChange={setEditedLevel}
-                      onSaveEdit={handleSaveEdit}
-                      onCancelEdit={cancelEdit}
-                      onStartEdit={startEdit}
-                      onDeleteWord={handleDeleteWord}
-                    />
+                    <AnimatedViewportItem key={index}>
+                      <DesktopWordCard
+                        word={word}
+                        isEditing={isEditing}
+                        editedMeaning={editedMeaning}
+                        editedLevel={editedLevel}
+                        onEditedMeaningChange={setEditedMeaning}
+                        onEditedLevelChange={setEditedLevel}
+                        onSaveEdit={handleSaveEdit}
+                        onCancelEdit={cancelEdit}
+                        onStartEdit={startEdit}
+                        onDeleteWord={handleDeleteWord}
+                      />
+                    </AnimatedViewportItem>
                   );
                 })}
               </div>
@@ -522,7 +532,9 @@ export default function HistoryPage() {
               {/* Mobile Card List */}
               <div className="md:hidden flex flex-col gap-4">
                 {filteredWords.map((word, index) => (
-                  <MobileWordCard key={index} word={word} />
+                  <AnimatedViewportItem key={index}>
+                    <MobileWordCard word={word} />
+                  </AnimatedViewportItem>
                 ))}
               </div>
             </div>
@@ -533,7 +545,7 @@ export default function HistoryPage() {
             onDownloadCsv={handleDownloadCsv}
             wordCount={filteredWords.length}
           />
-        </main>
+        </motion.main>
       </div>
     </div>
   );

@@ -24,6 +24,15 @@ export default {
         xl: '3rem',
         full: '9999px',
       },
+      keyframes: {
+        'highlight-pulse': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(0, 0, 0, 0)' },
+          '50%': { boxShadow: '0 0 0 4px rgba(0, 0, 0, 0.15)' },
+        },
+      },
+      animation: {
+        'highlight-pulse': 'highlight-pulse 0.75s ease-in-out 2',
+      },
     },
   },
   plugins: [],

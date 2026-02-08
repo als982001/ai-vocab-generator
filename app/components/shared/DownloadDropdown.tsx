@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
   ChevronUp,
@@ -8,6 +9,7 @@ import {
   FileText,
   type LucideIcon,
 } from "lucide-react";
+import { SPRING_DROPDOWN } from "~/utils/animation";
 
 interface IDownloadDropdownProps {
   wordCount: number;
@@ -79,33 +81,42 @@ export function DownloadDropdown({
   const menuPositionClass =
     direction === "up" ? "bottom-full mb-2" : "top-full mt-2";
 
+  const transformOrigin = direction === "up" ? "bottom center" : "top right";
+
   const ChevronIcon = direction === "up" ? ChevronUp : ChevronDown;
 
   return (
     <div ref={dropdownRef} className="relative">
       {/* Menu */}
-      {isOpen && (
-        <div
-          className={`absolute ${menuPositionClass} w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden z-50`}
-        >
-          {menuItems.map(
-            ({ icon: Icon, label, compactLabel, onClick }, index) => (
-              <button
-                key={label}
-                onClick={() => handleMenuItemClick(onClick)}
-                className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors ${
-                  index > 0 ? "border-t border-gray-100" : ""
-                }`}
-              >
-                <Icon className="w-5 h-5 text-text-secondary" />
-                <span className="text-sm font-medium text-text-primary">
-                  {compact ? compactLabel : label}
-                </span>
-              </button>
-            )
-          )}
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={SPRING_DROPDOWN}
+            style={{ transformOrigin }}
+            className={`absolute ${menuPositionClass} w-full bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden z-50`}
+          >
+            {menuItems.map(
+              ({ icon: Icon, label, compactLabel, onClick }, index) => (
+                <button
+                  key={label}
+                  onClick={() => handleMenuItemClick(onClick)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors ${
+                    index > 0 ? "border-t border-gray-100" : ""
+                  }`}
+                >
+                  <Icon className="w-5 h-5 text-text-secondary" />
+                  <span className="text-sm font-medium text-text-primary">
+                    {compact ? compactLabel : label}
+                  </span>
+                </button>
+              )
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Trigger Button */}
       <button
@@ -113,8 +124,8 @@ export function DownloadDropdown({
         disabled={disabled}
         className={
           compact
-            ? "flex items-center justify-center gap-2 rounded-full h-9 px-4 bg-primary hover:bg-gray-800 text-white text-sm font-medium transition-all shadow-md hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none"
-            : "w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-gray-800 text-white text-base font-bold transition-all shadow-lg hover:shadow-xl disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none"
+            ? "flex items-center justify-center gap-2 rounded-full h-9 px-4 bg-primary hover:bg-gray-800 active:scale-95 text-white text-sm font-medium transition-all shadow-md hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none"
+            : "w-full flex items-center justify-center gap-2 rounded-full h-12 bg-primary hover:bg-gray-800 active:scale-95 text-white text-base font-bold transition-all shadow-lg hover:shadow-xl disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none"
         }
       >
         <Download className={compact ? "w-4 h-4" : "w-5 h-5"} />

@@ -30,7 +30,7 @@ export function DesktopWordCard({
   onDeleteWord,
 }: IDesktopWordCardProps) {
   return (
-    <div className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between h-64">
+    <div className="group relative bg-white border border-border-color rounded-xl p-5 hover:border-gray-300 hover:shadow-sm hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between h-64">
       {/* Card Header */}
       <div className="flex justify-between items-start">
         {isEditing ? (
@@ -54,7 +54,7 @@ export function DesktopWordCard({
             {word.level}
           </span>
         )}
-        <span className="text-[11px] text-text-secondary font-medium">
+        <span className="text-[11px] text-text-secondary group-hover:text-text-primary font-medium transition-colors">
           {word.date}
         </span>
       </div>
@@ -86,7 +86,7 @@ export function DesktopWordCard({
       {!isEditing && (
         <button
           onClick={() => playTTS(word.word)}
-          className="absolute bottom-4 left-4 size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white transition-colors"
+          className="absolute bottom-4 left-4 size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-primary hover:text-white active:scale-125 transition-all"
           title="듣기"
         >
           <Volume2 className="w-4 h-4" />
