@@ -1,4 +1,5 @@
 import { Volume2 } from "lucide-react";
+import { playTTS } from "~/services/tts";
 import type { IWord } from "~/types";
 
 interface IWordCardProps {
@@ -48,7 +49,9 @@ export function WordCard({
         <div className="h-px w-full bg-gray-100 my-2"></div>
         <div className="flex justify-between items-center">
           <p className="text-gray-500 text-sm font-medium">{word.meaning} </p>
-          <Volume2 className="text-text-primary w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <button onClick={() => playTTS(word.word)}>
+            <Volume2 className="text-text-primary w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
         </div>
       </div>
     </div>
