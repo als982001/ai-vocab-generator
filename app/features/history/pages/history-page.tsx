@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Calendar,
   ChevronDown,
@@ -432,75 +432,84 @@ export default function HistoryPage() {
                     </button>
 
                     {/* Filter Panel */}
-                    {isFilterOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50">
-                        {/* Created At Section */}
-                        <div>
-                          <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-text-secondary" />
-                            Created At
-                          </h4>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleYearClick(2025)}
-                              className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                                selectedYear === 2025
-                                  ? "bg-primary text-white border-transparent shadow-sm"
-                                  : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                              }`}
-                            >
-                              2025
-                            </button>
-                            <button
-                              onClick={() => handleYearClick(2026)}
-                              className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                                selectedYear === 2026
-                                  ? "bg-primary text-white border-transparent shadow-sm"
-                                  : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                              }`}
-                            >
-                              2026
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Divider */}
-                        <div className="h-px bg-border-color"></div>
-
-                        {/* JLPT Level Section */}
-                        <div>
-                          <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
-                            <GraduationCap className="w-4 h-4 text-text-secondary" />
-                            JLPT Level
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {JLPT_LEVELS.map((level) => (
+                    <AnimatePresence>
+                      {isFilterOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          style={{ transformOrigin: "top right" }}
+                          className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50"
+                        >
+                          {/* Created At Section */}
+                          <div>
+                            <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-text-secondary" />
+                              Created At
+                            </h4>
+                            <div className="flex gap-2">
                               <button
-                                key={level}
-                                onClick={() => handleLevelClick(level)}
-                                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
-                                  selectedLevels.includes(level)
+                                onClick={() => handleYearClick(2025)}
+                                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                                  selectedYear === 2025
                                     ? "bg-primary text-white border-transparent shadow-sm"
                                     : "border-border-color text-text-secondary hover:bg-surface-highlight"
                                 }`}
                               >
-                                {level}
+                                2025
                               </button>
-                            ))}
+                              <button
+                                onClick={() => handleYearClick(2026)}
+                                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                                  selectedYear === 2026
+                                    ? "bg-primary text-white border-transparent shadow-sm"
+                                    : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                                }`}
+                              >
+                                2026
+                              </button>
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Action Buttons */}
-                        <div className="pt-1 flex justify-end gap-3 items-center">
-                          <button
-                            onClick={resetFilters}
-                            className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
-                          >
-                            Reset
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                          {/* Divider */}
+                          <div className="h-px bg-border-color"></div>
+
+                          {/* JLPT Level Section */}
+                          <div>
+                            <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                              <GraduationCap className="w-4 h-4 text-text-secondary" />
+                              JLPT Level
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {JLPT_LEVELS.map((level) => (
+                                <button
+                                  key={level}
+                                  onClick={() => handleLevelClick(level)}
+                                  className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
+                                    selectedLevels.includes(level)
+                                      ? "bg-primary text-white border-transparent shadow-sm"
+                                      : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                                  }`}
+                                >
+                                  {level}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="pt-1 flex justify-end gap-3 items-center">
+                            <button
+                              onClick={resetFilters}
+                              className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
