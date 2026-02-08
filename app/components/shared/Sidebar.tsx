@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 
-import { History, LayoutDashboard, Settings } from "lucide-react";
+import { History, LayoutDashboard } from "lucide-react";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 
 interface ISidebarProps {
@@ -92,12 +92,12 @@ export function Sidebar({
             </p>
           </div>
         </Link>
-        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 hover:scale-[1.02] transition-all group">
+        {/* <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 hover:scale-[1.02] transition-all group">
           <Settings className="text-text-secondary group-hover:text-text-primary w-5 h-5" />
           <p className="text-text-secondary group-hover:text-text-primary leading-normal font-bold text-sm">
             Settings
           </p>
-        </div>
+        </div> */}
       </div>
       <div className="h-px w-full bg-border-color my-2"></div>
 
