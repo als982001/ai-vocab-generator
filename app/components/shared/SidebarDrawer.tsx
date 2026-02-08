@@ -1,6 +1,5 @@
 import { X } from "lucide-react";
-
-import { Sidebar } from "~/features/dashboard/components/Sidebar";
+import { Sidebar } from "~/components/shared/Sidebar";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 
 interface ISidebarDrawerProps {

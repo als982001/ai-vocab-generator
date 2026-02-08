@@ -13,8 +13,8 @@ import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
+import { Sidebar } from "~/components/shared/Sidebar";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
