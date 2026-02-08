@@ -26,7 +26,7 @@ import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 import sampleResponse from "../../../../mockDatas/sample_response_02.json";
 
 const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
-const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
+const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
   const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);

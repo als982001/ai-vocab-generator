@@ -24,7 +24,7 @@ export function ImageOverlay({
       />
 
       <div className="absolute inset-0">
-        {words.map((word, index) => {
+        {words.map((word) => {
           if (!word.box_2d || word.box_2d.length !== 4) return null;
 
           const [ymin, xmin, ymax, xmax] = word.box_2d;

@@ -64,8 +64,7 @@ export function DesktopWordCard({
       {/* Card Body */}
       <div className="flex flex-col items-center text-center my-auto w-full">
         <p
-          className="text-xs text-text-secondary mb-1"
-          style={{ visibility: showFurigana ? "visible" : "hidden" }}
+          className={`text-xs text-text-secondary mb-1 ${showFurigana ? "visible" : "invisible"}`}
         >
           {word.reading}
         </p>
