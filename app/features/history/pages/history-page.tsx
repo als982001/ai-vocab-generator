@@ -46,6 +46,8 @@ export default function HistoryPage() {
   const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // 필터 패널 상태 및 핸들러
   const {
@@ -255,8 +257,20 @@ export default function HistoryPage() {
       words = words.filter((word) => selectedLevels.includes(word.level));
     }
 
+    // 검색 필터
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+
+      words = words.filter(
+        (word) =>
+          word.word.toLowerCase().includes(query) ||
+          word.meaning.toLowerCase().includes(query) ||
+          word.reading.toLowerCase().includes(query)
+      );
+    }
+
     return words;
-  }, [sortedWords, selectedYear, selectedLevels]);
+  }, [sortedWords, selectedYear, selectedLevels, searchQuery]);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(filteredWords);
@@ -264,6 +278,12 @@ export default function HistoryPage() {
 
   const handleDownloadCsv = () => {
     downloadWordsAsCsv(filteredWords);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setSearchQuery(searchInput);
+    }
   };
 
   return (
@@ -320,6 +340,9 @@ export default function HistoryPage() {
                 className="w-full h-12 pl-12 pr-4 bg-gray-100 border-none rounded-full text-base focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-text-secondary"
                 placeholder="Search vocabulary..."
                 type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
               />
             </label>
           </div>
@@ -374,6 +397,9 @@ export default function HistoryPage() {
                   className="pl-10 pr-4 py-2 w-64 text-sm bg-white border border-border-color rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder:text-text-secondary"
                   placeholder="Search vocabulary..."
                   type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
                 />
               </div>
               {/* Download Dropdown */}
