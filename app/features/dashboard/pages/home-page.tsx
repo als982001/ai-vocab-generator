@@ -29,7 +29,7 @@ const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
 const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
-  const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
+  const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
@@ -43,8 +43,8 @@ export default function HomePage() {
   const [words, setWords] = useState<IWord[]>(
     USE_SAMPLE_DATA ? (sampleResponse as IWord[]) : []
   );
-  const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
-  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+  const [hoveredWord, setHoveredWord] = useState<string | null>(null);
+  const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -72,28 +72,39 @@ export default function HomePage() {
     downloadWordsAsCsv(words);
   };
 
-  const handleWordClick = (index: number) => {
-    const element = document.getElementById(`word-card-${index}`);
+  const handleLevelToggle = (level: JlptLevel) => {
+    setSelectedLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
+    );
+  };
+
+  const filteredWords =
+    selectedLevels.length === 0
+      ? words
+      : words.filter((word) => selectedLevels.includes(word.level));
+
+  const handleWordClick = (wordStr: string) => {
+    const element = document.getElementById(`word-card-${wordStr}`);
 
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    setHighlightedIndex(index);
+    setHighlightedWord(wordStr);
 
     clearTimeout(highlightTimerRef.current);
     highlightTimerRef.current = setTimeout(() => {
-      setHighlightedIndex(null);
+      setHighlightedWord(null);
     }, 1500);
   };
 
-  const handleWordCardClick = (index: number) => {
+  const handleWordCardClick = (wordStr: string) => {
     // 모바일에서만 동작 (768px 미만)
     if (window.innerWidth >= 768) return;
 
-    const word = words[index];
+    const word = words.find((w) => w.word === wordStr);
 
-    if (!word.box_2d || word.box_2d.length !== 4) return;
+    if (!word?.box_2d || word.box_2d.length !== 4) return;
 
     const imageContainer = imageContainerRef.current;
 
@@ -158,16 +169,16 @@ export default function HomePage() {
       <SidebarDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        selectedLevel={selectedLevel}
-        onLevelChange={setSelectedLevel}
+        selectedLevels={selectedLevels}
+        onLevelToggle={handleLevelToggle}
         displayOptions={displayOptions}
         onDisplayOptionsChange={setDisplayOptions}
       />
 
       <div className="flex flex-col md:flex-row flex-1 h-full w-full overflow-hidden">
         <Sidebar
-          selectedLevel={selectedLevel}
-          onLevelChange={setSelectedLevel}
+          selectedLevels={selectedLevels}
+          onLevelToggle={handleLevelToggle}
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
           className="hidden md:flex"
@@ -184,20 +195,20 @@ export default function HomePage() {
             onImageUpload={handleImageUpload}
             isAnalyzing={isAnalyzing}
             words={words}
-            hoveredWordIndex={hoveredWordIndex}
-            onHover={setHoveredWordIndex}
+            hoveredWord={hoveredWord}
+            onHover={setHoveredWord}
             onWordClick={handleWordClick}
             imageContainerRef={imageContainerRef}
           />
           <ResultPanel
-            words={words}
+            words={filteredWords}
             displayOptions={displayOptions}
             onDownloadTxt={handleDownloadTxt}
             onDownloadCsv={handleDownloadCsv}
-            hoveredWordIndex={hoveredWordIndex}
-            onHover={setHoveredWordIndex}
+            hoveredWord={hoveredWord}
+            onHover={setHoveredWord}
             onWordCardClick={handleWordCardClick}
-            highlightedIndex={highlightedIndex}
+            highlightedWord={highlightedWord}
           />
         </motion.div>
       </div>

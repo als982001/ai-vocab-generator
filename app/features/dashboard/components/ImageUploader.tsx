@@ -27,9 +27,9 @@ interface IImageUploaderProps {
   onImageUpload: (image: IUploadedImage | null) => void;
   isAnalyzing: boolean;
   words: IWord[];
-  hoveredWordIndex: number | null;
-  onHover: (index: number | null) => void;
-  onWordClick: (index: number) => void;
+  hoveredWord: string | null;
+  onHover: (word: string | null) => void;
+  onWordClick: (word: string) => void;
   imageContainerRef?: RefObject<HTMLDivElement | null>;
 }
 
@@ -38,7 +38,7 @@ export function ImageUploader({
   onImageUpload,
   isAnalyzing,
   words,
-  hoveredWordIndex,
+  hoveredWord,
   onHover,
   onWordClick,
   imageContainerRef,
@@ -143,7 +143,7 @@ export function ImageUploader({
                   <ImageOverlay
                     imageSrc={uploadedImage.preview}
                     words={words}
-                    hoveredIndex={hoveredWordIndex}
+                    hoveredWord={hoveredWord}
                     onHover={onHover}
                     onClick={onWordClick}
                   />

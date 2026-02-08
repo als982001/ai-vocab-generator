@@ -6,8 +6,8 @@ import type { IDisplayOptions, JlptLevel } from "~/types";
 interface ISidebarDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedLevel: JlptLevel;
-  onLevelChange: (level: JlptLevel) => void;
+  selectedLevels: JlptLevel[];
+  onLevelToggle: (level: JlptLevel) => void;
   displayOptions: IDisplayOptions;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
 }
@@ -15,8 +15,8 @@ interface ISidebarDrawerProps {
 export function SidebarDrawer({
   isOpen,
   onClose,
-  selectedLevel,
-  onLevelChange,
+  selectedLevels,
+  onLevelToggle,
   displayOptions,
   onDisplayOptionsChange,
 }: ISidebarDrawerProps) {
@@ -46,8 +46,8 @@ export function SidebarDrawer({
           </button>
 
           <Sidebar
-            selectedLevel={selectedLevel}
-            onLevelChange={onLevelChange}
+            selectedLevels={selectedLevels}
+            onLevelToggle={onLevelToggle}
             displayOptions={displayOptions}
             onDisplayOptionsChange={onDisplayOptionsChange}
           />

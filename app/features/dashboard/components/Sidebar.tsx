@@ -4,16 +4,16 @@ import { History, LayoutDashboard, Settings } from "lucide-react";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 
 interface ISidebarProps {
-  selectedLevel: JlptLevel;
-  onLevelChange: (level: JlptLevel) => void;
+  selectedLevels: JlptLevel[];
+  onLevelToggle: (level: JlptLevel) => void;
   displayOptions: IDisplayOptions;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
   className?: string;
 }
 
 export function Sidebar({
-  selectedLevel,
-  onLevelChange,
+  selectedLevels,
+  onLevelToggle,
   displayOptions,
   onDisplayOptionsChange,
   className = "",
@@ -107,9 +107,9 @@ export function Sidebar({
           {jlptLevels.map((level) => (
             <button
               key={level}
-              onClick={() => onLevelChange(level)}
+              onClick={() => onLevelToggle(level)}
               className={`px-4 rounded-full flex items-center justify-center h-8 border transition-colors ${
-                selectedLevel === level
+                selectedLevels.includes(level)
                   ? "bg-primary text-white border-primary"
                   : "bg-surface-highlight text-black border-transparent hover:bg-primary hover:text-white hover:border-primary"
               }`}
@@ -150,7 +150,7 @@ export function Sidebar({
             ></div>
           </div>
         </div>
-        <div className="p-3 border border-border-color flex bg-white rounded-xl gap-4 justify-between items-center">
+        {/* <div className="p-3 border border-border-color flex bg-white rounded-xl gap-4 justify-between items-center">
           <div className="flex flex-col">
             <p className="text-text-primary font-bold text-sm leading-5">
               Show Romaji
@@ -173,7 +173,7 @@ export function Sidebar({
               }`}
             ></div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="mt-auto p-4">

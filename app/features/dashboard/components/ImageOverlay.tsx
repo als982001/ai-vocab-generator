@@ -3,15 +3,15 @@ import type { IWord } from "~/types";
 interface IImageOverlayProps {
   imageSrc: string;
   words: IWord[];
-  hoveredIndex: number | null;
-  onHover: (index: number | null) => void;
-  onClick: (index: number) => void;
+  hoveredWord: string | null;
+  onHover: (word: string | null) => void;
+  onClick: (word: string) => void;
 }
 
 export function ImageOverlay({
   imageSrc,
   words,
-  hoveredIndex,
+  hoveredWord,
   onHover,
   onClick,
 }: IImageOverlayProps) {
@@ -28,7 +28,7 @@ export function ImageOverlay({
           if (!word.box_2d || word.box_2d.length !== 4) return null;
 
           const [ymin, xmin, ymax, xmax] = word.box_2d;
-          const isHovered = hoveredIndex === index;
+          const isHovered = hoveredWord === word.word;
 
           const style = {
             top: `${ymin / 10}%`,
@@ -39,16 +39,16 @@ export function ImageOverlay({
 
           return (
             <div
-              key={index}
+              key={word.word}
               style={style}
               className={`absolute border-2 cursor-pointer transition-all duration-200 ${
                 isHovered
                   ? "border-red-500 bg-red-500/20"
                   : "border-transparent hover:border-red-300"
               }`}
-              onMouseEnter={() => onHover(index)}
+              onMouseEnter={() => onHover(word.word)}
               onMouseLeave={() => onHover(null)}
-              onClick={() => onClick(index)}
+              onClick={() => onClick(word.word)}
             />
           );
         })}
