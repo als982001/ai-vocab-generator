@@ -7,6 +7,7 @@ interface ISidebarProps {
   selectedLevels: JlptLevel[];
   onLevelToggle: (level: JlptLevel) => void;
   displayOptions: IDisplayOptions;
+  showJlptLevelOptions?: boolean;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
   className?: string;
 }
@@ -15,6 +16,7 @@ export function Sidebar({
   selectedLevels,
   onLevelToggle,
   displayOptions,
+  showJlptLevelOptions = true,
   onDisplayOptionsChange,
   className = "",
 }: ISidebarProps) {
@@ -99,26 +101,28 @@ export function Sidebar({
       </div>
       <div className="h-px w-full bg-border-color my-2"></div>
 
-      <div className="p-4">
-        <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-4">
-          JLPT Level
-        </h3>
-        <div className="flex flex-wrap gap-2 px-2">
-          {jlptLevels.map((level) => (
-            <button
-              key={level}
-              onClick={() => onLevelToggle(level)}
-              className={`px-4 rounded-full flex items-center justify-center h-8 border transition-colors ${
-                selectedLevels.includes(level)
-                  ? "bg-primary text-white border-primary"
-                  : "bg-surface-highlight text-black border-transparent hover:bg-primary hover:text-white hover:border-primary"
-              }`}
-            >
-              <p className="leading-normal font-bold text-xs">{level}</p>
-            </button>
-          ))}
+      {showJlptLevelOptions && (
+        <div className="p-4">
+          <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-4">
+            JLPT Level
+          </h3>
+          <div className="flex flex-wrap gap-2 px-2">
+            {jlptLevels.map((level) => (
+              <button
+                key={level}
+                onClick={() => onLevelToggle(level)}
+                className={`px-4 rounded-full flex items-center justify-center h-8 border transition-colors ${
+                  selectedLevels.includes(level)
+                    ? "bg-primary text-white border-primary"
+                    : "bg-surface-highlight text-black border-transparent hover:bg-primary hover:text-white hover:border-primary"
+                }`}
+              >
+                <p className="leading-normal font-bold text-xs">{level}</p>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="px-4 py-2 flex flex-col gap-3">
         <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-2">

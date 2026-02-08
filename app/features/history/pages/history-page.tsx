@@ -32,13 +32,12 @@ import {
   getAnalysisHistory,
   updateWordInAnalysis,
 } from "~/services/localStorage";
-import type { IDisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
 
 export default function HistoryPage() {
-  const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
@@ -277,8 +276,8 @@ export default function HistoryPage() {
       <SidebarDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        selectedLevel={selectedLevel}
-        onLevelChange={setSelectedLevel}
+        selectedLevels={selectedLevels}
+        onLevelToggle={handleLevelClick}
         displayOptions={displayOptions}
         onDisplayOptionsChange={setDisplayOptions}
       />
@@ -297,8 +296,9 @@ export default function HistoryPage() {
 
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
-          selectedLevel={selectedLevel}
-          onLevelChange={setSelectedLevel}
+          showJlptLevelOptions={false}
+          selectedLevels={selectedLevels}
+          onLevelToggle={handleLevelClick}
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
           className="hidden md:flex"
@@ -532,6 +532,7 @@ export default function HistoryPage() {
                         onCancelEdit={cancelEdit}
                         onStartEdit={startEdit}
                         onDeleteWord={handleDeleteWord}
+                        showFurigana={displayOptions.showFurigana}
                       />
                     </AnimatedViewportItem>
                   );

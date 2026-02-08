@@ -9,6 +9,7 @@ interface IDesktopWordCardProps {
   isEditing: boolean;
   editedMeaning: string;
   editedLevel: JlptLevel;
+  showFurigana: boolean;
   onEditedMeaningChange: (value: string) => void;
   onEditedLevelChange: (level: JlptLevel) => void;
   onSaveEdit: () => void;
@@ -22,6 +23,7 @@ export function DesktopWordCard({
   isEditing,
   editedMeaning,
   editedLevel,
+  showFurigana,
   onEditedMeaningChange,
   onEditedLevelChange,
   onSaveEdit,
@@ -61,7 +63,13 @@ export function DesktopWordCard({
 
       {/* Card Body */}
       <div className="flex flex-col items-center text-center my-auto w-full">
-        <p className="text-xs text-text-secondary mb-1">{word.reading}</p>
+        <p
+          className="text-xs text-text-secondary mb-1"
+          style={{ visibility: showFurigana ? "visible" : "hidden" }}
+        >
+          {word.reading}
+        </p>
+
         <h3 className="text-4xl font-bold text-text-primary mb-4">
           {word.word}
         </h3>
