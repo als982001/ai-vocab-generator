@@ -1,4 +1,5 @@
-import { Edit, Volume2 } from "lucide-react";
+import { Volume2 } from "lucide-react";
+import { playTTS } from "~/services/tts";
 import type { IWord } from "~/types";
 
 interface IWordCardProps {
@@ -6,6 +7,7 @@ interface IWordCardProps {
   showFurigana?: boolean;
   showRomaji?: boolean;
   isHovered?: boolean;
+  isHighlighted?: boolean;
   onHover?: (hovered: boolean) => void;
   onClick?: () => void;
 }
@@ -15,28 +17,26 @@ export function WordCard({
   showFurigana = true,
   // showRomaji = false,
   isHovered = false,
+  isHighlighted = false,
   onHover,
   onClick,
 }: IWordCardProps) {
   return (
     <div
-      className={`shrink-0 bg-white rounded-xl p-4 hover:shadow-lg transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
+      className={`shrink-0 bg-white rounded-xl p-4 hover:shadow-lg hover:-translate-y-1 transition-all group cursor-pointer relative overflow-hidden shadow-sm ${
         isHovered ? "ring-2 ring-red-500 shadow-lg" : ""
-      }`}
+      } ${isHighlighted ? "animate-highlight-pulse" : ""}`}
       onMouseEnter={() => onHover?.(true)}
       onMouseLeave={() => onHover?.(false)}
       onClick={onClick}
     >
-      <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-        <Edit className="text-text-secondary hover:text-text-primary w-4 h-4" />
-      </div>
       <div className="flex flex-col gap-1">
-        <div className="flex items-baseline gap-2">
-          {showFurigana && (
-            <p className="text-text-secondary text-xs font-japanese">
-              {word.reading}
-            </p>
-          )}
+        <div className="flex items-baseline justify-between gap-2">
+          <p
+            className={`text-text-secondary text-xs font-japanese ${showFurigana ? "visible" : "invisible"}`}
+          >
+            {word.reading}
+          </p>
           <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-black text-white">
             {word.level}
           </span>
@@ -47,7 +47,9 @@ export function WordCard({
         <div className="h-px w-full bg-gray-100 my-2"></div>
         <div className="flex justify-between items-center">
           <p className="text-gray-500 text-sm font-medium">{word.meaning} </p>
-          <Volume2 className="text-text-primary w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <button onClick={() => playTTS(word.word).catch(() => {})}>
+            <Volume2 className="text-text-primary w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
         </div>
       </div>
     </div>

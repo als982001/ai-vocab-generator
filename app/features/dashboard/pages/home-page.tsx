@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
+import { Sidebar } from "~/components/shared/Sidebar";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
-import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
@@ -19,15 +20,16 @@ import type {
   IWord,
   JlptLevel,
 } from "~/types";
+import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 
 // 샘플 데이터 (반응형 테스트용)
-import sampleResponse from "../../../../mockDatas/sample_response_01.json";
+import sampleResponse from "../../../../mockDatas/sample_response_02.json";
 
-const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_01.png";
-const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
+const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
+const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
-  const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
+  const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
@@ -41,10 +43,13 @@ export default function HomePage() {
   const [words, setWords] = useState<IWord[]>(
     USE_SAMPLE_DATA ? (sampleResponse as IWord[]) : []
   );
-  const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
+  const [hoveredWord, setHoveredWord] = useState<string | null>(null);
+  const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [enableResultAnimation, setEnableResultAnimation] = useState(true);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // 컴포넌트 unmount 시 마지막 이미지의 preview URL 정리 (메모리 누수 방지)
   useEffect(() => {
@@ -55,6 +60,11 @@ export default function HomePage() {
     };
   }, [uploadedImage]);
 
+  // 하이라이트 타이머 cleanup
+  useEffect(() => {
+    return () => clearTimeout(highlightTimerRef.current);
+  }, []);
+
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
   };
@@ -63,21 +73,41 @@ export default function HomePage() {
     downloadWordsAsCsv(words);
   };
 
-  const handleWordClick = (index: number) => {
-    const element = document.getElementById(`word-card-${index}`);
+  const handleLevelToggle = (level: JlptLevel) => {
+    setEnableResultAnimation(false);
+
+    setSelectedLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
+    );
+  };
+
+  const filteredWords =
+    selectedLevels.length === 0
+      ? words
+      : words.filter((word) => selectedLevels.includes(word.level));
+
+  const handleWordClick = (wordStr: string) => {
+    const element = document.getElementById(`word-card-${wordStr}`);
 
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+
+    setHighlightedWord(wordStr);
+
+    clearTimeout(highlightTimerRef.current);
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightedWord(null);
+    }, 1500);
   };
 
-  const handleWordCardClick = (index: number) => {
+  const handleWordCardClick = (wordStr: string) => {
     // 모바일에서만 동작 (768px 미만)
     if (window.innerWidth >= 768) return;
 
-    const word = words[index];
+    const word = words.find((w) => w.word === wordStr);
 
-    if (!word.box_2d || word.box_2d.length !== 4) return;
+    if (!word?.box_2d || word.box_2d.length !== 4) return;
 
     const imageContainer = imageContainerRef.current;
 
@@ -117,6 +147,7 @@ export default function HomePage() {
         const analyzedWords = await analyzeImage(image.file);
 
         setWords(analyzedWords);
+        setEnableResultAnimation(true);
 
         toast.success("분석을 성공했습니다.");
 
@@ -142,39 +173,49 @@ export default function HomePage() {
       <SidebarDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        selectedLevel={selectedLevel}
-        onLevelChange={setSelectedLevel}
+        selectedLevels={selectedLevels}
+        onLevelToggle={handleLevelToggle}
         displayOptions={displayOptions}
         onDisplayOptionsChange={setDisplayOptions}
       />
 
       <div className="flex flex-col md:flex-row flex-1 h-full w-full overflow-hidden">
         <Sidebar
-          selectedLevel={selectedLevel}
-          onLevelChange={setSelectedLevel}
+          selectedLevels={selectedLevels}
+          onLevelToggle={handleLevelToggle}
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
           className="hidden md:flex"
         />
-        <ImageUploader
-          uploadedImage={uploadedImage}
-          onImageUpload={handleImageUpload}
-          isAnalyzing={isAnalyzing}
-          words={words}
-          hoveredWordIndex={hoveredWordIndex}
-          onHover={setHoveredWordIndex}
-          onWordClick={handleWordClick}
-          imageContainerRef={imageContainerRef}
-        />
-        <ResultPanel
-          words={words}
-          displayOptions={displayOptions}
-          onDownloadTxt={handleDownloadTxt}
-          onDownloadCsv={handleDownloadCsv}
-          hoveredWordIndex={hoveredWordIndex}
-          onHover={setHoveredWordIndex}
-          onWordCardClick={handleWordCardClick}
-        />
+        <motion.div
+          className="flex flex-col md:flex-row flex-1 overflow-hidden"
+          variants={PAGE_TRANSITION}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: PAGE_TRANSITION_DURATION }}
+        >
+          <ImageUploader
+            uploadedImage={uploadedImage}
+            onImageUpload={handleImageUpload}
+            isAnalyzing={isAnalyzing}
+            words={words}
+            hoveredWord={hoveredWord}
+            onHover={setHoveredWord}
+            onWordClick={handleWordClick}
+            imageContainerRef={imageContainerRef}
+          />
+          <ResultPanel
+            words={filteredWords}
+            displayOptions={displayOptions}
+            onDownloadTxt={handleDownloadTxt}
+            onDownloadCsv={handleDownloadCsv}
+            hoveredWord={hoveredWord}
+            onHover={setHoveredWord}
+            onWordCardClick={handleWordCardClick}
+            highlightedWord={highlightedWord}
+            enableAnimation={enableResultAnimation}
+          />
+        </motion.div>
       </div>
 
       <FloatingActionButton
