@@ -40,10 +40,10 @@ export function Sidebar({
       <div className="flex flex-col p-4 gap-2">
         <Link to="/">
           <div
-            className={`flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full transition-colors ${
+            className={`flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full transition-all ${
               pathname === "/"
                 ? "bg-surface-highlight"
-                : "hover:bg-surface-highlight/50 group"
+                : "hover:bg-surface-highlight/50 hover:scale-[1.02] group"
             }`}
           >
             <LayoutDashboard
@@ -66,10 +66,10 @@ export function Sidebar({
         </Link>
         <Link to="/history">
           <div
-            className={`flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full transition-colors ${
+            className={`flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full transition-all ${
               pathname === "/history"
                 ? "bg-surface-highlight"
-                : "hover:bg-surface-highlight/50 group"
+                : "hover:bg-surface-highlight/50 hover:scale-[1.02] group"
             }`}
           >
             <History
@@ -90,7 +90,7 @@ export function Sidebar({
             </p>
           </div>
         </Link>
-        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 transition-colors group">
+        <div className="flex items-center gap-3 cursor-pointer h-12 px-4 py-3 rounded-full hover:bg-surface-highlight/50 hover:scale-[1.02] transition-all group">
           <Settings className="text-text-secondary group-hover:text-text-primary w-5 h-5" />
           <p className="text-text-secondary group-hover:text-text-primary leading-normal font-bold text-sm">
             Settings

@@ -8,7 +8,7 @@ interface IMobileWordCardProps {
 
 export function MobileWordCard({ word }: IMobileWordCardProps) {
   return (
-    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm">
+    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.98]">
       {/* Card Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex h-8 w-8 items-center justify-center bg-primary rounded-full">

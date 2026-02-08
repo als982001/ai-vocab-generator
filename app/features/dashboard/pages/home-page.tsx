@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
@@ -19,12 +20,13 @@ import type {
   IWord,
   JlptLevel,
 } from "~/types";
+import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 
 // 샘플 데이터 (반응형 테스트용)
-import sampleResponse from "../../../../mockDatas/sample_response_01.json";
+import sampleResponse from "../../../../mockDatas/sample_response_02.json";
 
-const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_01.png";
-const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
+const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
+const USE_SAMPLE_DATA = true; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
   const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
@@ -42,9 +44,11 @@ export default function HomePage() {
     USE_SAMPLE_DATA ? (sampleResponse as IWord[]) : []
   );
   const [hoveredWordIndex, setHoveredWordIndex] = useState<number | null>(null);
+  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const highlightTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // 컴포넌트 unmount 시 마지막 이미지의 preview URL 정리 (메모리 누수 방지)
   useEffect(() => {
@@ -54,6 +58,11 @@ export default function HomePage() {
       }
     };
   }, [uploadedImage]);
+
+  // 하이라이트 타이머 cleanup
+  useEffect(() => {
+    return () => clearTimeout(highlightTimerRef.current);
+  }, []);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
@@ -69,6 +78,13 @@ export default function HomePage() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+
+    setHighlightedIndex(index);
+
+    clearTimeout(highlightTimerRef.current);
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightedIndex(null);
+    }, 1500);
   };
 
   const handleWordCardClick = (index: number) => {
@@ -156,25 +172,34 @@ export default function HomePage() {
           onDisplayOptionsChange={setDisplayOptions}
           className="hidden md:flex"
         />
-        <ImageUploader
-          uploadedImage={uploadedImage}
-          onImageUpload={handleImageUpload}
-          isAnalyzing={isAnalyzing}
-          words={words}
-          hoveredWordIndex={hoveredWordIndex}
-          onHover={setHoveredWordIndex}
-          onWordClick={handleWordClick}
-          imageContainerRef={imageContainerRef}
-        />
-        <ResultPanel
-          words={words}
-          displayOptions={displayOptions}
-          onDownloadTxt={handleDownloadTxt}
-          onDownloadCsv={handleDownloadCsv}
-          hoveredWordIndex={hoveredWordIndex}
-          onHover={setHoveredWordIndex}
-          onWordCardClick={handleWordCardClick}
-        />
+        <motion.div
+          className="flex flex-col md:flex-row flex-1 overflow-hidden"
+          variants={PAGE_TRANSITION}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: PAGE_TRANSITION_DURATION }}
+        >
+          <ImageUploader
+            uploadedImage={uploadedImage}
+            onImageUpload={handleImageUpload}
+            isAnalyzing={isAnalyzing}
+            words={words}
+            hoveredWordIndex={hoveredWordIndex}
+            onHover={setHoveredWordIndex}
+            onWordClick={handleWordClick}
+            imageContainerRef={imageContainerRef}
+          />
+          <ResultPanel
+            words={words}
+            displayOptions={displayOptions}
+            onDownloadTxt={handleDownloadTxt}
+            onDownloadCsv={handleDownloadCsv}
+            hoveredWordIndex={hoveredWordIndex}
+            onHover={setHoveredWordIndex}
+            onWordCardClick={handleWordCardClick}
+            highlightedIndex={highlightedIndex}
+          />
+        </motion.div>
       </div>
 
       <FloatingActionButton

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Calendar,
   ChevronDown,
@@ -8,6 +9,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
@@ -31,6 +33,7 @@ import {
   updateWordInAnalysis,
 } from "~/services/localStorage";
 import type { IDisplayOptions, JlptLevel } from "~/types";
+import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
 
@@ -302,7 +305,13 @@ export default function HistoryPage() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#fafafa]">
+        <motion.main
+          className="flex-1 flex flex-col h-full relative overflow-hidden bg-[#fafafa]"
+          variants={PAGE_TRANSITION}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: PAGE_TRANSITION_DURATION }}
+        >
           {/* Mobile Search Bar */}
           <div className="md:hidden px-4 py-3 bg-white">
             <label className="relative flex items-center w-full">
@@ -351,7 +360,7 @@ export default function HistoryPage() {
           </div>
 
           {/* Header - Desktop only */}
-          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-10 px-6 items-center justify-between shrink-0">
+          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-30 px-6 items-center justify-between shrink-0">
             <div>
               <h2 className="text-xl font-bold tracking-tight text-text-primary">
                 History
@@ -423,75 +432,84 @@ export default function HistoryPage() {
                     </button>
 
                     {/* Filter Panel */}
-                    {isFilterOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50">
-                        {/* Created At Section */}
-                        <div>
-                          <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-text-secondary" />
-                            Created At
-                          </h4>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleYearClick(2025)}
-                              className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                                selectedYear === 2025
-                                  ? "bg-primary text-white border-transparent shadow-sm"
-                                  : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                              }`}
-                            >
-                              2025
-                            </button>
-                            <button
-                              onClick={() => handleYearClick(2026)}
-                              className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                                selectedYear === 2026
-                                  ? "bg-primary text-white border-transparent shadow-sm"
-                                  : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                              }`}
-                            >
-                              2026
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Divider */}
-                        <div className="h-px bg-border-color"></div>
-
-                        {/* JLPT Level Section */}
-                        <div>
-                          <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
-                            <GraduationCap className="w-4 h-4 text-text-secondary" />
-                            JLPT Level
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {JLPT_LEVELS.map((level) => (
+                    <AnimatePresence>
+                      {isFilterOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          style={{ transformOrigin: "top right" }}
+                          className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50"
+                        >
+                          {/* Created At Section */}
+                          <div>
+                            <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-text-secondary" />
+                              Created At
+                            </h4>
+                            <div className="flex gap-2">
                               <button
-                                key={level}
-                                onClick={() => handleLevelClick(level)}
-                                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
-                                  selectedLevels.includes(level)
+                                onClick={() => handleYearClick(2025)}
+                                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                                  selectedYear === 2025
                                     ? "bg-primary text-white border-transparent shadow-sm"
                                     : "border-border-color text-text-secondary hover:bg-surface-highlight"
                                 }`}
                               >
-                                {level}
+                                2025
                               </button>
-                            ))}
+                              <button
+                                onClick={() => handleYearClick(2026)}
+                                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                                  selectedYear === 2026
+                                    ? "bg-primary text-white border-transparent shadow-sm"
+                                    : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                                }`}
+                              >
+                                2026
+                              </button>
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Action Buttons */}
-                        <div className="pt-1 flex justify-end gap-3 items-center">
-                          <button
-                            onClick={resetFilters}
-                            className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
-                          >
-                            Reset
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                          {/* Divider */}
+                          <div className="h-px bg-border-color"></div>
+
+                          {/* JLPT Level Section */}
+                          <div>
+                            <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                              <GraduationCap className="w-4 h-4 text-text-secondary" />
+                              JLPT Level
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {JLPT_LEVELS.map((level) => (
+                                <button
+                                  key={level}
+                                  onClick={() => handleLevelClick(level)}
+                                  className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
+                                    selectedLevels.includes(level)
+                                      ? "bg-primary text-white border-transparent shadow-sm"
+                                      : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                                  }`}
+                                >
+                                  {level}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="pt-1 flex justify-end gap-3 items-center">
+                            <button
+                              onClick={resetFilters}
+                              className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
@@ -502,19 +520,20 @@ export default function HistoryPage() {
                   const isEditing = checkIsEditing(word);
 
                   return (
-                    <DesktopWordCard
-                      key={index}
-                      word={word}
-                      isEditing={isEditing}
-                      editedMeaning={editedMeaning}
-                      editedLevel={editedLevel}
-                      onEditedMeaningChange={setEditedMeaning}
-                      onEditedLevelChange={setEditedLevel}
-                      onSaveEdit={handleSaveEdit}
-                      onCancelEdit={cancelEdit}
-                      onStartEdit={startEdit}
-                      onDeleteWord={handleDeleteWord}
-                    />
+                    <AnimatedViewportItem key={index}>
+                      <DesktopWordCard
+                        word={word}
+                        isEditing={isEditing}
+                        editedMeaning={editedMeaning}
+                        editedLevel={editedLevel}
+                        onEditedMeaningChange={setEditedMeaning}
+                        onEditedLevelChange={setEditedLevel}
+                        onSaveEdit={handleSaveEdit}
+                        onCancelEdit={cancelEdit}
+                        onStartEdit={startEdit}
+                        onDeleteWord={handleDeleteWord}
+                      />
+                    </AnimatedViewportItem>
                   );
                 })}
               </div>
@@ -522,7 +541,9 @@ export default function HistoryPage() {
               {/* Mobile Card List */}
               <div className="md:hidden flex flex-col gap-4">
                 {filteredWords.map((word, index) => (
-                  <MobileWordCard key={index} word={word} />
+                  <AnimatedViewportItem key={index}>
+                    <MobileWordCard word={word} />
+                  </AnimatedViewportItem>
                 ))}
               </div>
             </div>
@@ -533,7 +554,7 @@ export default function HistoryPage() {
             onDownloadCsv={handleDownloadCsv}
             wordCount={filteredWords.length}
           />
-        </main>
+        </motion.main>
       </div>
     </div>
   );

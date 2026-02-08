@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { FileSpreadsheet, FileText, ImagePlus, Plus } from "lucide-react";
 import type { IUploadedImage } from "~/types";
+import { SPRING_DROPDOWN } from "~/utils/animation";
 
 interface IFloatingActionButtonProps {
   onImageUpload?: (image: IUploadedImage) => void;
@@ -86,43 +88,52 @@ export function FloatingActionButton({
       )}
 
       {/* Menu (위로 열림) */}
-      {isOpen && (
-        <div className="absolute bottom-full mb-3 right-0 w-44 bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden">
-          {onImageUpload && (
-            <button onClick={handleUploadClick} className={menuButtonClass}>
-              <ImagePlus className="w-5 h-5 text-text-secondary" />
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={SPRING_DROPDOWN}
+            style={{ transformOrigin: "bottom right" }}
+            className="absolute bottom-full mb-3 right-0 w-44 bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden"
+          >
+            {onImageUpload && (
+              <button onClick={handleUploadClick} className={menuButtonClass}>
+                <ImagePlus className="w-5 h-5 text-text-secondary" />
+                <span className="text-sm font-medium text-text-primary">
+                  이미지 업로드
+                </span>
+              </button>
+            )}
+            <button
+              onClick={handleDownloadTxtClick}
+              disabled={isDownloadDisabled}
+              className={menuButtonClass}
+            >
+              <FileText className="w-5 h-5 text-text-secondary" />
               <span className="text-sm font-medium text-text-primary">
-                이미지 업로드
+                TXT 다운로드
               </span>
             </button>
-          )}
-          <button
-            onClick={handleDownloadTxtClick}
-            disabled={isDownloadDisabled}
-            className={menuButtonClass}
-          >
-            <FileText className="w-5 h-5 text-text-secondary" />
-            <span className="text-sm font-medium text-text-primary">
-              TXT 다운로드
-            </span>
-          </button>
-          <button
-            onClick={handleDownloadCsvClick}
-            disabled={isDownloadDisabled}
-            className={menuButtonClass}
-          >
-            <FileSpreadsheet className="w-5 h-5 text-text-secondary" />
-            <span className="text-sm font-medium text-text-primary">
-              CSV 다운로드
-            </span>
-          </button>
-        </div>
-      )}
+            <button
+              onClick={handleDownloadCsvClick}
+              disabled={isDownloadDisabled}
+              className={menuButtonClass}
+            >
+              <FileSpreadsheet className="w-5 h-5 text-text-secondary" />
+              <span className="text-sm font-medium text-text-primary">
+                CSV 다운로드
+              </span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* FAB Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-primary hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+        className="w-14 h-14 rounded-full bg-primary hover:bg-gray-800 active:scale-95 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
         aria-label="메뉴 열기"
       >
         <Plus
