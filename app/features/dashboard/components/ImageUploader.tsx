@@ -9,7 +9,6 @@ import {
   CheckCircle,
   CloudUpload,
   HelpCircle,
-  Home,
   Loader2,
   X,
 } from "lucide-react";
@@ -27,9 +26,9 @@ interface IImageUploaderProps {
   onImageUpload: (image: IUploadedImage | null) => void;
   isAnalyzing: boolean;
   words: IWord[];
-  hoveredWordIndex: number | null;
-  onHover: (index: number | null) => void;
-  onWordClick: (index: number) => void;
+  hoveredWord: string | null;
+  onHover: (word: string | null) => void;
+  onWordClick: (word: string) => void;
   imageContainerRef?: RefObject<HTMLDivElement | null>;
 }
 
@@ -38,7 +37,7 @@ export function ImageUploader({
   onImageUpload,
   isAnalyzing,
   words,
-  hoveredWordIndex,
+  hoveredWord,
   onHover,
   onWordClick,
   imageContainerRef,
@@ -89,9 +88,9 @@ export function ImageUploader({
     <main className="h-[45%] md:h-auto md:flex-1 flex flex-col bg-gray-50 relative overflow-hidden min-w-0 shrink-0 md:shrink">
       <div className="h-16 hidden md:flex items-center justify-between px-8 bg-white shrink-0 shadow-sm">
         <div className="flex items-center gap-2 text-text-secondary text-sm">
-          <Home className="w-4 h-4" />
+          <CloudUpload className="w-4 h-4" />
           <span>/</span>
-          <span className="text-text-primary font-medium">Dashboard</span>
+          <span className="text-text-primary font-medium">Upload</span>
         </div>
         <div className="flex items-center gap-4">
           <button className="text-text-secondary hover:text-primary transition-colors">
@@ -143,7 +142,7 @@ export function ImageUploader({
                   <ImageOverlay
                     imageSrc={uploadedImage.preview}
                     words={words}
-                    hoveredIndex={hoveredWordIndex}
+                    hoveredWord={hoveredWord}
                     onHover={onHover}
                     onClick={onWordClick}
                   />

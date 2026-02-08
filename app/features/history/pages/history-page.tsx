@@ -5,6 +5,7 @@ import {
   Calendar,
   ChevronDown,
   GraduationCap,
+  History,
   Search,
   SlidersHorizontal,
 } from "lucide-react";
@@ -13,8 +14,8 @@ import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
+import { Sidebar } from "~/components/shared/Sidebar";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { Sidebar } from "~/features/dashboard/components/Sidebar";
 import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
@@ -32,13 +33,12 @@ import {
   getAnalysisHistory,
   updateWordInAnalysis,
 } from "~/services/localStorage";
-import type { IDisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
 
 export default function HistoryPage() {
-  const [selectedLevel, setSelectedLevel] = useState<JlptLevel>("N3");
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
@@ -47,6 +47,8 @@ export default function HistoryPage() {
   const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // 필터 패널 상태 및 핸들러
   const {
@@ -256,8 +258,20 @@ export default function HistoryPage() {
       words = words.filter((word) => selectedLevels.includes(word.level));
     }
 
+    // 검색 필터
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+
+      words = words.filter(
+        (word) =>
+          word.word.toLowerCase().includes(query) ||
+          word.meaning.toLowerCase().includes(query) ||
+          word.reading.toLowerCase().includes(query)
+      );
+    }
+
     return words;
-  }, [sortedWords, selectedYear, selectedLevels]);
+  }, [sortedWords, selectedYear, selectedLevels, searchQuery]);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(filteredWords);
@@ -265,6 +279,12 @@ export default function HistoryPage() {
 
   const handleDownloadCsv = () => {
     downloadWordsAsCsv(filteredWords);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setSearchQuery(searchInput);
+    }
   };
 
   return (
@@ -277,8 +297,8 @@ export default function HistoryPage() {
       <SidebarDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        selectedLevel={selectedLevel}
-        onLevelChange={setSelectedLevel}
+        selectedLevels={selectedLevels}
+        onLevelToggle={handleLevelClick}
         displayOptions={displayOptions}
         onDisplayOptionsChange={setDisplayOptions}
       />
@@ -297,8 +317,9 @@ export default function HistoryPage() {
 
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
-          selectedLevel={selectedLevel}
-          onLevelChange={setSelectedLevel}
+          showJlptLevelOptions={false}
+          selectedLevels={selectedLevels}
+          onLevelToggle={handleLevelClick}
           displayOptions={displayOptions}
           onDisplayOptionsChange={setDisplayOptions}
           className="hidden md:flex"
@@ -320,6 +341,9 @@ export default function HistoryPage() {
                 className="w-full h-12 pl-12 pr-4 bg-gray-100 border-none rounded-full text-base focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-text-secondary"
                 placeholder="Search vocabulary..."
                 type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
               />
             </label>
           </div>
@@ -360,11 +384,11 @@ export default function HistoryPage() {
           </div>
 
           {/* Header - Desktop only */}
-          <header className="hidden md:flex h-16 border-b border-border-color bg-surface-light/80 backdrop-blur-sm sticky top-0 z-30 px-6 items-center justify-between shrink-0">
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-text-primary">
-                History
-              </h2>
+          <header className="hidden md:flex h-16 bg-white shadow-sm sticky top-0 z-30 px-8 items-center justify-between shrink-0">
+            <div className="flex items-center gap-2 text-text-secondary text-sm">
+              <History className="w-4 h-4" />
+              <span>/</span>
+              <span className="text-text-primary font-medium">History</span>
             </div>
             <div className="flex items-center gap-3">
               {/* Search */}
@@ -374,6 +398,9 @@ export default function HistoryPage() {
                   className="pl-10 pr-4 py-2 w-64 text-sm bg-white border border-border-color rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder:text-text-secondary"
                   placeholder="Search vocabulary..."
                   type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
                 />
               </div>
               {/* Download Dropdown */}
@@ -532,6 +559,7 @@ export default function HistoryPage() {
                         onCancelEdit={cancelEdit}
                         onStartEdit={startEdit}
                         onDeleteWord={handleDeleteWord}
+                        showFurigana={displayOptions.showFurigana}
                       />
                     </AnimatedViewportItem>
                   );
