@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router";
 
-import { CloudUpload, History } from "lucide-react";
+import { CloudUpload, History, LogOut } from "lucide-react";
+import { useAuth } from "~/contexts/AuthContext";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
 
@@ -21,6 +22,7 @@ export function Sidebar({
   onDisplayOptionsChange,
   className = "",
 }: ISidebarProps) {
+  const { user, signOut } = useAuth();
   const jlptLevels: JlptLevel[] = [...JLPT_LEVELS];
   const location = useLocation();
 
@@ -153,15 +155,28 @@ export function Sidebar({
 
       <div className="mt-auto p-4">
         <div className="p-3 bg-white border border-border-color flex gap-3 items-center rounded-xl">
-          <div className="text-white font-bold bg-text-primary rounded-full flex items-center justify-center w-10 h-10">
-            JD
-          </div>
-          <div className="flex flex-col">
-            <p className="text-text-primary font-bold text-sm leading-5">
-              Jane Doe
+          <img
+            src={user?.user_metadata.avatar_url}
+            alt="프로필"
+            className="w-10 h-10 rounded-full"
+            referrerPolicy="no-referrer"
+          />
+          <div className="flex flex-col flex-1 min-w-0">
+            <p className="text-text-primary font-bold text-sm leading-5 truncate">
+              {user?.user_metadata.full_name}
             </p>
-            <p className="text-text-secondary text-xs leading-4">Free Plan</p>
+            <p className="text-text-secondary text-xs leading-4 truncate">
+              {user?.email}
+            </p>
           </div>
+          <button
+            type="button"
+            onClick={signOut}
+            className="text-text-secondary hover:text-text-primary transition-colors shrink-0"
+            title="로그아웃"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </aside>
