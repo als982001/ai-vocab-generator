@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -24,16 +24,16 @@ import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
 import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
 import { MobileWordCard } from "~/features/history/components/MobileWordCard";
 import { SORT_OPTIONS } from "~/features/history/constants/sort";
+import { useAnalysisHistory } from "~/features/history/hooks/useAnalysisHistory";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
-import type { IWordWithDate, SortOption } from "~/features/history/types";
 import {
-  addWordToAnalysis,
-  deleteAnalysis,
-  getAnalysisHistory,
-  updateWordInAnalysis,
-} from "~/services/localStorage";
-import type { IDisplayOptions } from "~/types";
+  useDeleteWord,
+  useRestoreWord,
+  useUpdateWord,
+} from "~/features/history/hooks/useWordMutations";
+import type { IWordWithDate, SortOption } from "~/features/history/types";
+import type { IDisplayOptions, JlptLevel } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 import { formatRelativeTime } from "~/utils/date";
 import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
@@ -44,7 +44,6 @@ export default function HistoryPage() {
     showRomaji: false,
   });
 
-  const [allWords, setAllWords] = useState<IWordWithDate[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -74,143 +73,97 @@ export default function HistoryPage() {
     checkIsEditing,
   } = useWordEdit();
 
-  // 로컬 스토리지에서 히스토리 불러오기
-  useEffect(() => {
-    const loadHistory = () => {
-      const savedHistory = getAnalysisHistory();
+  // Supabase에서 히스토리 조회
+  const { data: historyData } = useAnalysisHistory();
 
-      // 모든 분석 결과의 단어를 플랫하게 펼치기
-      const words: IWordWithDate[] = savedHistory.flatMap((analysis) =>
-        analysis.words.map((word) => ({
-          ...word,
-          date: formatRelativeTime(analysis.createdAt),
-          createdAt: analysis.createdAt,
-          analysisId: analysis.id,
-        }))
-      );
+  const deleteWordMutation = useDeleteWord();
+  const updateWordMutation = useUpdateWord();
+  const restoreWordMutation = useRestoreWord();
 
-      setAllWords(words);
-    };
+  // 쿼리 데이터를 IWordWithDate[] 형태로 변환
+  const allWords = useMemo(() => {
+    if (!historyData) return [];
 
-    loadHistory();
-  }, []);
+    return historyData.flatMap((analysis) =>
+      analysis.words.map((word) => ({
+        ...word,
+        level: word.level as JlptLevel,
+        box_2d: word.box_2d ?? undefined,
+        date: formatRelativeTime(analysis.created_at),
+        createdAt: analysis.created_at,
+        analysisId: analysis.id,
+      }))
+    );
+  }, [historyData]);
 
-  const handleDeleteWord = ({
-    historyId,
-    targetWord,
-  }: {
-    historyId: string;
-    targetWord: string;
-  }) => {
+  const handleDeleteWord = (targetWord: IWordWithDate) => {
+    if (deleteWordMutation.isPending) return;
+
     if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
-      // 삭제 전 백업
-      const deletedWord = allWords.find(
-        (w) => w.analysisId === historyId && w.word === targetWord
-      );
-
-      const updatedHistory = deleteAnalysis({ historyId, targetWord });
-
-      const words: IWordWithDate[] = updatedHistory.flatMap((analysis) =>
-        analysis.words.map((word) => ({
-          ...word,
-          date: formatRelativeTime(analysis.createdAt),
-          createdAt: analysis.createdAt,
-          analysisId: analysis.id,
-        }))
-      );
-
-      toast.success("단어가 삭제되었습니다.", {
-        action: {
-          label: "취소",
-          onClick: () => {
-            if (!deletedWord) return;
-
-            const { word, reading, meaning, level } = deletedWord;
-
-            // 삭제된 단어를 다시 추가
-            const restoredHistory = addWordToAnalysis({
-              historyId,
-              deletedWord: { word, reading, meaning, level },
-            });
-
-            const restoredWords: IWordWithDate[] = restoredHistory.flatMap(
-              (analysis) =>
-                analysis.words.map((word) => ({
-                  ...word,
-                  date: formatRelativeTime(analysis.createdAt),
-                  createdAt: analysis.createdAt,
-                  analysisId: analysis.id,
-                }))
-            );
-
-            setAllWords(restoredWords);
-            toast.success("삭제가 취소되었습니다.");
-          },
+      deleteWordMutation.mutate(targetWord.id, {
+        onSuccess: () => {
+          toast.success("단어가 삭제되었습니다.", {
+            action: {
+              label: "취소",
+              onClick: () => {
+                restoreWordMutation.mutate(
+                  {
+                    analysisId: targetWord.analysisId,
+                    word: {
+                      word: targetWord.word,
+                      reading: targetWord.reading,
+                      meaning: targetWord.meaning,
+                      level: targetWord.level,
+                      box_2d: targetWord.box_2d,
+                    },
+                  },
+                  {
+                    onSuccess: () => toast.success("삭제가 취소되었습니다."),
+                  }
+                );
+              },
+            },
+          });
         },
       });
-
-      setAllWords(words);
     }
   };
 
   // 편집 저장
   const handleSaveEdit = () => {
-    if (!editingWord) return;
+    if (!editingWord || updateWordMutation.isPending) return;
 
-    // 편집 전 원본 데이터 백업
-    const originalWord = allWords.find(
-      (w) =>
-        w.analysisId === editingWord!.historyId && w.word === editingWord!.word
-    );
+    const { wordId } = editingWord;
+    const originalWord = allWords.find((w) => w.id === wordId);
 
-    const updatedHistory = updateWordInAnalysis({
-      historyId: editingWord.historyId,
-      targetWord: editingWord.word,
-      newMeaning: editedMeaning,
-      newLevel: editedLevel,
-    });
+    updateWordMutation.mutate(
+      { wordId, meaning: editedMeaning, level: editedLevel },
+      {
+        onSuccess: () => {
+          toast.success("단어가 저장되었습니다.", {
+            action: {
+              label: "취소",
+              onClick: () => {
+                if (!originalWord) return;
 
-    const words: IWordWithDate[] = updatedHistory.flatMap((analysis) =>
-      analysis.words.map((word) => ({
-        ...word,
-        date: formatRelativeTime(analysis.createdAt),
-        createdAt: analysis.createdAt,
-        analysisId: analysis.id,
-      }))
-    );
-
-    toast.success("단어가 저장되었습니다.", {
-      action: {
-        label: "취소",
-        onClick: () => {
-          if (!originalWord || !editingWord) return;
-
-          // 원본 데이터로 복원
-          const restoredHistory = updateWordInAnalysis({
-            historyId: editingWord.historyId,
-            targetWord: editingWord.word,
-            newMeaning: originalWord.meaning,
-            newLevel: originalWord.level,
+                updateWordMutation.mutate(
+                  {
+                    wordId,
+                    meaning: originalWord.meaning,
+                    level: originalWord.level,
+                  },
+                  {
+                    onSuccess: () => toast.success("수정이 취소되었습니다."),
+                  }
+                );
+              },
+            },
           });
 
-          const restoredWords: IWordWithDate[] = restoredHistory.flatMap(
-            (analysis) =>
-              analysis.words.map((word) => ({
-                ...word,
-                date: formatRelativeTime(analysis.createdAt),
-                createdAt: analysis.createdAt,
-                analysisId: analysis.id,
-              }))
-          );
-
-          setAllWords(restoredWords);
-          toast.success("수정이 취소되었습니다.");
+          clearEditingWord();
         },
-      },
-    });
-
-    setAllWords(words);
-    clearEditingWord();
+      }
+    );
   };
 
   // 정렬된 단어 목록

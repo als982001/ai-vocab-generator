@@ -14,6 +14,8 @@
 - **Routing:** React Router 7
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
+- **Backend:** Supabase (Auth + PostgreSQL)
+- **Server State:** TanStack Query (React Query)
 - **AI:** Google Gemini 2.5 Flash API
 - **UI Libraries:** Lucide React, Sonner (Toast), React Dropzone, Framer Motion
 - **Other:** Web Speech API (TTS)
@@ -71,12 +73,14 @@
 - **단어 편집/삭제**: 뜻 수정 및 불필요한 단어 삭제 (실행 취소 지원)
 - **발음 듣기**: TTS(Text-to-Speech)로 일본어 발음 청취
 
-## 🔧 주요 구현 사항 (2026.02.01 기준)
+## 🔧 주요 구현 사항
 
-### 1. LocalStorage 기반 CRUD 구현
+### 1. Supabase 기반 데이터 영속화 (localStorage → Supabase 마이그레이션)
 
-- **영구 저장**: 서버 없이도 브라우저에서 단어 데이터를 생성/읽기/수정/삭제할 수 있도록 구현
-- **서비스 레이어 분리**: `localStorage.ts`에서 데이터 접근 로직을 캡슐화하여 추후 백엔드 마이그레이션 용이
+- **클라우드 저장**: 기존 localStorage 방식에서 Supabase PostgreSQL로 마이그레이션하여 기기/브라우저 변경 시에도 데이터 유지
+- **테이블 설계**: `analyses`(분석 결과) + `words`(추출 단어) 2개 테이블로 정규화, `words.user_id` 비정규화를 통해 JOIN 없이 빠른 조회 가능
+- **RLS (Row Level Security)**: 유저별 데이터 격리를 DB 레벨에서 보장하여 다른 유저의 데이터 접근 원천 차단
+- **서비스 레이어 분리**: `analysis.ts`에서 Supabase CRUD 로직을 캡슐화하여 페이지 컴포넌트와 데이터 접근 계층 분리
 - **실행 취소 기능**: Sonner Toast의 `action` 속성을 활용해 삭제/수정 작업 즉시 복구 가능
 
 ### 2. 성능 최적화
@@ -111,12 +115,39 @@
 - **데이터 무결성**: 쉼표(`,`)나 줄바꿈이 포함된 텍스트가 셀을 깨뜨리지 않도록 이스케이프 처리 구현
 - **Anki 호환성**: 암기 앱(Anki)에서 즉시 가져올 수 있는 포맷 표준 준수
 
-## 💡 기술적 의사결정 (2026.02.01 기준)
+### 7. Google OAuth 인증
+
+<div align="center">
+  <img src=".github/assets/login_logout.gif" alt="Google 로그인/로그아웃" width="70%">
+</div>
+
+- **Supabase Auth 연동**: Google OAuth 2.0을 통한 소셜 로그인 구현
+- **AuthContext**: `onAuthStateChange`로 세션 변화 감지, `getSession()`으로 기존 세션 복원
+- **라우트 보호**: `ProtectedLayout`을 통해 미인증 유저는 `/login`으로 리다이렉트, 인증된 유저가 `/login` 접근 시 `/`로 리다이렉트
+- **유저 프로필 표시**: 사이드바에 Google 프로필 이미지, 이름, 이메일 표시 및 로그아웃 기능
+
+<div align="center">
+  <img src=".github/assets/user_info.png" alt="사이드바 유저 프로필" width="70%">
+</div>
+
+### 8. TanStack Query 서버 상태 관리
+
+- **커스텀 훅 패턴**: `useAnalysisHistory`, `useSaveAnalysis`, `useWordMutations` 등 기능별 훅으로 분리
+- **자동 캐싱**: 히스토리 페이지 재방문 시 API 재호출 없이 캐시된 데이터 즉시 표시
+- **선언적 상태 관리**: `isLoading`, `isError` 등으로 로딩/에러 UI를 선언적으로 처리
+- **자동 리페칭**: mutation 성공 시 `invalidateQueries`로 관련 데이터 자동 갱신
+
+## 💡 기술적 의사결정
 
 ### CSV 생성을 클라이언트에서 처리한 이유
 
 - **서버 부하 감소**: 별도의 백엔드 API 호출 없이 브라우저의 `Blob` 객체를 활용하여 즉시 파일 생성
 - **보안**: 사용자 데이터가 서버를 거치지 않고 로컬에서 바로 파일로 변환됨
+
+### words 테이블에 user_id를 비정규화한 이유
+
+- **조회 성능**: "내 단어 전체 조회" 시 `analyses` JOIN 없이 `words` 테이블만으로 처리 가능
+- **RLS 단순화**: Row Level Security 정책에서 서브쿼리 없이 `auth.uid() = user_id` 단순 비교로 접근 제어
 
 ## 🗺️ Roadmap
 
@@ -128,7 +159,8 @@
 - [x] TTS 발음 듣기 기능
 - [x] CSV / Anki 포맷 내보내기
 - [x] 모바일 반응형 UI 완벽 지원
-- [ ] 다국어 지원 (영어, 중국어 등)
-- [ ] PDF 파일 업로드 지원
+- [x] Google OAuth 로그인 (Supabase Auth)
+- [x] 클라우드 데이터 저장 (localStorage → Supabase PostgreSQL)
+- [x] TanStack Query 서버 상태 관리
 
 ## 📂 Directory Structure
