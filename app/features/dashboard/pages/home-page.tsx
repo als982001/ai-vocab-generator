@@ -8,12 +8,12 @@ import { Sidebar } from "~/components/shared/Sidebar";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
 import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
+import { useSaveAnalysis } from "~/features/dashboard/hooks/useSaveAnalysis";
 import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
 } from "~/features/dashboard/utils/download";
 import { analyzeImage } from "~/services/gemini";
-import { saveAnalysis } from "~/services/localStorage";
 import type {
   IDisplayOptions,
   IUploadedImage,
@@ -29,6 +29,8 @@ const SAMPLE_IMAGE_PATH = "/mockDatas/sample_image_02.png";
 const USE_SAMPLE_DATA = false; // 테스트 완료 후 false로 변경
 
 export default function HomePage() {
+  const { mutate: saveAnalysis } = useSaveAnalysis();
+
   const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
@@ -151,8 +153,8 @@ export default function HomePage() {
 
         toast.success("분석을 성공했습니다.");
 
-        // 로컬 스토리지에 분석 결과 저장
-        saveAnalysis(analyzedWords, image.file.name);
+        // Supabase에 분석 결과 저장
+        saveAnalysis({ words: analyzedWords, imageName: image.file.name });
       } catch (error) {
         console.error(error);
         toast.error("이미지 분석에 실패했습니다. 다시 시도해주세요.");

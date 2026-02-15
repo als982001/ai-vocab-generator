@@ -4,6 +4,7 @@ import type { IWordWithDate } from "~/features/history/types";
 import type { JlptLevel } from "~/types";
 
 interface IEditingWord {
+  wordId: string;
   historyId: string;
   word: string;
 }
@@ -22,6 +23,7 @@ export function useWordEdit() {
   /** 편집 모드 시작 - 선택한 단어의 현재 값으로 초기화 */
   const startEdit = (word: IWordWithDate) => {
     setEditingWord({
+      wordId: word.id,
       historyId: word.analysisId,
       word: word.word,
     });
@@ -43,10 +45,7 @@ export function useWordEdit() {
 
   /** 특정 단어가 현재 편집 중인지 확인 */
   const checkIsEditing = (word: IWordWithDate) => {
-    return (
-      editingWord?.historyId === word.analysisId &&
-      editingWord?.word === word.word
-    );
+    return editingWord?.wordId === word.id;
   };
 
   return {
