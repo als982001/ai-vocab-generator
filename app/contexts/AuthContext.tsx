@@ -17,10 +17,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      })
+      .catch((error) => {
+        console.error("Failed to get session:", error);
+        setUser(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     const {
       data: { subscription },
@@ -41,7 +49,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) console.error("Sign out failed:", error);
   };
 
   return (

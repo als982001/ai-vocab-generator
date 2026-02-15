@@ -8,7 +8,11 @@ export function useAnalysisHistory() {
 
   return useQuery({
     queryKey: QUERY_KEYS.analysisHistory,
-    queryFn: () => getAnalysisHistory(user!.id),
+    queryFn: () => {
+      if (!user) throw new Error("User must be authenticated");
+
+      return getAnalysisHistory(user.id);
+    },
     enabled: !!user,
   });
 }

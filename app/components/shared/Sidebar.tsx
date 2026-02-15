@@ -156,7 +156,18 @@ export function Sidebar({
       <div className="mt-auto p-4">
         <div className="p-3 bg-white border border-border-color flex gap-3 items-center rounded-xl">
           <img
-            src={user?.user_metadata.avatar_url}
+            src={(() => {
+              const url = user?.user_metadata.avatar_url;
+              if (!url) return undefined;
+
+              try {
+                return ["http:", "https:"].includes(new URL(url).protocol)
+                  ? url
+                  : undefined;
+              } catch {
+                return undefined;
+              }
+            })()}
             alt="프로필"
             className="w-10 h-10 rounded-full"
             referrerPolicy="no-referrer"

@@ -14,8 +14,11 @@ export function useSaveAnalysis() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ words, imageName }: ISaveAnalysisParams) =>
-      saveAnalysis(user!.id, words, imageName),
+    mutationFn: ({ words, imageName }: ISaveAnalysisParams) => {
+      if (!user) throw new Error("User must be authenticated");
+
+      return saveAnalysis(user.id, words, imageName);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.analysisHistory });
     },

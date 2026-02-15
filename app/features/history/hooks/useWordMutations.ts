@@ -39,8 +39,11 @@ export function useRestoreWord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ analysisId, word }: { analysisId: string; word: IWord }) =>
-      restoreWord(user!.id, analysisId, word),
+    mutationFn: ({ analysisId, word }: { analysisId: string; word: IWord }) => {
+      if (!user) throw new Error("User must be authenticated");
+
+      return restoreWord(user.id, analysisId, word);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.analysisHistory });
     },

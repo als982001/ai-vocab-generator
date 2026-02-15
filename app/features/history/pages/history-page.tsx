@@ -97,6 +97,8 @@ export default function HistoryPage() {
   }, [historyData]);
 
   const handleDeleteWord = (targetWord: IWordWithDate) => {
+    if (deleteWordMutation.isPending) return;
+
     if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
       deleteWordMutation.mutate(targetWord.id, {
         onSuccess: () => {
@@ -129,7 +131,7 @@ export default function HistoryPage() {
 
   // 편집 저장
   const handleSaveEdit = () => {
-    if (!editingWord) return;
+    if (!editingWord || updateWordMutation.isPending) return;
 
     const { wordId } = editingWord;
     const originalWord = allWords.find((w) => w.id === wordId);
