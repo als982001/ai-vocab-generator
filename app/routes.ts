@@ -1,12 +1,17 @@
-import { type RouteConfig, index, route } from "@react-router/dev/routes";
+import {
+  type RouteConfig,
+  index,
+  layout,
+  route,
+} from "@react-router/dev/routes";
 
 export default [
-  // 홈 페이지 (대시보드)
-  index("./features/dashboard/pages/home-page.tsx"),
-
-  // 히스토리 페이지
-  route("/history", "./features/history/pages/history-page.tsx"),
-
-  // 로그인 페이지
+  // 로그인 페이지 (인증 불필요)
   route("/login", "./features/auth/pages/login-page.tsx"),
+
+  // 인증 필요 라우트
+  layout("./components/shared/ProtectedLayout.tsx", [
+    index("./features/dashboard/pages/home-page.tsx"),
+    route("/history", "./features/history/pages/history-page.tsx"),
+  ]),
 ] satisfies RouteConfig;

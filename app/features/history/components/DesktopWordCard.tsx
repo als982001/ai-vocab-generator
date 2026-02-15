@@ -15,7 +15,7 @@ interface IDesktopWordCardProps {
   onSaveEdit: () => void;
   onCancelEdit: () => void;
   onStartEdit: (word: IWordWithDate) => void;
-  onDeleteWord: (params: { historyId: string; targetWord: string }) => void;
+  onDeleteWord: (word: IWordWithDate) => void;
 }
 
 export function DesktopWordCard({
@@ -129,12 +129,7 @@ export function DesktopWordCard({
               <Edit className="w-4 h-4" />
             </button>
             <button
-              onClick={() =>
-                onDeleteWord({
-                  historyId: word.analysisId,
-                  targetWord: word.word,
-                })
-              }
+              onClick={() => onDeleteWord(word)}
               className="size-8 rounded-full bg-surface-highlight flex items-center justify-center text-text-secondary hover:bg-red-500 hover:text-white transition-colors"
               title="Delete"
             >

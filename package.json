@@ -16,6 +16,8 @@
     "@react-router/dev": "^7.11.0",
     "@react-router/node": "^7.11.0",
     "@react-router/serve": "^7.11.0",
+    "@supabase/supabase-js": "^2.95.3",
+    "@tanstack/react-query": "^5.90.21",
     "@vercel/react-router": "^1.2.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.33.0",
