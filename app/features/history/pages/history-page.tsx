@@ -1,14 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  Calendar,
-  ChevronDown,
-  GraduationCap,
-  History,
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { History, Search, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
@@ -21,33 +14,34 @@ import {
   downloadWordsAsTxt,
 } from "~/features/dashboard/utils/download";
 import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
+import { FilterDropdown } from "~/features/history/components/FilterDropdown";
 import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
 import { MobileWordCard } from "~/features/history/components/MobileWordCard";
 import { SORT_OPTIONS } from "~/features/history/constants/sort";
 import { useAnalysisHistory } from "~/features/history/hooks/useAnalysisHistory";
+import { useSearch } from "~/features/history/hooks/useSearch";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
+import { useWordListData } from "~/features/history/hooks/useWordListData";
 import {
   useDeleteWord,
   useRestoreWord,
   useUpdateWord,
 } from "~/features/history/hooks/useWordMutations";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
-import type { IDisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
-import { formatRelativeTime } from "~/utils/date";
-import { JLPT_LEVELS, levelToNumber } from "~/utils/jlpt";
 
 export default function HistoryPage() {
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
     showRomaji: false,
   });
-
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+
+  const { searchInput, searchQuery, setSearchInput, handleSearchKeyDown } =
+    useSearch();
 
   // 필터 패널 상태 및 핸들러
   const {
@@ -76,25 +70,17 @@ export default function HistoryPage() {
   // Supabase에서 히스토리 조회
   const { data: historyData } = useAnalysisHistory();
 
+  const { allWords, filteredWords } = useWordListData({
+    historyData,
+    sortBy,
+    selectedYear,
+    selectedLevels,
+    searchQuery,
+  });
+
   const deleteWordMutation = useDeleteWord();
   const updateWordMutation = useUpdateWord();
   const restoreWordMutation = useRestoreWord();
-
-  // 쿼리 데이터를 IWordWithDate[] 형태로 변환
-  const allWords = useMemo(() => {
-    if (!historyData) return [];
-
-    return historyData.flatMap((analysis) =>
-      analysis.words.map((word) => ({
-        ...word,
-        level: word.level as JlptLevel,
-        box_2d: word.box_2d ?? undefined,
-        date: formatRelativeTime(analysis.created_at),
-        createdAt: analysis.created_at,
-        analysisId: analysis.id,
-      }))
-    );
-  }, [historyData]);
 
   const handleDeleteWord = (targetWord: IWordWithDate) => {
     if (deleteWordMutation.isPending) return;
@@ -166,78 +152,12 @@ export default function HistoryPage() {
     );
   };
 
-  // 정렬된 단어 목록
-  const sortedWords = useMemo(() => {
-    const words = [...allWords];
-
-    switch (sortBy) {
-      case "oldest":
-        return words.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-      case "level-easy":
-        return words.sort(
-          (a, b) => levelToNumber(b.level) - levelToNumber(a.level)
-        ); // N5 -> N4 -> N3 -> N2 -> N1
-      case "level-hard":
-        return words.sort(
-          (a, b) => levelToNumber(a.level) - levelToNumber(b.level)
-        ); // N1 -> N2 -> N3 -> N4 -> N5
-      case "newest":
-      default:
-        return words.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-    }
-  }, [allWords, sortBy]);
-
-  // 필터링된 단어 목록
-  const filteredWords = useMemo(() => {
-    let words = [...sortedWords];
-
-    // 연도 필터
-    if (selectedYear !== null) {
-      words = words.filter((word) => {
-        const year = new Date(word.createdAt).getFullYear();
-
-        return year === selectedYear;
-      });
-    }
-
-    // 레벨 필터 (다중 선택)
-    if (selectedLevels.length > 0) {
-      words = words.filter((word) => selectedLevels.includes(word.level));
-    }
-
-    // 검색 필터
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-
-      words = words.filter(
-        (word) =>
-          word.word.toLowerCase().includes(query) ||
-          word.meaning.toLowerCase().includes(query) ||
-          word.reading.toLowerCase().includes(query)
-      );
-    }
-
-    return words;
-  }, [sortedWords, selectedYear, selectedLevels, searchQuery]);
-
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(filteredWords);
   };
 
   const handleDownloadCsv = () => {
     downloadWordsAsCsv(filteredWords);
-  };
-
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      setSearchQuery(searchInput);
-    }
   };
 
   return (
@@ -395,102 +315,15 @@ export default function HistoryPage() {
                   </div>
 
                   {/* Filters Dropdown */}
-                  <div className="relative">
-                    <button
-                      onClick={toggleFilter}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-white border border-border-color rounded-lg hover:border-gray-300 transition-colors shadow-sm select-none"
-                    >
-                      <SlidersHorizontal className="w-[18px] h-[18px] text-text-secondary" />
-                      <span className="text-sm font-medium text-text-primary">
-                        Filters
-                      </span>
-                      <ChevronDown
-                        className={`w-4 h-4 text-text-secondary transition-transform ${
-                          isFilterOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-
-                    {/* Filter Panel */}
-                    <AnimatePresence>
-                      {isFilterOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.15 }}
-                          style={{ transformOrigin: "top right" }}
-                          className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50"
-                        >
-                          {/* Created At Section */}
-                          <div>
-                            <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-text-secondary" />
-                              Created At
-                            </h4>
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleYearClick(2025)}
-                                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                                  selectedYear === 2025
-                                    ? "bg-primary text-white border-transparent shadow-sm"
-                                    : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                                }`}
-                              >
-                                2025
-                              </button>
-                              <button
-                                onClick={() => handleYearClick(2026)}
-                                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                                  selectedYear === 2026
-                                    ? "bg-primary text-white border-transparent shadow-sm"
-                                    : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                                }`}
-                              >
-                                2026
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Divider */}
-                          <div className="h-px bg-border-color"></div>
-
-                          {/* JLPT Level Section */}
-                          <div>
-                            <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
-                              <GraduationCap className="w-4 h-4 text-text-secondary" />
-                              JLPT Level
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {JLPT_LEVELS.map((level) => (
-                                <button
-                                  key={level}
-                                  onClick={() => handleLevelClick(level)}
-                                  className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
-                                    selectedLevels.includes(level)
-                                      ? "bg-primary text-white border-transparent shadow-sm"
-                                      : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                                  }`}
-                                >
-                                  {level}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="pt-1 flex justify-end gap-3 items-center">
-                            <button
-                              onClick={resetFilters}
-                              className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
-                            >
-                              Reset
-                            </button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  <FilterDropdown
+                    isFilterOpen={isFilterOpen}
+                    selectedYear={selectedYear}
+                    selectedLevels={selectedLevels}
+                    onYearChange={handleYearClick}
+                    onLevelChange={handleLevelClick}
+                    onReset={resetFilters}
+                    onToggle={toggleFilter}
+                  />
                 </div>
               </div>
 
