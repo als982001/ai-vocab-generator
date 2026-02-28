@@ -13,7 +13,7 @@ interface IAnalysisData {
     word: string;
     reading: string;
     meaning: string;
-    level: string;
+    level: JlptLevel;
     box_2d?: number[] | null;
   }[];
 }

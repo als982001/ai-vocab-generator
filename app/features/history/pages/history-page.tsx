@@ -85,6 +85,7 @@ export default function HistoryPage() {
   const handleDeleteWord = (targetWord: IWordWithDate) => {
     if (deleteWordMutation.isPending) return;
 
+    // confirm 대신 모달/다이얼로그 적용하면 좋을 거 같음
     if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
       deleteWordMutation.mutate(targetWord.id, {
         onSuccess: () => {

@@ -1,3 +1,5 @@
+import type { JlptLevel } from ".";
+
 export interface IAnalysisRow {
   id: string;
   user_id: string;
@@ -12,7 +14,7 @@ export interface IWordRow {
   word: string;
   reading: string;
   meaning: string;
-  level: string;
+  level: JlptLevel;
   box_2d: number[] | null;
   created_at: string;
 }
