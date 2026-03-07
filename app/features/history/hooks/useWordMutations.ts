@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "~/constants/queryKeys";
 import { useAuth } from "~/contexts/AuthContext";
 import { deleteWord, restoreWord, updateWord } from "~/services/analysis";
-import type { IWord } from "~/types";
+import type { IWord, JlptLevel } from "~/types";
 
 export function useDeleteWord() {
   const queryClient = useQueryClient();
@@ -26,7 +26,7 @@ export function useUpdateWord() {
     }: {
       wordId: string;
       meaning: string;
-      level: string;
+      level: JlptLevel;
     }) => updateWord(wordId, meaning, level),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.analysisHistory });

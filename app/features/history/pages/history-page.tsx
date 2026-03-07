@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { motion } from "framer-motion";
 import { History, Search, SlidersHorizontal } from "lucide-react";
-import { toast } from "sonner";
 import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
@@ -20,14 +19,10 @@ import { MobileWordCard } from "~/features/history/components/MobileWordCard";
 import { SORT_OPTIONS } from "~/features/history/constants/sort";
 import { useAnalysisHistory } from "~/features/history/hooks/useAnalysisHistory";
 import { useSearch } from "~/features/history/hooks/useSearch";
+import { useWordActions } from "~/features/history/hooks/useWordActions";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import { useWordListData } from "~/features/history/hooks/useWordListData";
-import {
-  useDeleteWord,
-  useRestoreWord,
-  useUpdateWord,
-} from "~/features/history/hooks/useWordMutations";
 import type { IWordWithDate, SortOption } from "~/features/history/types";
 import type { IDisplayOptions } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
@@ -78,80 +73,7 @@ export default function HistoryPage() {
     searchQuery,
   });
 
-  const deleteWordMutation = useDeleteWord();
-  const updateWordMutation = useUpdateWord();
-  const restoreWordMutation = useRestoreWord();
-
-  const handleDeleteWord = (targetWord: IWordWithDate) => {
-    if (deleteWordMutation.isPending) return;
-
-    // confirm 대신 모달/다이얼로그 적용하면 좋을 거 같음
-    if (confirm("정말 이 단어를 삭제하시겠습니까?")) {
-      deleteWordMutation.mutate(targetWord.id, {
-        onSuccess: () => {
-          toast.success("단어가 삭제되었습니다.", {
-            action: {
-              label: "취소",
-              onClick: () => {
-                restoreWordMutation.mutate(
-                  {
-                    analysisId: targetWord.analysisId,
-                    word: {
-                      word: targetWord.word,
-                      reading: targetWord.reading,
-                      meaning: targetWord.meaning,
-                      level: targetWord.level,
-                      box_2d: targetWord.box_2d,
-                    },
-                  },
-                  {
-                    onSuccess: () => toast.success("삭제가 취소되었습니다."),
-                  }
-                );
-              },
-            },
-          });
-        },
-      });
-    }
-  };
-
-  // 편집 저장
-  const handleSaveEdit = () => {
-    if (!editingWord || updateWordMutation.isPending) return;
-
-    const { wordId } = editingWord;
-    const originalWord = allWords.find((w) => w.id === wordId);
-
-    updateWordMutation.mutate(
-      { wordId, meaning: editedMeaning, level: editedLevel },
-      {
-        onSuccess: () => {
-          toast.success("단어가 저장되었습니다.", {
-            action: {
-              label: "취소",
-              onClick: () => {
-                if (!originalWord) return;
-
-                updateWordMutation.mutate(
-                  {
-                    wordId,
-                    meaning: originalWord.meaning,
-                    level: originalWord.level,
-                  },
-                  {
-                    onSuccess: () => toast.success("수정이 취소되었습니다."),
-                  }
-                );
-              },
-            },
-          });
-
-          clearEditingWord();
-        },
-      }
-    );
-  };
+  const { handleDeleteWord, handleSaveEdit } = useWordActions(allWords);
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(filteredWords);
@@ -342,7 +264,14 @@ export default function HistoryPage() {
                         editedLevel={editedLevel}
                         onEditedMeaningChange={setEditedMeaning}
                         onEditedLevelChange={setEditedLevel}
-                        onSaveEdit={handleSaveEdit}
+                        onSaveEdit={() =>
+                          handleSaveEdit(
+                            editingWord,
+                            editedMeaning,
+                            editedLevel,
+                            clearEditingWord
+                          )
+                        }
                         onCancelEdit={cancelEdit}
                         onStartEdit={startEdit}
                         onDeleteWord={handleDeleteWord}
