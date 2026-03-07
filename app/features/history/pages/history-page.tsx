@@ -23,7 +23,7 @@ import { useWordActions } from "~/features/history/hooks/useWordActions";
 import { useWordEdit } from "~/features/history/hooks/useWordEdit";
 import { useWordFilter } from "~/features/history/hooks/useWordFilter";
 import { useWordListData } from "~/features/history/hooks/useWordListData";
-import type { IWordWithDate, SortOption } from "~/features/history/types";
+import type { SortOption } from "~/features/history/types";
 import type { IDisplayOptions } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 
