@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { motion } from "framer-motion";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
@@ -54,10 +54,13 @@ export default function HomePage() {
     );
   };
 
-  const filteredWords =
-    selectedLevels.length === 0
-      ? words
-      : words.filter((word) => selectedLevels.includes(word.level));
+  const filteredWords = useMemo(
+    () =>
+      selectedLevels.length === 0
+        ? words
+        : words.filter((word) => selectedLevels.includes(word.level)),
+    [words, selectedLevels]
+  );
 
   return (
     <div className="bg-background-dark text-text-primary font-display h-screen w-full overflow-hidden flex flex-col">
