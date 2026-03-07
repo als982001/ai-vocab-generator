@@ -30,6 +30,19 @@ export function ResultPanel({
   highlightedWord,
   enableAnimation = true,
 }: IResultPanelProps) {
+  const renderWordCard = (word: IWord) => (
+    <div key={word.word} id={`word-card-${word.word}`}>
+      <WordCard
+        word={word}
+        showFurigana={displayOptions.showFurigana}
+        isHovered={hoveredWord === word.word}
+        isHighlighted={highlightedWord === word.word}
+        onHover={(hovered) => onHover(hovered ? word.word : null)}
+        onClick={() => onWordCardClick?.(word.word)}
+      />
+    </div>
+  );
+
   return (
     <aside className="flex-1 md:w-[350px] md:flex-none flex flex-col bg-white md:bg-gray-50 rounded-t-xl md:rounded-none -mt-4 md:mt-0 relative shadow-sm z-10 overflow-hidden">
       {/* 모바일 드래그 핸들 */}
@@ -66,33 +79,13 @@ export function ResultPanel({
           <AnimatedList className="flex flex-col gap-3">
             {words.map((word) => (
               <AnimatedListItem key={word.word}>
-                <div id={`word-card-${word.word}`}>
-                  <WordCard
-                    word={word}
-                    showFurigana={displayOptions.showFurigana}
-                    isHovered={hoveredWord === word.word}
-                    isHighlighted={highlightedWord === word.word}
-                    onHover={(hovered) => onHover(hovered ? word.word : null)}
-                    onClick={() => onWordCardClick?.(word.word)}
-                  />
-                </div>
+                {renderWordCard(word)}
               </AnimatedListItem>
             ))}
           </AnimatedList>
         ) : (
           <div className="flex flex-col gap-3">
-            {words.map((word) => (
-              <div id={`word-card-${word.word}`} key={word.word}>
-                <WordCard
-                  word={word}
-                  showFurigana={displayOptions.showFurigana}
-                  isHovered={hoveredWord === word.word}
-                  isHighlighted={highlightedWord === word.word}
-                  onHover={(hovered) => onHover(hovered ? word.word : null)}
-                  onClick={() => onWordCardClick?.(word.word)}
-                />
-              </div>
-            ))}
+            {words.map((word) => renderWordCard(word))}
           </div>
         )}
       </div>

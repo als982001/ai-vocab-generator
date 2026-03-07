@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { IWord } from "~/types";
+import { isLocalEnvironment } from "~/utils/env";
 
 import {
   ANALYZE_IMAGE_PROMPT,
@@ -60,9 +61,7 @@ export const analyzeImage = async (file: File): Promise<IWord[]> => {
 
   // 2. 내 Vercel 서버로 요청 (API 키 필요 없음!)
   // 로컬 환경 체크
-  const isLocal = window.location.hostname === "localhost";
-
-  if (isLocal) {
+  if (isLocalEnvironment()) {
     const result = await analyzeImageLocal(imagePart);
 
     return result;

@@ -4,6 +4,7 @@ import { CloudUpload, History, LogOut } from "lucide-react";
 import { useAuth } from "~/contexts/AuthContext";
 import type { IDisplayOptions, JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
+import { getValidAvatarUrl } from "~/utils/url";
 
 interface ISidebarProps {
   selectedLevels: JlptLevel[];
@@ -156,18 +157,7 @@ export function Sidebar({
       <div className="mt-auto p-4">
         <div className="p-3 bg-white border border-border-color flex gap-3 items-center rounded-xl">
           <img
-            src={(() => {
-              const url = user?.user_metadata.avatar_url;
-              if (!url) return undefined;
-
-              try {
-                return ["http:", "https:"].includes(new URL(url).protocol)
-                  ? url
-                  : undefined;
-              } catch {
-                return undefined;
-              }
-            })()}
+            src={getValidAvatarUrl(user?.user_metadata.avatar_url) ?? ""}
             alt="프로필"
             className="w-10 h-10 rounded-full"
             referrerPolicy="no-referrer"
