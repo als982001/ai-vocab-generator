@@ -30,7 +30,6 @@ import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 export default function HistoryPage() {
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
-    showRomaji: false,
   });
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

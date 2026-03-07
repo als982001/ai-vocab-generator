@@ -33,7 +33,6 @@ export default function HomePage() {
   const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
     showFurigana: true,
-    showRomaji: false,
   });
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

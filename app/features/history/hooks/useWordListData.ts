@@ -2,24 +2,12 @@ import { useMemo } from "react";
 
 import type { SortOption } from "~/features/history/types";
 import type { JlptLevel } from "~/types";
+import type { IAnalysisRow, IWordRow } from "~/types/supabase";
 import { formatRelativeTime } from "~/utils/date";
 import { levelToNumber } from "~/utils/jlpt";
 
-interface IAnalysisData {
-  id: string;
-  created_at: string;
-  words: {
-    id: string;
-    word: string;
-    reading: string;
-    meaning: string;
-    level: JlptLevel;
-    box_2d?: number[] | null;
-  }[];
-}
-
 interface IUseWordListDataParams {
-  historyData: IAnalysisData[] | undefined;
+  historyData: (IAnalysisRow & { words: IWordRow[] })[] | undefined;
   sortBy: SortOption;
   selectedYear: number | null;
   selectedLevels: JlptLevel[];
@@ -40,7 +28,7 @@ export function useWordListData({
     return historyData.flatMap((analysis) =>
       analysis.words.map((word) => ({
         ...word,
-        level: word.level as JlptLevel,
+        level: word.level,
         box_2d: word.box_2d ?? undefined,
         date: formatRelativeTime(analysis.created_at),
         createdAt: analysis.created_at,

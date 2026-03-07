@@ -70,7 +70,6 @@ export function ResultPanel({
                   <WordCard
                     word={word}
                     showFurigana={displayOptions.showFurigana}
-                    showRomaji={displayOptions.showRomaji}
                     isHovered={hoveredWord === word.word}
                     isHighlighted={highlightedWord === word.word}
                     onHover={(hovered) => onHover(hovered ? word.word : null)}
@@ -87,7 +86,6 @@ export function ResultPanel({
                 <WordCard
                   word={word}
                   showFurigana={displayOptions.showFurigana}
-                  showRomaji={displayOptions.showRomaji}
                   isHovered={hoveredWord === word.word}
                   isHighlighted={highlightedWord === word.word}
                   onHover={(hovered) => onHover(hovered ? word.word : null)}
