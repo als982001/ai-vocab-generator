@@ -1,5 +1,8 @@
 import { Calendar, Check, GraduationCap } from "lucide-react";
-import { SORT_OPTIONS } from "~/features/history/constants/sort";
+import {
+  AVAILABLE_YEARS,
+  SORT_OPTIONS,
+} from "~/features/history/constants/sort";
 import type { SortOption } from "~/features/history/types";
 import type { JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
@@ -91,26 +94,19 @@ export function MobileFilterSheet({
               </h3>
             </div>
             <div className="flex gap-3">
-              <button
-                onClick={() => onYearChange(2025)}
-                className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
-                  selectedYear === 2025
-                    ? "border-primary bg-primary text-white"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
-                }`}
-              >
-                2025
-              </button>
-              <button
-                onClick={() => onYearChange(2026)}
-                className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
-                  selectedYear === 2026
-                    ? "border-primary bg-primary text-white"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
-                }`}
-              >
-                2026
-              </button>
+              {AVAILABLE_YEARS.map((year) => (
+                <button
+                  key={year}
+                  onClick={() => onYearChange(year)}
+                  className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
+                    selectedYear === year
+                      ? "border-primary bg-primary text-white"
+                      : "border-gray-200 text-gray-500 hover:border-gray-300"
+                  }`}
+                >
+                  {year}
+                </button>
+              ))}
             </div>
           </div>
 

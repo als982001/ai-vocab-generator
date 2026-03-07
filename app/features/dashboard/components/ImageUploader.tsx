@@ -15,6 +15,10 @@ import {
 import { ImageOverlay } from "~/features/dashboard/components/ImageOverlay";
 import type { IUploadedImage, IWord } from "~/types";
 
+const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+const LOADING_MESSAGE_INTERVAL_MS = 3000;
+
 const LOADING_MESSAGES = [
   "이미지 분석 중...",
   "단어를 추출하는 중...",
@@ -49,7 +53,7 @@ export function ImageUploader({
 
     const interval = setInterval(() => {
       setLoadingMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-    }, 3000);
+    }, LOADING_MESSAGE_INTERVAL_MS);
 
     return () => {
       clearInterval(interval);
@@ -73,7 +77,7 @@ export function ImageUploader({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
-    maxSize: 5 * 1024 * 1024, // 5MB
+    maxSize: MAX_FILE_SIZE_BYTES,
     multiple: false,
   });
 
@@ -177,7 +181,7 @@ export function ImageUploader({
                       : "이미지를 드래그 앤 드롭하세요"}
                   </p>
                   <p className="text-text-secondary text-sm font-normal text-center">
-                    JPG, PNG, WEBP 지원 (최대 5MB)
+                    {`JPG, PNG, WEBP 지원 (최대 ${MAX_FILE_SIZE_MB}MB)`}
                   </p>
                 </div>
                 <button className="mt-4 flex min-w-[140px] items-center justify-center rounded-full h-11 px-6 bg-primary hover:bg-gray-800 text-white text-sm font-bold tracking-wide transition-all shadow-lg hover:shadow-xl">

@@ -1,5 +1,7 @@
 import type { IWord } from "~/types";
 
+const BOX_COORDINATE_SCALE = 1000;
+
 interface IImageOverlayProps {
   imageSrc: string;
   words: IWord[];
@@ -31,10 +33,10 @@ export function ImageOverlay({
           const isHovered = hoveredWord === word.word;
 
           const style = {
-            top: `${ymin / 10}%`,
-            left: `${xmin / 10}%`,
-            width: `${(xmax - xmin) / 10}%`,
-            height: `${(ymax - ymin) / 10}%`,
+            top: `${(ymin / BOX_COORDINATE_SCALE) * 100}%`,
+            left: `${(xmin / BOX_COORDINATE_SCALE) * 100}%`,
+            width: `${((xmax - xmin) / BOX_COORDINATE_SCALE) * 100}%`,
+            height: `${((ymax - ymin) / BOX_COORDINATE_SCALE) * 100}%`,
           };
 
           return (

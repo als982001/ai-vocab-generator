@@ -5,6 +5,7 @@ import {
   GraduationCap,
   SlidersHorizontal,
 } from "lucide-react";
+import { AVAILABLE_YEARS } from "~/features/history/constants/sort";
 import type { JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
 
@@ -60,26 +61,19 @@ export function FilterDropdown({
                 Created At
               </h4>
               <div className="flex gap-2">
-                <button
-                  onClick={() => onYearChange(2025)}
-                  className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                    selectedYear === 2025
-                      ? "bg-primary text-white border-transparent shadow-sm"
-                      : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                  }`}
-                >
-                  2025
-                </button>
-                <button
-                  onClick={() => onYearChange(2026)}
-                  className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
-                    selectedYear === 2026
-                      ? "bg-primary text-white border-transparent shadow-sm"
-                      : "border-border-color text-text-secondary hover:bg-surface-highlight"
-                  }`}
-                >
-                  2026
-                </button>
+                {AVAILABLE_YEARS.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => onYearChange(year)}
+                    className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                      selectedYear === year
+                        ? "bg-primary text-white border-transparent shadow-sm"
+                        : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                    }`}
+                  >
+                    {year}
+                  </button>
+                ))}
               </div>
             </div>
 
