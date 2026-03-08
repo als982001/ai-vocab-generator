@@ -30,6 +30,7 @@ export function BoundingBoxOverlay({
         const [ymin, xmin, ymax, xmax] = word.box_2d;
         const isHovered = hoveredWord === word.word;
 
+        // 동적 퍼센트 좌표값은 Tailwind 임의값으로 처리 불가 → 인라인 스타일 사용
         const style = {
           top: `${(ymin / BOX_COORDINATE_SCALE) * 100}%`,
           left: `${(xmin / BOX_COORDINATE_SCALE) * 100}%`,

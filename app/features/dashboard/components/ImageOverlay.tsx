@@ -1,6 +1,6 @@
 import type { IWord } from "~/types";
 
-const BOX_COORDINATE_SCALE = 1000;
+import { BoundingBoxOverlay } from "./BoundingBoxOverlay";
 
 interface IImageOverlayProps {
   imageSrc: string;
@@ -25,36 +25,12 @@ export function ImageOverlay({
         className="max-w-full max-h-[500px] object-contain rounded-lg"
       />
 
-      <div className="absolute inset-0">
-        {words.map((word) => {
-          if (!word.box_2d || word.box_2d.length !== 4) return null;
-
-          const [ymin, xmin, ymax, xmax] = word.box_2d;
-          const isHovered = hoveredWord === word.word;
-
-          const style = {
-            top: `${(ymin / BOX_COORDINATE_SCALE) * 100}%`,
-            left: `${(xmin / BOX_COORDINATE_SCALE) * 100}%`,
-            width: `${((xmax - xmin) / BOX_COORDINATE_SCALE) * 100}%`,
-            height: `${((ymax - ymin) / BOX_COORDINATE_SCALE) * 100}%`,
-          };
-
-          return (
-            <div
-              key={word.word}
-              style={style}
-              className={`absolute border-2 cursor-pointer transition-all duration-200 ${
-                isHovered
-                  ? "border-red-500 bg-red-500/20"
-                  : "border-transparent hover:border-red-300"
-              }`}
-              onMouseEnter={() => onHover(word.word)}
-              onMouseLeave={() => onHover(null)}
-              onClick={() => onClick(word.word)}
-            />
-          );
-        })}
-      </div>
+      <BoundingBoxOverlay
+        words={words}
+        hoveredWord={hoveredWord}
+        onHover={onHover}
+        onClick={onClick}
+      />
     </div>
   );
 }
