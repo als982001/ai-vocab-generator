@@ -5,12 +5,12 @@ import {
   GraduationCap,
   SlidersHorizontal,
 } from "lucide-react";
-import { AVAILABLE_YEARS } from "~/features/history/constants/sort";
 import type { JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
 
 interface IFilterDropdownProps {
   isFilterOpen: boolean;
+  availableYears: number[];
   selectedYear: number | null;
   selectedLevels: JlptLevel[];
   onYearChange: (year: number) => void;
@@ -21,6 +21,7 @@ interface IFilterDropdownProps {
 
 export function FilterDropdown({
   isFilterOpen,
+  availableYears,
   selectedYear,
   selectedLevels,
   onYearChange,
@@ -61,7 +62,7 @@ export function FilterDropdown({
                 Created At
               </h4>
               <div className="flex gap-2">
-                {AVAILABLE_YEARS.map((year) => (
+                {availableYears.map((year) => (
                   <button
                     key={year}
                     onClick={() => onYearChange(year)}

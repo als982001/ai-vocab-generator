@@ -6,5 +6,3 @@ export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "level-easy", label: "Level N5 → N1" },
   { value: "level-hard", label: "Level N1 → N5" },
 ];
-
-export const AVAILABLE_YEARS = [2025, 2026] as const;

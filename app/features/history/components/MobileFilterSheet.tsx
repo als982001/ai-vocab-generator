@@ -1,8 +1,5 @@
 import { Calendar, Check, GraduationCap } from "lucide-react";
-import {
-  AVAILABLE_YEARS,
-  SORT_OPTIONS,
-} from "~/features/history/constants/sort";
+import { SORT_OPTIONS } from "~/features/history/constants/sort";
 import type { SortOption } from "~/features/history/types";
 import type { JlptLevel } from "~/types";
 import { JLPT_LEVELS } from "~/utils/jlpt";
@@ -12,6 +9,7 @@ interface IMobileFilterSheetProps {
   onClose: () => void;
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
+  availableYears: number[];
   selectedYear: number | null;
   onYearChange: (year: number) => void;
   selectedLevels: JlptLevel[];
@@ -24,6 +22,7 @@ export function MobileFilterSheet({
   onClose,
   sortBy,
   onSortChange,
+  availableYears,
   selectedYear,
   onYearChange,
   selectedLevels,
@@ -94,7 +93,7 @@ export function MobileFilterSheet({
               </h3>
             </div>
             <div className="flex gap-3">
-              {AVAILABLE_YEARS.map((year) => (
+              {availableYears.map((year) => (
                 <button
                   key={year}
                   onClick={() => onYearChange(year)}

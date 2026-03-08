@@ -64,7 +64,7 @@ export default function HistoryPage() {
   // Supabase에서 히스토리 조회
   const { data: historyData } = useAnalysisHistory();
 
-  const { allWords, filteredWords } = useWordListData({
+  const { allWords, filteredWords, availableYears } = useWordListData({
     historyData,
     sortBy,
     selectedYear,
@@ -103,6 +103,7 @@ export default function HistoryPage() {
         onClose={toggleFilter}
         sortBy={sortBy}
         onSortChange={setSortBy}
+        availableYears={availableYears}
         selectedYear={selectedYear}
         onYearChange={handleYearClick}
         selectedLevels={selectedLevels}
@@ -239,6 +240,7 @@ export default function HistoryPage() {
                   {/* Filters Dropdown */}
                   <FilterDropdown
                     isFilterOpen={isFilterOpen}
+                    availableYears={availableYears}
                     selectedYear={selectedYear}
                     selectedLevels={selectedLevels}
                     onYearChange={handleYearClick}

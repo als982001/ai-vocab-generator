@@ -37,6 +37,8 @@ export function useWordListData({
     );
   }, [historyData]);
 
+  console.log("allWords", allWords);
+
   // 정렬된 단어 목록
   const sortedWords = useMemo(() => {
     const words = [...allWords];
@@ -97,5 +99,13 @@ export function useWordListData({
     return words;
   }, [sortedWords, selectedYear, selectedLevels, searchQuery]);
 
-  return { allWords, filteredWords };
+  const availableYears = useMemo(() => {
+    const years = new Set(
+      allWords.map((word) => new Date(word.createdAt).getFullYear())
+    );
+
+    return [...years].sort((a, b) => b - a);
+  }, [allWords]);
+
+  return { allWords, filteredWords, availableYears };
 }
