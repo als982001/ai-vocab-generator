@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { toast } from "sonner";
 import { useSaveAnalysis } from "~/features/dashboard/hooks/useSaveAnalysis";
-import { analyzeImage } from "~/services/gemini";
+import { analyzeDocument } from "~/services/gemini";
 import type { IUploadedImage, IWord } from "~/types";
 
 export function useImageAnalysis() {
@@ -39,7 +39,7 @@ export function useImageAnalysis() {
 
       try {
         // 실제 Gemini API 호출
-        const analyzedWords = await analyzeImage(image.file);
+        const analyzedWords = await analyzeDocument(image.file);
 
         setWords(analyzedWords);
         setEnableResultAnimation(true);

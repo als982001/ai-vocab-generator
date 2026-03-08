@@ -8,6 +8,7 @@ import {
   Bell,
   CheckCircle,
   CloudUpload,
+  FileText,
   HelpCircle,
   Loader2,
   X,
@@ -66,7 +67,9 @@ export function ImageUploader({
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
         const preview = URL.createObjectURL(file);
-        onImageUpload({ file, preview });
+        const fileType = file.type === "application/pdf" ? "pdf" : "image";
+
+        onImageUpload({ file, preview, fileType });
       }
     },
     [onImageUpload]
@@ -76,6 +79,7 @@ export function ImageUploader({
     onDrop,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+      "application/pdf": [".pdf"],
     },
     maxSize: MAX_FILE_SIZE_BYTES,
     multiple: false,
@@ -141,6 +145,26 @@ export function ImageUploader({
                     </p>
                   </div>
                 </div>
+              ) : uploadedImage.fileType === "pdf" ? (
+                <>
+                  <div className="flex flex-col items-center justify-center gap-4 flex-1">
+                    <div className="h-24 w-24 rounded-2xl bg-gray-100 flex items-center justify-center">
+                      <FileText className="w-12 h-12 text-text-secondary" />
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <p className="text-text-primary text-base font-semibold text-center break-all max-w-xs">
+                        {uploadedImage.file.name}
+                      </p>
+                      <p className="text-text-secondary text-sm">
+                        PDF 파일이 업로드되었습니다
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-text-secondary text-sm">
+                    {uploadedImage.file.name} (
+                    {(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                </>
               ) : (
                 <>
                   <ImageOverlay

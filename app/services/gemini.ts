@@ -54,7 +54,7 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 // 실제 AI 호출 함수
-export const analyzeImage = async (file: File): Promise<IWord[]> => {
+export const analyzeDocument = async (file: File): Promise<IWord[]> => {
   // 1. 파일을 Base64로 변환 (기존 함수 활용)
   const imagePart = await fileToGenerativePart(file);
   const base64Data = imagePart.inlineData.data;
