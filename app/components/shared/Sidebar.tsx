@@ -24,7 +24,6 @@ export function Sidebar({
   className = "",
 }: ISidebarProps) {
   const { user, signOut } = useAuth();
-  const jlptLevels: JlptLevel[] = [...JLPT_LEVELS];
   const location = useLocation();
 
   const { pathname } = location;
@@ -105,7 +104,7 @@ export function Sidebar({
             JLPT Level
           </h3>
           <div className="flex flex-wrap gap-2 px-2">
-            {jlptLevels.map((level) => (
+            {JLPT_LEVELS.map((level) => (
               <button
                 key={level}
                 onClick={() => onLevelToggle(level)}
