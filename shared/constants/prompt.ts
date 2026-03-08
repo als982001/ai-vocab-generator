@@ -15,5 +15,23 @@ Example format:
 [{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "box_2d": [150, 200, 300, 400]}]
 `;
 
+export const ANALYZE_DOCUMENT_PROMPT = `
+Analyze this document (image or PDF) and extract Japanese vocabulary.
+Return the result as a STRICT JSON array without markdown code blocks.
+
+Each item should have:
+- word: The Japanese word (Kanji or Kana)
+- reading: Furigana reading in Hiragana/Katakana
+- meaning: Meaning in Korean (한국어 뜻)
+- level: Estimated JLPT level (e.g., N5, N4, N3, N2, N1)
+- page: The page number where this word appears (Integer, 1-indexed. If it's a single image, return 1).
+- box_2d: The exact bounding box of where this word appears on that specific page.
+  Format: [y_min, x_min, y_max, x_max] as normalized coordinates from 0 to 1000,
+  where (0,0) is top-left corner and (1000,1000) is bottom-right corner of the page.
+
+Example format:
+[{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "page": 1, "box_2d": [150, 200, 300, 400]}]
+`;
+
 export const GEMINI_2_DOT_5_FLASH = "gemini-2.5-flash";
 export const GEMINI_3_FLASH_PREVIEW = "gemini-3-flash-preview";
