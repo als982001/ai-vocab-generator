@@ -1,4 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { IWord } from "~/types";
+import { isLocalEnvironment } from "~/utils/env";
 
 import {
   ANALYZE_IMAGE_PROMPT,
@@ -10,7 +12,7 @@ const analyzeImageLocal = async (imagePart: {
     data: string;
     mimeType: string;
   };
-}) => {
+}): Promise<IWord[]> => {
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
   try {
@@ -28,7 +30,7 @@ const analyzeImageLocal = async (imagePart: {
     // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거
     const cleanJson = text.replace(/```json|```/g, "").trim();
 
-    return JSON.parse(cleanJson);
+    return JSON.parse(cleanJson) as IWord[];
   } catch (error) {
     console.error(error);
     throw error;
@@ -52,17 +54,16 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 // 실제 AI 호출 함수
-export const analyzeImage = async (file: File) => {
+export const analyzeImage = async (file: File): Promise<IWord[]> => {
   // 1. 파일을 Base64로 변환 (기존 함수 활용)
   const imagePart = await fileToGenerativePart(file);
   const base64Data = imagePart.inlineData.data;
 
   // 2. 내 Vercel 서버로 요청 (API 키 필요 없음!)
   // 로컬 환경 체크
-  const isLocal = window.location.hostname === "localhost";
-
-  if (isLocal) {
+  if (isLocalEnvironment()) {
     const result = await analyzeImageLocal(imagePart);
+
     return result;
   }
 
@@ -74,5 +75,5 @@ export const analyzeImage = async (file: File) => {
 
   if (!response.ok) throw new Error("분석 실패");
 
-  return await response.json();
+  return (await response.json()) as IWord[];
 };

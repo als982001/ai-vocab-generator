@@ -7,4 +7,10 @@ export interface IWordWithDate extends IWord {
   createdAt: string;
 }
 
+export interface IEditingWord {
+  wordId: string;
+  historyId: string;
+  word: string;
+}
+
 export type SortOption = "newest" | "oldest" | "level-easy" | "level-hard";

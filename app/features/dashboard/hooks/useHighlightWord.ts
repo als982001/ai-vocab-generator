@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+const HIGHLIGHT_DURATION_MS = 1500;
+
 export function useHighlightWord() {
   const [highlightedWord, setHighlightedWord] = useState<string | null>(null);
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -22,7 +24,7 @@ export function useHighlightWord() {
 
     highlightTimerRef.current = setTimeout(() => {
       setHighlightedWord(null);
-    }, 1500);
+    }, HIGHLIGHT_DURATION_MS);
   };
 
   return { highlightedWord, handleWordClick };

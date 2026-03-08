@@ -1,13 +1,7 @@
 import { useState } from "react";
 
-import type { IWordWithDate } from "~/features/history/types";
+import type { IEditingWord, IWordWithDate } from "~/features/history/types";
 import type { JlptLevel } from "~/types";
-
-interface IEditingWord {
-  wordId: string;
-  historyId: string;
-  word: string;
-}
 
 /**
  * 단어 편집 모드를 관리하는 커스텀 훅

@@ -5,7 +5,6 @@ import type { IWord } from "~/types";
 interface IWordCardProps {
   word: IWord;
   showFurigana?: boolean;
-  showRomaji?: boolean;
   isHovered?: boolean;
   isHighlighted?: boolean;
   onHover?: (hovered: boolean) => void;
@@ -15,7 +14,6 @@ interface IWordCardProps {
 export function WordCard({
   word,
   showFurigana = true,
-  // showRomaji = false,
   isHovered = false,
   isHighlighted = false,
   onHover,
