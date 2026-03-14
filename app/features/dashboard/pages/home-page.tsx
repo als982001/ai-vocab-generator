@@ -14,7 +14,7 @@ import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
 } from "~/features/dashboard/utils/download";
-import type { IDisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions, IUploadedImage, JlptLevel } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 
 export default function HomePage() {
@@ -28,7 +28,6 @@ export default function HomePage() {
   } = useImageAnalysis();
 
   const { highlightedWord, handleWordClick } = useHighlightWord();
-  const { imageContainerRef, handleWordCardClick } = useImageScroll(words);
 
   const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
@@ -36,6 +35,21 @@ export default function HomePage() {
   });
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_numPages, setNumPages] = useState(0);
+
+  const { imageContainerRef, handleWordCardClick } = useImageScroll(words, {
+    fileType: uploadedImage?.fileType,
+    onPageChange: setCurrentPage,
+  });
+
+  const handleFileUploadWithReset = (image: IUploadedImage | null) => {
+    setCurrentPage(1);
+    setNumPages(0);
+
+    handleImageUpload(image);
+  };
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
@@ -91,13 +105,16 @@ export default function HomePage() {
         >
           <ImageUploader
             uploadedImage={uploadedImage}
-            onImageUpload={handleImageUpload}
+            onImageUpload={handleFileUploadWithReset}
             isAnalyzing={isAnalyzing}
             words={words}
             hoveredWord={hoveredWord}
             onHover={setHoveredWord}
             onWordClick={handleWordClick}
             imageContainerRef={imageContainerRef}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            onNumPagesLoad={setNumPages}
           />
           <ResultPanel
             words={filteredWords}
@@ -114,7 +131,7 @@ export default function HomePage() {
       </div>
 
       <FloatingActionButton
-        onImageUpload={handleImageUpload}
+        onImageUpload={handleFileUploadWithReset}
         onDownloadTxt={handleDownloadTxt}
         onDownloadCsv={handleDownloadCsv}
         wordCount={words.length}
