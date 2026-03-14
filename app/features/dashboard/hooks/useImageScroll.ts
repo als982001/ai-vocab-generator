@@ -2,7 +2,13 @@ import { useRef } from "react";
 
 import type { IWord } from "~/types";
 
-export function useImageScroll(words: IWord[]) {
+export function useImageScroll(
+  words: IWord[],
+  options?: {
+    fileType?: "image" | "pdf";
+    onPageChange?: (page: number) => void;
+  }
+) {
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const handleWordCardClick = (wordStr: string) => {
@@ -11,7 +17,19 @@ export function useImageScroll(words: IWord[]) {
 
     const word = words.find((w) => w.word === wordStr);
 
-    if (!word?.box_2d || word.box_2d.length !== 4) return;
+    if (!word) return;
+
+    // PDF일 때: 해당 단어의 페이지로 이동
+    if (options?.fileType === "pdf") {
+      if (word.page != null) {
+        options.onPageChange?.(word.page);
+      }
+
+      return;
+    }
+
+    // 이미지일 때: 해당 단어 위치로 스크롤
+    if (!word.box_2d || word.box_2d.length !== 4) return;
 
     const imageContainer = imageContainerRef.current;
 
