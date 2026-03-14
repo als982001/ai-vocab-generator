@@ -8,13 +8,13 @@ import {
   Bell,
   CheckCircle,
   CloudUpload,
-  FileText,
   HelpCircle,
   Loader2,
   X,
 } from "lucide-react";
-import { ImageOverlay } from "~/features/dashboard/components/ImageOverlay";
 import type { IUploadedImage, IWord } from "~/types";
+
+import { DocumentViewer } from "./DocumentViewer";
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -35,6 +35,9 @@ interface IImageUploaderProps {
   onHover: (word: string | null) => void;
   onWordClick: (word: string) => void;
   imageContainerRef?: RefObject<HTMLDivElement | null>;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  onNumPagesLoad: (numPages: number) => void;
 }
 
 export function ImageUploader({
@@ -46,6 +49,9 @@ export function ImageUploader({
   onHover,
   onWordClick,
   imageContainerRef,
+  currentPage,
+  onPageChange,
+  onNumPagesLoad,
 }: IImageUploaderProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
@@ -145,34 +151,17 @@ export function ImageUploader({
                     </p>
                   </div>
                 </div>
-              ) : uploadedImage.fileType === "pdf" ? (
-                <>
-                  <div className="flex flex-col items-center justify-center gap-4 flex-1">
-                    <div className="h-24 w-24 rounded-2xl bg-gray-100 flex items-center justify-center">
-                      <FileText className="w-12 h-12 text-text-secondary" />
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <p className="text-text-primary text-base font-semibold text-center break-all max-w-xs">
-                        {uploadedImage.file.name}
-                      </p>
-                      <p className="text-text-secondary text-sm">
-                        PDF 파일이 업로드되었습니다
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-text-secondary text-sm">
-                    {uploadedImage.file.name} (
-                    {(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
-                  </p>
-                </>
               ) : (
                 <>
-                  <ImageOverlay
-                    imageSrc={uploadedImage.preview}
+                  <DocumentViewer
+                    uploadedImage={uploadedImage}
                     words={words}
                     hoveredWord={hoveredWord}
                     onHover={onHover}
-                    onClick={onWordClick}
+                    onWordClick={onWordClick}
+                    currentPage={currentPage}
+                    onPageChange={onPageChange}
+                    onNumPagesLoad={onNumPagesLoad}
                   />
                   <p className="text-text-secondary text-sm">
                     {uploadedImage.file.name} (
@@ -201,11 +190,11 @@ export function ImageUploader({
                 <div className="flex flex-col items-center gap-1">
                   <p className="text-text-primary text-xl font-bold leading-tight tracking-tight text-center">
                     {isDragActive
-                      ? "이미지를 여기에 놓으세요"
-                      : "이미지를 드래그 앤 드롭하세요"}
+                      ? "파일을 여기에 놓으세요"
+                      : "이미지 또는 PDF를 드래그 앤 드롭하세요"}
                   </p>
                   <p className="text-text-secondary text-sm font-normal text-center">
-                    {`JPG, PNG, WEBP 지원 (최대 ${MAX_FILE_SIZE_MB}MB)`}
+                    {`JPG, PNG, WEBP, PDF 지원 (최대 ${MAX_FILE_SIZE_MB}MB)`}
                   </p>
                 </div>
                 <button className="mt-4 flex min-w-[140px] items-center justify-center rounded-full h-11 px-6 bg-primary hover:bg-gray-800 text-white text-sm font-bold tracking-wide transition-all shadow-lg hover:shadow-xl">
