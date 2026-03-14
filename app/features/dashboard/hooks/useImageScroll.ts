@@ -12,9 +12,6 @@ export function useImageScroll(
   const fileContainerRef = useRef<HTMLDivElement>(null);
 
   const handleWordCardClick = (wordStr: string) => {
-    // 모바일에서만 동작 (768px 미만)
-    if (window.innerWidth >= 768) return;
-
     const word = words.find((w) => w.word === wordStr);
 
     if (!word) return;
@@ -27,6 +24,9 @@ export function useImageScroll(
 
       return;
     }
+
+    // 모바일에서만 동작 (768px 미만)
+    if (window.innerWidth >= 768) return;
 
     // 이미지일 때: 해당 단어 위치로 스크롤
     if (!word.box_2d || word.box_2d.length !== 4) return;
