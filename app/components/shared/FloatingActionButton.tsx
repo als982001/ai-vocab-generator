@@ -2,18 +2,18 @@ import { useEffect, useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { FileSpreadsheet, FileText, ImagePlus, Plus } from "lucide-react";
-import type { IUploadedImage } from "~/types";
+import type { IUploadedFile } from "~/types";
 import { SPRING_DROPDOWN } from "~/utils/animation";
 
 interface IFloatingActionButtonProps {
-  onImageUpload?: (image: IUploadedImage) => void;
+  onFileUpload?: (file: IUploadedFile) => void;
   onDownloadTxt: () => void;
   onDownloadCsv: () => void;
   wordCount: number;
 }
 
 export function FloatingActionButton({
-  onImageUpload,
+  onFileUpload,
   onDownloadTxt,
   onDownloadCsv,
   wordCount,
@@ -47,9 +47,11 @@ export function FloatingActionButton({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (file && onImageUpload) {
+    if (file && onFileUpload) {
       const preview = URL.createObjectURL(file);
-      onImageUpload({ file, preview });
+      const fileType = file.type === "application/pdf" ? "pdf" : "image";
+
+      onFileUpload({ file, preview, fileType });
     }
 
     // Reset input so same file can be selected again
@@ -77,11 +79,11 @@ export function FloatingActionButton({
 
   return (
     <div ref={containerRef} className="md:hidden fixed bottom-8 right-6 z-50">
-      {onImageUpload && (
+      {onFileUpload && (
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,.pdf"
           onChange={handleFileChange}
           className="hidden"
         />
@@ -98,11 +100,11 @@ export function FloatingActionButton({
             style={{ transformOrigin: "bottom right" }}
             className="absolute bottom-full mb-3 right-0 w-44 bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden"
           >
-            {onImageUpload && (
+            {onFileUpload && (
               <button onClick={handleUploadClick} className={menuButtonClass}>
                 <ImagePlus className="w-5 h-5 text-text-secondary" />
                 <span className="text-sm font-medium text-text-primary">
-                  이미지 업로드
+                  파일 업로드
                 </span>
               </button>
             )}

@@ -5,27 +5,27 @@ import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { Sidebar } from "~/components/shared/Sidebar";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
+import { FileUploader } from "~/features/dashboard/components/FileUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
+import { useFileAnalysis } from "~/features/dashboard/hooks/useFileAnalysis";
 import { useHighlightWord } from "~/features/dashboard/hooks/useHighlightWord";
-import { useImageAnalysis } from "~/features/dashboard/hooks/useImageAnalysis";
 import { useImageScroll } from "~/features/dashboard/hooks/useImageScroll";
 import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
 } from "~/features/dashboard/utils/download";
-import type { IDisplayOptions, IUploadedImage, JlptLevel } from "~/types";
+import type { IDisplayOptions, IUploadedFile, JlptLevel } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 
 export default function HomePage() {
   const {
-    uploadedImage,
+    uploadedFile,
     isAnalyzing,
     words,
     enableResultAnimation,
     setEnableResultAnimation,
-    handleImageUpload,
-  } = useImageAnalysis();
+    handleFileUpload,
+  } = useFileAnalysis();
 
   const { highlightedWord, handleWordClick } = useHighlightWord();
 
@@ -39,16 +39,16 @@ export default function HomePage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_numPages, setNumPages] = useState(0);
 
-  const { imageContainerRef, handleWordCardClick } = useImageScroll(words, {
-    fileType: uploadedImage?.fileType,
+  const { fileContainerRef, handleWordCardClick } = useImageScroll(words, {
+    fileType: uploadedFile?.fileType,
     onPageChange: setCurrentPage,
   });
 
-  const handleFileUploadWithReset = (image: IUploadedImage | null) => {
+  const handleFileUploadWithReset = (file: IUploadedFile | null) => {
     setCurrentPage(1);
     setNumPages(0);
 
-    handleImageUpload(image);
+    handleFileUpload(file);
   };
 
   const handleDownloadTxt = () => {
@@ -103,15 +103,15 @@ export default function HomePage() {
           animate="animate"
           transition={{ duration: PAGE_TRANSITION_DURATION }}
         >
-          <ImageUploader
-            uploadedImage={uploadedImage}
-            onImageUpload={handleFileUploadWithReset}
+          <FileUploader
+            uploadedFile={uploadedFile}
+            onFileUpload={handleFileUploadWithReset}
             isAnalyzing={isAnalyzing}
             words={words}
             hoveredWord={hoveredWord}
             onHover={setHoveredWord}
             onWordClick={handleWordClick}
-            imageContainerRef={imageContainerRef}
+            fileContainerRef={fileContainerRef}
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onNumPagesLoad={setNumPages}
@@ -131,7 +131,7 @@ export default function HomePage() {
       </div>
 
       <FloatingActionButton
-        onImageUpload={handleFileUploadWithReset}
+        onFileUpload={handleFileUploadWithReset}
         onDownloadTxt={handleDownloadTxt}
         onDownloadCsv={handleDownloadCsv}
         wordCount={words.length}

@@ -12,7 +12,7 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-import type { IUploadedImage, IWord } from "~/types";
+import type { IUploadedFile, IWord } from "~/types";
 
 import { DocumentViewer } from "./DocumentViewer";
 
@@ -26,33 +26,33 @@ const LOADING_MESSAGES = [
   "거의 다 됐어요!",
 ];
 
-interface IImageUploaderProps {
-  uploadedImage: IUploadedImage | null;
-  onImageUpload: (image: IUploadedImage | null) => void;
+interface IFileUploaderProps {
+  uploadedFile: IUploadedFile | null;
+  onFileUpload: (file: IUploadedFile | null) => void;
   isAnalyzing: boolean;
   words: IWord[];
   hoveredWord: string | null;
   onHover: (word: string | null) => void;
   onWordClick: (word: string) => void;
-  imageContainerRef?: RefObject<HTMLDivElement | null>;
+  fileContainerRef?: RefObject<HTMLDivElement | null>;
   currentPage: number;
   onPageChange: (page: number) => void;
   onNumPagesLoad: (numPages: number) => void;
 }
 
-export function ImageUploader({
-  uploadedImage,
-  onImageUpload,
+export function FileUploader({
+  uploadedFile,
+  onFileUpload,
   isAnalyzing,
   words,
   hoveredWord,
   onHover,
   onWordClick,
-  imageContainerRef,
+  fileContainerRef,
   currentPage,
   onPageChange,
   onNumPagesLoad,
-}: IImageUploaderProps) {
+}: IFileUploaderProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -75,10 +75,10 @@ export function ImageUploader({
         const preview = URL.createObjectURL(file);
         const fileType = file.type === "application/pdf" ? "pdf" : "image";
 
-        onImageUpload({ file, preview, fileType });
+        onFileUpload({ file, preview, fileType });
       }
     },
-    [onImageUpload]
+    [onFileUpload]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -92,10 +92,10 @@ export function ImageUploader({
   });
 
   const handleRemoveImage = () => {
-    if (uploadedImage?.preview) {
-      URL.revokeObjectURL(uploadedImage.preview);
+    if (uploadedFile?.preview) {
+      URL.revokeObjectURL(uploadedFile.preview);
     }
-    onImageUpload(null);
+    onFileUpload(null);
   };
 
   return (
@@ -117,9 +117,9 @@ export function ImageUploader({
       </div>
       <div className="flex-1 p-8 flex flex-col items-center justify-center overflow-y-auto bg-gray-50">
         <div className="w-full max-w-3xl h-full max-h-[600px] flex flex-col">
-          {uploadedImage ? (
+          {uploadedFile ? (
             <div
-              ref={imageContainerRef}
+              ref={fileContainerRef}
               className="flex-1 flex flex-col items-center justify-start md:justify-center gap-6 rounded-2xl bg-white shadow-md px-6 py-14 relative overflow-y-auto md:overflow-hidden"
             >
               {!isAnalyzing && (
@@ -154,7 +154,7 @@ export function ImageUploader({
               ) : (
                 <>
                   <DocumentViewer
-                    uploadedImage={uploadedImage}
+                    uploadedFile={uploadedFile}
                     words={words}
                     hoveredWord={hoveredWord}
                     onHover={onHover}
@@ -164,8 +164,8 @@ export function ImageUploader({
                     onNumPagesLoad={onNumPagesLoad}
                   />
                   <p className="text-text-secondary text-sm">
-                    {uploadedImage.file.name} (
-                    {(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
+                    {uploadedFile.file.name} (
+                    {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
                 </>
               )}

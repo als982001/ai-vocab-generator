@@ -13,7 +13,7 @@ export interface IDisplayOptions {
   showFurigana: boolean;
 }
 
-export interface IUploadedImage {
+export interface IUploadedFile {
   file: File;
   preview: string;
   fileType: "image" | "pdf";

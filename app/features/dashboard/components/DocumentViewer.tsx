@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 
-import type { IUploadedImage, IWord } from "~/types";
+import type { IUploadedFile, IWord } from "~/types";
 
 import { ImageOverlay } from "./ImageOverlay";
 
@@ -9,7 +9,7 @@ const PdfViewer = lazy(() =>
 );
 
 interface IDocumentViewerProps {
-  uploadedImage: IUploadedImage;
+  uploadedFile: IUploadedFile;
   words: IWord[];
   hoveredWord: string | null;
   onHover: (word: string | null) => void;
@@ -20,7 +20,7 @@ interface IDocumentViewerProps {
 }
 
 export function DocumentViewer({
-  uploadedImage,
+  uploadedFile,
   words,
   hoveredWord,
   onHover,
@@ -29,10 +29,10 @@ export function DocumentViewer({
   onPageChange,
   onNumPagesLoad,
 }: IDocumentViewerProps) {
-  if (uploadedImage.fileType === "image") {
+  if (uploadedFile.fileType === "image") {
     return (
       <ImageOverlay
-        imageSrc={uploadedImage.preview}
+        imageSrc={uploadedFile.preview}
         words={words}
         hoveredWord={hoveredWord}
         onHover={onHover}
@@ -41,7 +41,7 @@ export function DocumentViewer({
     );
   }
 
-  if (uploadedImage.fileType === "pdf") {
+  if (uploadedFile.fileType === "pdf") {
     return (
       <Suspense
         fallback={
@@ -51,7 +51,7 @@ export function DocumentViewer({
         }
       >
         <PdfViewer
-          file={uploadedImage.file}
+          file={uploadedFile.file}
           words={words}
           hoveredWord={hoveredWord}
           onHover={onHover}
