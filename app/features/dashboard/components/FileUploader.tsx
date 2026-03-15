@@ -172,7 +172,7 @@ export function FileUploader({
                     onPageChange={onPageChange}
                     onNumPagesLoad={onNumPagesLoad}
                   />
-                  <p className="text-text-secondary text-sm">
+                  <p className="text-text-secondary text-sm text-center">
                     {uploadedFile.file.name} (
                     {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
