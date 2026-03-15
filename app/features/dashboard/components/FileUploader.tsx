@@ -4,14 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Bell,
-  CheckCircle,
-  CloudUpload,
-  HelpCircle,
-  Loader2,
-  X,
-} from "lucide-react";
+import { Bell, CloudUpload, HelpCircle, Loader2, X } from "lucide-react";
 import type { IUploadedFile, IWord } from "~/types";
 
 import { DocumentViewer } from "./DocumentViewer";
