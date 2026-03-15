@@ -62,15 +62,13 @@ export const analyzeDocument = async (file: File): Promise<IWord[]> => {
   const imagePart = await fileToGenerativePart(file);
   const base64Data = imagePart.inlineData.data;
 
-  // PDF 여부에 따라 프롬프트 분기
-  const prompt =
-    file.type === "application/pdf"
-      ? ANALYZE_DOCUMENT_PROMPT
-      : ANALYZE_IMAGE_PROMPT;
-
-  // 2. 내 Vercel 서버로 요청 (API 키 필요 없음!)
-  // 로컬 환경 체크
+  // 로컬 환경: 클라이언트에서 직접 Gemini API 호출
   if (isLocalEnvironment()) {
+    const prompt =
+      file.type === "application/pdf"
+        ? ANALYZE_DOCUMENT_PROMPT
+        : ANALYZE_IMAGE_PROMPT;
+
     const result = await analyzeImageLocal(imagePart, prompt);
 
     return result;

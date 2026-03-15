@@ -39,8 +39,6 @@ export function useFileAnalysis() {
         // 실제 Gemini API 호출
         const analyzedWords = await analyzeDocument(uploadedNewFile.file);
 
-        console.log("analyzedWords", analyzedWords);
-
         setWords(analyzedWords);
         setEnableResultAnimation(true);
 

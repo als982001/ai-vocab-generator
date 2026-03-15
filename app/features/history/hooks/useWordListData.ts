@@ -37,8 +37,6 @@ export function useWordListData({
     );
   }, [historyData]);
 
-  console.log("allWords", allWords);
-
   // 정렬된 단어 목록
   const sortedWords = useMemo(() => {
     const words = [...allWords];
