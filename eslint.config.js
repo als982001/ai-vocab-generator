@@ -18,6 +18,9 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
       // React Router v7은 meta, loader, action 등을 export하는 것이 정상 패턴

@@ -9,6 +9,7 @@ interface IMobileFilterSheetProps {
   onClose: () => void;
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
+  availableYears: number[];
   selectedYear: number | null;
   onYearChange: (year: number) => void;
   selectedLevels: JlptLevel[];
@@ -21,6 +22,7 @@ export function MobileFilterSheet({
   onClose,
   sortBy,
   onSortChange,
+  availableYears,
   selectedYear,
   onYearChange,
   selectedLevels,
@@ -91,26 +93,19 @@ export function MobileFilterSheet({
               </h3>
             </div>
             <div className="flex gap-3">
-              <button
-                onClick={() => onYearChange(2025)}
-                className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
-                  selectedYear === 2025
-                    ? "border-primary bg-primary text-white"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
-                }`}
-              >
-                2025
-              </button>
-              <button
-                onClick={() => onYearChange(2026)}
-                className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
-                  selectedYear === 2026
-                    ? "border-primary bg-primary text-white"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
-                }`}
-              >
-                2026
-              </button>
+              {availableYears.map((year) => (
+                <button
+                  key={year}
+                  onClick={() => onYearChange(year)}
+                  className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
+                    selectedYear === year
+                      ? "border-primary bg-primary text-white"
+                      : "border-gray-200 text-gray-500 hover:border-gray-300"
+                  }`}
+                >
+                  {year}
+                </button>
+              ))}
             </div>
           </div>
 
