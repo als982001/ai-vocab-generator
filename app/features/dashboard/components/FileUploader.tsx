@@ -46,7 +46,6 @@ export function FileUploader({
   onPageChange,
   onNumPagesLoad,
 }: IFileUploaderProps) {
-  console.log("uploadedFile", uploadedFile);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -121,9 +120,11 @@ export function FileUploader({
             <div
               ref={fileContainerRef}
               className={`flex-1 flex flex-col rounded-2xl bg-white shadow-md relative ${
-                uploadedFile.fileType === "pdf"
-                  ? "p-0 overflow-y-auto"
-                  : "items-center justify-start md:justify-center gap-6 px-6 py-14 overflow-y-auto md:overflow-hidden"
+                isAnalyzing
+                  ? "items-center justify-center"
+                  : uploadedFile.fileType === "pdf"
+                    ? "p-0 overflow-y-auto"
+                    : "items-center justify-start md:justify-center gap-6 px-6 py-14 overflow-y-auto md:overflow-hidden"
               }`}
             >
               {!isAnalyzing && (
