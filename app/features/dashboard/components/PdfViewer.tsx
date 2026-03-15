@@ -1,19 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Document, Page } from "react-pdf";
-import { pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
+import "~/features/dashboard/utils/pdfjs-setup";
 import type { IWord } from "~/types";
 
 import { BoundingBoxOverlay } from "./BoundingBoxOverlay";
 import { PdfPagination } from "./PdfPagination";
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
 
 interface IPdfViewerProps {
   file: File;
