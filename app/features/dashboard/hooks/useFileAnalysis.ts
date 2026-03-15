@@ -44,13 +44,17 @@ export function useFileAnalysis() {
         setWords(analyzedWords);
         setEnableResultAnimation(true);
 
-        toast.success("분석을 성공했습니다.");
+        if (analyzedWords.length > 0) {
+          toast.success("분석을 성공했습니다.");
 
-        // Supabase에 분석 결과 저장
-        saveAnalysis({
-          words: analyzedWords,
-          imageName: uploadedNewFile.file.name,
-        });
+          // Supabase에 분석 결과 저장
+          saveAnalysis({
+            words: analyzedWords,
+            imageName: uploadedNewFile.file.name,
+          });
+        } else {
+          toast.info("단어를 찾지 못했습니다.");
+        }
       } catch (error) {
         console.error(error);
         toast.error("파일 분석에 실패했습니다. 다시 시도해주세요.");
