@@ -41,6 +41,7 @@ export default function HomePage() {
 
   const { fileContainerRef, handleWordCardClick } = useImageScroll(words, {
     fileType: uploadedFile?.fileType,
+    currentPage,
     onPageChange: setCurrentPage,
   });
 
