@@ -4,16 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Bell,
-  CheckCircle,
-  CloudUpload,
-  HelpCircle,
-  Loader2,
-  X,
-} from "lucide-react";
-import { ImageOverlay } from "~/features/dashboard/components/ImageOverlay";
-import type { IUploadedImage, IWord } from "~/types";
+import { Bell, CloudUpload, HelpCircle, Loader2, X } from "lucide-react";
+import type { IUploadedFile, IWord } from "~/types";
+
+import { DocumentViewer } from "./DocumentViewer";
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -25,27 +19,35 @@ const LOADING_MESSAGES = [
   "거의 다 됐어요!",
 ];
 
-interface IImageUploaderProps {
-  uploadedImage: IUploadedImage | null;
-  onImageUpload: (image: IUploadedImage | null) => void;
+interface IFileUploaderProps {
+  uploadedFile: IUploadedFile | null;
+  onFileUpload: (file: IUploadedFile | null) => void;
   isAnalyzing: boolean;
   words: IWord[];
   hoveredWord: string | null;
   onHover: (word: string | null) => void;
   onWordClick: (word: string) => void;
-  imageContainerRef?: RefObject<HTMLDivElement | null>;
+  fileContainerRef?: RefObject<HTMLDivElement | null>;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  onNumPagesLoad: (numPages: number) => void;
+  onPageRendered?: () => void;
 }
 
-export function ImageUploader({
-  uploadedImage,
-  onImageUpload,
+export function FileUploader({
+  uploadedFile,
+  onFileUpload,
   isAnalyzing,
   words,
   hoveredWord,
   onHover,
   onWordClick,
-  imageContainerRef,
-}: IImageUploaderProps) {
+  fileContainerRef,
+  currentPage,
+  onPageChange,
+  onNumPagesLoad,
+  onPageRendered,
+}: IFileUploaderProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -66,26 +68,29 @@ export function ImageUploader({
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
         const preview = URL.createObjectURL(file);
-        onImageUpload({ file, preview });
+        const fileType = file.type === "application/pdf" ? "pdf" : "image";
+
+        onFileUpload({ file, preview, fileType });
       }
     },
-    [onImageUpload]
+    [onFileUpload]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+      "application/pdf": [".pdf"],
     },
     maxSize: MAX_FILE_SIZE_BYTES,
     multiple: false,
   });
 
   const handleRemoveImage = () => {
-    if (uploadedImage?.preview) {
-      URL.revokeObjectURL(uploadedImage.preview);
+    if (uploadedFile?.preview) {
+      URL.revokeObjectURL(uploadedFile.preview);
     }
-    onImageUpload(null);
+    onFileUpload(null);
   };
 
   return (
@@ -106,11 +111,23 @@ export function ImageUploader({
         </div>
       </div>
       <div className="flex-1 p-8 flex flex-col items-center justify-center overflow-y-auto bg-gray-50">
-        <div className="w-full max-w-3xl h-full max-h-[600px] flex flex-col">
-          {uploadedImage ? (
+        <div
+          className={`w-full h-full flex flex-col ${
+            uploadedFile?.fileType === "pdf"
+              ? "max-w-5xl max-h-[calc(100vh-12rem)]"
+              : "max-w-3xl max-h-[600px]"
+          }`}
+        >
+          {uploadedFile ? (
             <div
-              ref={imageContainerRef}
-              className="flex-1 flex flex-col items-center justify-start md:justify-center gap-6 rounded-2xl bg-white shadow-md px-6 py-14 relative overflow-y-auto md:overflow-hidden"
+              ref={fileContainerRef}
+              className={`flex-1 flex flex-col rounded-2xl bg-white shadow-md relative ${
+                isAnalyzing
+                  ? "items-center justify-center"
+                  : uploadedFile.fileType === "pdf"
+                    ? "p-0 overflow-y-auto"
+                    : "items-center justify-start md:justify-center gap-6 px-6 py-14 overflow-y-auto md:overflow-hidden"
+              }`}
             >
               {!isAnalyzing && (
                 <button
@@ -142,19 +159,27 @@ export function ImageUploader({
                   </div>
                 </div>
               ) : (
-                <>
-                  <ImageOverlay
-                    imageSrc={uploadedImage.preview}
+                <div
+                  className={
+                    uploadedFile.fileType === "pdf" ? "flex-1 w-full" : ""
+                  }
+                >
+                  <DocumentViewer
+                    uploadedFile={uploadedFile}
                     words={words}
                     hoveredWord={hoveredWord}
                     onHover={onHover}
-                    onClick={onWordClick}
+                    onWordClick={onWordClick}
+                    currentPage={currentPage}
+                    onPageChange={onPageChange}
+                    onNumPagesLoad={onNumPagesLoad}
+                    onPageRendered={onPageRendered}
                   />
-                  <p className="text-text-secondary text-sm">
-                    {uploadedImage.file.name} (
-                    {(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
+                  <p className="text-text-secondary text-sm text-center">
+                    {uploadedFile.file.name} (
+                    {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
-                </>
+                </div>
               )}
             </div>
           ) : (
@@ -177,11 +202,11 @@ export function ImageUploader({
                 <div className="flex flex-col items-center gap-1">
                   <p className="text-text-primary text-xl font-bold leading-tight tracking-tight text-center">
                     {isDragActive
-                      ? "이미지를 여기에 놓으세요"
-                      : "이미지를 드래그 앤 드롭하세요"}
+                      ? "파일을 여기에 놓으세요"
+                      : "이미지 또는 PDF를 드래그 앤 드롭하세요"}
                   </p>
                   <p className="text-text-secondary text-sm font-normal text-center">
-                    {`JPG, PNG, WEBP 지원 (최대 ${MAX_FILE_SIZE_MB}MB)`}
+                    {`JPG, PNG, WEBP, PDF 지원 (최대 ${MAX_FILE_SIZE_MB}MB)`}
                   </p>
                 </div>
                 <button className="mt-4 flex min-w-[140px] items-center justify-center rounded-full h-11 px-6 bg-primary hover:bg-gray-800 text-white text-sm font-bold tracking-wide transition-all shadow-lg hover:shadow-xl">
@@ -190,16 +215,6 @@ export function ImageUploader({
               </div>
             </div>
           )}
-          <div className="mt-6 flex justify-center gap-8 text-text-secondary text-sm">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="text-text-primary w-5 h-5" />
-              <span>고정밀 OCR</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="text-text-primary w-5 h-5" />
-              <span>자동 번역</span>
-            </div>
-          </div>
         </div>
       </div>
     </main>

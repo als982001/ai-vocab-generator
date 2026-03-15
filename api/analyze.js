@@ -2,6 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import {
+  ANALYZE_DOCUMENT_PROMPT,
   ANALYZE_IMAGE_PROMPT,
   GEMINI_3_FLASH_PREVIEW,
 } from "../shared/constants/prompt.js";
@@ -16,19 +17,22 @@ export default async function handler(request, response) {
   }
 
   try {
-    const { imageBase64 } = request.body; // 프론트에서 받은 이미지
+    const { imageBase64, mimeType } = request.body; // 프론트에서 받은 이미지
 
     // 서버 환경변수는 VITE_ 안 붙여도 됨 (보안 안전)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
 
-    const prompt = ANALYZE_IMAGE_PROMPT;
+    const prompt =
+      mimeType === "application/pdf"
+        ? ANALYZE_DOCUMENT_PROMPT
+        : ANALYZE_IMAGE_PROMPT;
 
     // 이미지 객체 생성
     const imagePart = {
       inlineData: {
         data: imageBase64,
-        mimeType: "image/jpeg", // 혹은 png 등 유동적으로
+        mimeType,
       },
     };
 

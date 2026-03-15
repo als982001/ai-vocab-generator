@@ -3,24 +3,25 @@ import type { IWord } from "~/types";
 import { isLocalEnvironment } from "~/utils/env";
 
 import {
+  ANALYZE_DOCUMENT_PROMPT,
   ANALYZE_IMAGE_PROMPT,
   GEMINI_3_FLASH_PREVIEW,
 } from "../../shared/constants/prompt";
 
-const analyzeImageLocal = async (imagePart: {
-  inlineData: {
-    data: string;
-    mimeType: string;
-  };
-}): Promise<IWord[]> => {
+const analyzeImageLocal = async (
+  imagePart: {
+    inlineData: {
+      data: string;
+      mimeType: string;
+    };
+  },
+  prompt: string
+): Promise<IWord[]> => {
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
   try {
     // Gemini 1.5 Flash 모델 선택 (빠르고 저렴함)
     const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
-
-    // 프롬프트 (명령어)
-    const prompt = ANALYZE_IMAGE_PROMPT;
 
     // AI에게 요청 전송
     const result = await model.generateContent([prompt, imagePart]);
@@ -54,15 +55,21 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 // 실제 AI 호출 함수
-export const analyzeImage = async (file: File): Promise<IWord[]> => {
+export const analyzeDocument = async (file: File): Promise<IWord[]> => {
+  if (!file.type) throw new Error("지원하지 않는 파일 형식입니다.");
+
   // 1. 파일을 Base64로 변환 (기존 함수 활용)
   const imagePart = await fileToGenerativePart(file);
   const base64Data = imagePart.inlineData.data;
 
-  // 2. 내 Vercel 서버로 요청 (API 키 필요 없음!)
-  // 로컬 환경 체크
+  // 로컬 환경: 클라이언트에서 직접 Gemini API 호출
   if (isLocalEnvironment()) {
-    const result = await analyzeImageLocal(imagePart);
+    const prompt =
+      file.type === "application/pdf"
+        ? ANALYZE_DOCUMENT_PROMPT
+        : ANALYZE_IMAGE_PROMPT;
+
+    const result = await analyzeImageLocal(imagePart, prompt);
 
     return result;
   }
@@ -70,7 +77,7 @@ export const analyzeImage = async (file: File): Promise<IWord[]> => {
   const response = await fetch("/api/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ imageBase64: base64Data }),
+    body: JSON.stringify({ imageBase64: base64Data, mimeType: file.type }),
   });
 
   if (!response.ok) throw new Error("분석 실패");

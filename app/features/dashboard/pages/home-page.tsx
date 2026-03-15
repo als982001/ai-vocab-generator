@@ -5,30 +5,29 @@ import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
 import { MobileHeader } from "~/components/shared/MobileHeader";
 import { Sidebar } from "~/components/shared/Sidebar";
 import { SidebarDrawer } from "~/components/shared/SidebarDrawer";
-import { ImageUploader } from "~/features/dashboard/components/ImageUploader";
+import { FileUploader } from "~/features/dashboard/components/FileUploader";
 import { ResultPanel } from "~/features/dashboard/components/ResultPanel";
+import { useFileAnalysis } from "~/features/dashboard/hooks/useFileAnalysis";
 import { useHighlightWord } from "~/features/dashboard/hooks/useHighlightWord";
-import { useImageAnalysis } from "~/features/dashboard/hooks/useImageAnalysis";
 import { useImageScroll } from "~/features/dashboard/hooks/useImageScroll";
 import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
 } from "~/features/dashboard/utils/download";
-import type { IDisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions, IUploadedFile, JlptLevel } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
 
 export default function HomePage() {
   const {
-    uploadedImage,
+    uploadedFile,
     isAnalyzing,
     words,
     enableResultAnimation,
     setEnableResultAnimation,
-    handleImageUpload,
-  } = useImageAnalysis();
+    handleFileUpload,
+  } = useFileAnalysis();
 
   const { highlightedWord, handleWordClick } = useHighlightWord();
-  const { imageContainerRef, handleWordCardClick } = useImageScroll(words);
 
   const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
   const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
@@ -36,6 +35,24 @@ export default function HomePage() {
   });
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_numPages, setNumPages] = useState(0); // 추후 "3/10 페이지" 같은 총 페이지 수 표시에 활용 예정
+
+  const { fileContainerRef, handleWordCardClick, handlePageRendered } =
+    useImageScroll(words, {
+      fileType: uploadedFile?.fileType,
+      currentPage,
+      onPageChange: setCurrentPage,
+    });
+
+  const handleFileUploadWithReset = (file: IUploadedFile | null) => {
+    setCurrentPage(1);
+    setNumPages(0);
+
+    handleFileUpload(file);
+  };
 
   const handleDownloadTxt = () => {
     downloadWordsAsTxt(words);
@@ -89,15 +106,19 @@ export default function HomePage() {
           animate="animate"
           transition={{ duration: PAGE_TRANSITION_DURATION }}
         >
-          <ImageUploader
-            uploadedImage={uploadedImage}
-            onImageUpload={handleImageUpload}
+          <FileUploader
+            uploadedFile={uploadedFile}
+            onFileUpload={handleFileUploadWithReset}
             isAnalyzing={isAnalyzing}
             words={words}
             hoveredWord={hoveredWord}
             onHover={setHoveredWord}
             onWordClick={handleWordClick}
-            imageContainerRef={imageContainerRef}
+            fileContainerRef={fileContainerRef}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            onNumPagesLoad={setNumPages}
+            onPageRendered={handlePageRendered}
           />
           <ResultPanel
             words={filteredWords}
@@ -114,7 +135,7 @@ export default function HomePage() {
       </div>
 
       <FloatingActionButton
-        onImageUpload={handleImageUpload}
+        onFileUpload={handleFileUploadWithReset}
         onDownloadTxt={handleDownloadTxt}
         onDownloadCsv={handleDownloadCsv}
         wordCount={words.length}
