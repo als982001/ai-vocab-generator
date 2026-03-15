@@ -39,7 +39,12 @@
 - **후리가나 지원**: 일본어 발음(읽는 법) 제공
 - **데이터 내보내기**: 추출된 단어장을 TXT 또는 CSV 파일로 다운로드
 
-#### v0.2.0 ~ v0.3.0 추가 기능
+#### v0.2.0 추가 기능
+
+- **바운딩 박스 표시**: 추출된 단어의 위치를 이미지 위에 박스로 표시
+- **모바일 반응형 지원**: 모바일 화면에 최적화된 레이아웃 제공
+
+#### v0.3.0 추가 기능
 
 <div align="center">
   <img src=".github/assets/mobile_main.png" alt="모바일 메인 화면" width="30%">
@@ -47,12 +52,26 @@
   <img src=".github/assets/csv_feature.gif" alt="CSV 다운로드 기능" width="50%">
 </div>
 
-- **바운딩 박스 표시**: 추출된 단어의 위치를 이미지 위에 박스로 표시
 - **단어 상호작용**: 이미지 내 박스 클릭 시 해당 단어 카드로 자동 스크롤
-- **모바일 반응형 지원**: 모바일 화면에 최적화된 레이아웃 제공
 - **CSV 다운로드**: Anki 및 엑셀 호환을 위한 CSV 포맷 지원 (UTF-8 BOM 적용)
+- **모바일 히스토리**: 모바일 화면에 최적화된 히스토리 페이지 레이아웃
+- **모바일 다운로드**: 모바일 환경에서 TXT/CSV 다운로드 지원
 
 #### v0.4.0 추가 기능
+
+- **애니메이션 & 마이크로 인터랙션**: Framer Motion 기반 카드 순차 등장(stagger), 페이지 전환, hover/active 피드백
+- **MVP 기능 다듬기**: 전반적인 UI 품질 개선 및 불필요한 코드 정리
+
+#### v0.5.0 추가 기능
+
+- **Google OAuth 로그인**: Supabase Auth를 통한 Google 소셜 로그인 구현
+- **클라우드 데이터 저장**: localStorage에서 Supabase PostgreSQL로 마이그레이션
+
+#### v0.6.0 추가 기능
+
+- **코드 구조 개선**: 커스텀 훅 추출 및 FilterDropdown 컴포넌트 분리 리팩토링
+
+#### v0.7.0 추가 기능
 
 <div align="center">
   <img src=".github/assets/pdf-pc.gif" alt="PC PDF 업로드" width="70%">
