@@ -54,11 +54,18 @@
 
 #### v0.4.0 추가 기능
 
+<div align="center">
+  <img src=".github/assets/pdf-pc.gif" alt="PC PDF 업로드" width="70%">
+  <br><br>
+  <img src=".github/assets/pdf-mobile.gif" alt="모바일 PDF 업로드" width="30%">
+</div>
+
 - **PDF 파일 업로드**: 이미지뿐 아니라 PDF 문서도 드래그앤드롭으로 업로드하여 단어 추출
 - **PDF 뷰어**: react-pdf 기반 캔버스 렌더링으로 PDF 페이지를 화면에 직접 표시
 - **PDF 페이지네이션**: 이전/다음 버튼으로 여러 페이지 탐색
 - **페이지별 바운딩 박스**: 현재 보고 있는 PDF 페이지에 해당하는 단어만 바운딩 박스 표시
 - **단어 클릭 시 페이지 이동**: 우측 단어 카드 클릭 시 해당 단어가 위치한 PDF 페이지로 자동 이동 및 스크롤
+- **PC/모바일 모두 지원**: PDF 업로드 및 뷰어가 데스크톱과 모바일 환경 모두에서 정상 동작
 
 ### 📚 히스토리 페이지 (`/history`)
 
