@@ -97,8 +97,7 @@ export function FloatingActionButton({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={SPRING_DROPDOWN}
-            style={{ transformOrigin: "bottom right" }}
-            className="absolute bottom-full mb-3 right-0 w-44 bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden"
+            className="absolute bottom-full mb-3 right-0 w-44 origin-bottom-right bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden"
           >
             {onFileUpload && (
               <button onClick={handleUploadClick} className={menuButtonClass}>
