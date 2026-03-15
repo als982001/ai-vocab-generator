@@ -23,11 +23,6 @@ export function useFileAnalysis() {
   }, [uploadedFile]);
 
   const handleFileUpload = async (uploadedNewFile: IUploadedFile | null) => {
-    // 이전 파일의 preview URL 정리
-    if (uploadedFile?.preview) {
-      URL.revokeObjectURL(uploadedFile.preview);
-    }
-
     setUploadedFile(uploadedNewFile);
 
     // 파일이 업로드되면 분석 시작

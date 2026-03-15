@@ -87,9 +87,6 @@ export function FileUploader({
   });
 
   const handleRemoveImage = () => {
-    if (uploadedFile?.preview) {
-      URL.revokeObjectURL(uploadedFile.preview);
-    }
     onFileUpload(null);
   };
 
