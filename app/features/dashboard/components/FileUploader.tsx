@@ -53,6 +53,7 @@ export function FileUploader({
   onPageChange,
   onNumPagesLoad,
 }: IFileUploaderProps) {
+  console.log("uploadedFile", uploadedFile);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -116,10 +117,17 @@ export function FileUploader({
         </div>
       </div>
       <div className="flex-1 p-8 flex flex-col items-center justify-center overflow-y-auto bg-gray-50">
-        <div className="w-full max-w-3xl h-full max-h-[600px] flex flex-col">
+        <div
+          className={`w-full h-full flex flex-col ${
+            uploadedFile?.fileType === "pdf"
+              ? "max-w-5xl max-h-[calc(100vh-12rem)]"
+              : "max-w-3xl max-h-[600px]"
+          }`}
+        >
           {uploadedFile ? (
             <div
               ref={fileContainerRef}
+              style={{ border: "3px solid black" }}
               className="flex-1 flex flex-col items-center justify-start md:justify-center gap-6 rounded-2xl bg-white shadow-md px-6 py-14 relative overflow-y-auto md:overflow-hidden"
             >
               {!isAnalyzing && (
@@ -152,7 +160,7 @@ export function FileUploader({
                   </div>
                 </div>
               ) : (
-                <>
+                <div style={{ backgroundColor: "pink" }}>
                   <DocumentViewer
                     uploadedFile={uploadedFile}
                     words={words}
@@ -167,7 +175,7 @@ export function FileUploader({
                     {uploadedFile.file.name} (
                     {(uploadedFile.file.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
-                </>
+                </div>
               )}
             </div>
           ) : (
@@ -203,16 +211,6 @@ export function FileUploader({
               </div>
             </div>
           )}
-          <div className="mt-6 flex justify-center gap-8 text-text-secondary text-sm">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="text-text-primary w-5 h-5" />
-              <span>고정밀 OCR</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="text-text-primary w-5 h-5" />
-              <span>자동 번역</span>
-            </div>
-          </div>
         </div>
       </div>
     </main>
