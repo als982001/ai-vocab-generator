@@ -1,6 +1,6 @@
 # 📸 Snap-Voca (AI 단어장 생성기)
 
-이미지에서 일본어 단어를 추출하여 한국어 번역과 발음(후리가나)이 포함된 단어장을 자동으로 생성합니다.
+이미지 또는 PDF에서 일본어 단어를 추출하여 한국어 번역과 발음(후리가나)이 포함된 단어장을 자동으로 생성합니다.
 
 | Type             | Link                                                              |
 | :--------------- | :---------------------------------------------------------------- |
@@ -18,13 +18,14 @@
 - **Server State:** TanStack Query (React Query)
 - **AI:** Google Gemini 2.5 Flash API
 - **UI Libraries:** Lucide React, Sonner (Toast), React Dropzone, Framer Motion
+- **PDF:** react-pdf (PDF.js 기반 캔버스 렌더링)
 - **Other:** Web Speech API (TTS)
 
 ## ✨ Features
 
 ### 📤 메인 페이지 (`/`)
 
-이미지에서 일본어 단어를 추출하여 단어장을 생성합니다.
+이미지 또는 PDF에서 일본어 단어를 추출하여 단어장을 생성합니다.
 
 <div align="center">
   <img src=".github/assets/main01.png" alt="이미지 업로드" width="70%">
@@ -32,7 +33,7 @@
   <img src=".github/assets/main02.png" alt="단어 추출 결과" width="70%">
 </div>
 
-- **Drag & Drop 업로드**: 이미지를 드래그앤드롭으로 간편하게 업로드
+- **Drag & Drop 업로드**: 이미지 또는 PDF를 드래그앤드롭으로 간편하게 업로드
 - **AI 단어 추출**: Google Gemini API를 통해 이미지 속 일본어 단어 자동 인식
 - **JLPT 레벨 표시**: 각 단어의 난이도 레벨 (N5~N1) 자동 판별
 - **후리가나 지원**: 일본어 발음(읽는 법) 제공
@@ -50,6 +51,14 @@
 - **단어 상호작용**: 이미지 내 박스 클릭 시 해당 단어 카드로 자동 스크롤
 - **모바일 반응형 지원**: 모바일 화면에 최적화된 레이아웃 제공
 - **CSV 다운로드**: Anki 및 엑셀 호환을 위한 CSV 포맷 지원 (UTF-8 BOM 적용)
+
+#### v0.4.0 추가 기능
+
+- **PDF 파일 업로드**: 이미지뿐 아니라 PDF 문서도 드래그앤드롭으로 업로드하여 단어 추출
+- **PDF 뷰어**: react-pdf 기반 캔버스 렌더링으로 PDF 페이지를 화면에 직접 표시
+- **PDF 페이지네이션**: 이전/다음 버튼으로 여러 페이지 탐색
+- **페이지별 바운딩 박스**: 현재 보고 있는 PDF 페이지에 해당하는 단어만 바운딩 박스 표시
+- **단어 클릭 시 페이지 이동**: 우측 단어 카드 클릭 시 해당 단어가 위치한 PDF 페이지로 자동 이동 및 스크롤
 
 ### 📚 히스토리 페이지 (`/history`)
 
@@ -96,26 +105,35 @@
 - **다운로드 옵션 제공**: Radix UI 기반 드롭다운 메뉴를 통해 TXT/CSV 포맷 선택 가능
 - **애니메이션 & 마이크로 인터랙션**: Framer Motion 기반 카드 순차 등장(stagger), 페이지 전환, hover/active 피드백 등 세밀한 인터랙션 적용
 
-### 4. AI 이미지 분석 & 시각화
+### 4. AI 파일 분석 & 시각화
 
 - **Google Gemini 2.5 Flash API** 연동: OCR + 번역 + 레벨 판정을 한 번의 API 호출로 처리
-- **좌표 기반 오버레이**: AI 응답에서 단어 좌표를 받아 이미지 위에 바운딩 박스 렌더링
+- **이미지/PDF 분기 처리**: 파일 타입에 따라 `ANALYZE_IMAGE_PROMPT` / `ANALYZE_DOCUMENT_PROMPT` 자동 선택
+- **좌표 기반 오버레이**: AI 응답에서 단어 좌표를 받아 이미지 또는 PDF 캔버스 위에 바운딩 박스 렌더링
 - **반응형 좌표 계산**: 창 크기 변경 시에도 박스 위치가 정확하게 유지되도록 구현
 
-### 5. 모바일 반응형 아키텍처 (v0.3.0)
+### 5. PDF 문서 뷰어 (v0.4.0)
+
+- **react-pdf 기반 렌더링**: PDF.js Canvas로 PDF 페이지를 렌더링하여 바운딩 박스 오버레이 가능
+- **DocumentViewer 래퍼**: `fileType`에 따라 이미지 뷰어 또는 PDF 뷰어로 자동 분기
+- **번들 최적화**: `React.lazy` + `Suspense`로 PdfViewer를 동적 로드하여 초기 번들 크기 최소화
+- **반응형 PDF 너비**: `ResizeObserver`로 컨테이너 너비를 실시간 측정하여 PDF 캔버스 크기 자동 조정
+- **페이지 연동 스크롤**: 단어 클릭 시 해당 페이지로 이동 후 단어 위치로 자동 스크롤 (`onPageRendered` 콜백 활용)
+
+### 6. 모바일 반응형 아키텍처 (v0.3.0)
 
 - **Layout Shift 방지**: Tailwind CSS Breakpoint(`md:`)를 활용하여 JS 개입 없이 CSS 레벨에서 레이아웃 전환
 - **모바일 전용 컴포넌트**:
   - `Sheet` (Drawer): 모바일에서 사이드바 메뉴를 대체하는 드로어 구현
   - `FloatingActionButton`: 모바일 환경에서 주요 기능(업로드/다운로드) 접근성 강화
 
-### 6. 데이터 내보내기 고도화 (CSV)
+### 7. 데이터 내보내기 고도화 (CSV)
 
 - **인코딩 처리**: 엑셀(Excel)에서 한글/일본어 깨짐 방지를 위해 **UTF-8 BOM(\uFEFF)** 적용
 - **데이터 무결성**: 쉼표(`,`)나 줄바꿈이 포함된 텍스트가 셀을 깨뜨리지 않도록 이스케이프 처리 구현
 - **Anki 호환성**: 암기 앱(Anki)에서 즉시 가져올 수 있는 포맷 표준 준수
 
-### 7. Google OAuth 인증
+### 8. Google OAuth 인증
 
 <div align="center">
   <img src=".github/assets/login_logout.gif" alt="Google 로그인/로그아웃" width="70%">
@@ -130,7 +148,7 @@
   <img src=".github/assets/user_info.png" alt="사이드바 유저 프로필" width="70%">
 </div>
 
-### 8. TanStack Query 서버 상태 관리
+### 9. TanStack Query 서버 상태 관리
 
 - **커스텀 훅 패턴**: `useAnalysisHistory`, `useSaveAnalysis`, `useWordMutations` 등 기능별 훅으로 분리
 - **자동 캐싱**: 히스토리 페이지 재방문 시 API 재호출 없이 캐시된 데이터 즉시 표시
@@ -162,5 +180,6 @@
 - [x] Google OAuth 로그인 (Supabase Auth)
 - [x] 클라우드 데이터 저장 (localStorage → Supabase PostgreSQL)
 - [x] TanStack Query 서버 상태 관리
+- [x] PDF 파일 업로드 및 분석 (react-pdf 뷰어)
 
 ## 📂 Directory Structure
