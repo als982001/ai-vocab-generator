@@ -24,6 +24,7 @@ interface IPdfViewerProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   onNumPagesLoad: (numPages: number) => void;
+  onPageRendered?: () => void;
 }
 
 export function PdfViewer({
@@ -35,6 +36,7 @@ export function PdfViewer({
   currentPage,
   onPageChange,
   onNumPagesLoad,
+  onPageRendered,
 }: IPdfViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -73,6 +75,7 @@ export function PdfViewer({
                   width={containerWidth}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
+                  onRenderSuccess={onPageRendered}
                 />
                 <BoundingBoxOverlay
                   words={words}

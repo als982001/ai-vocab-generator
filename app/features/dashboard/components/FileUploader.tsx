@@ -31,6 +31,7 @@ interface IFileUploaderProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   onNumPagesLoad: (numPages: number) => void;
+  onPageRendered?: () => void;
 }
 
 export function FileUploader({
@@ -45,6 +46,7 @@ export function FileUploader({
   currentPage,
   onPageChange,
   onNumPagesLoad,
+  onPageRendered,
 }: IFileUploaderProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
@@ -171,6 +173,7 @@ export function FileUploader({
                     currentPage={currentPage}
                     onPageChange={onPageChange}
                     onNumPagesLoad={onNumPagesLoad}
+                    onPageRendered={onPageRendered}
                   />
                   <p className="text-text-secondary text-sm text-center">
                     {uploadedFile.file.name} (

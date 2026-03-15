@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 
 import type { IWord } from "~/types";
 
@@ -11,6 +11,7 @@ export function useImageScroll(
   }
 ) {
   const fileContainerRef = useRef<HTMLDivElement>(null);
+  const pendingScrollWordRef = useRef<IWord | null>(null);
 
   const scrollToWordPosition = (word: IWord) => {
     const container = fileContainerRef.current;
@@ -33,6 +34,14 @@ export function useImageScroll(
     });
   };
 
+  // react-pdf Page 렌더링 완료 시 호출 — 대기 중인 스크롤 실행
+  const handlePageRendered = useCallback(() => {
+    if (pendingScrollWordRef.current) {
+      scrollToWordPosition(pendingScrollWordRef.current);
+      pendingScrollWordRef.current = null;
+    }
+  }, []);
+
   const handleWordCardClick = (wordStr: string) => {
     const word = words.find((w) => w.word === wordStr);
 
@@ -45,12 +54,8 @@ export function useImageScroll(
       if (isSamePage) {
         scrollToWordPosition(word);
       } else if (word.page != null) {
+        pendingScrollWordRef.current = word;
         options.onPageChange?.(word.page);
-
-        // 페이지 전환 후 react-pdf 캔버스 렌더링 대기
-        setTimeout(() => {
-          scrollToWordPosition(word);
-        }, 300);
       }
 
       return;
@@ -63,5 +68,5 @@ export function useImageScroll(
     scrollToWordPosition(word);
   };
 
-  return { fileContainerRef, handleWordCardClick };
+  return { fileContainerRef, handleWordCardClick, handlePageRendered };
 }

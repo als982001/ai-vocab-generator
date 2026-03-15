@@ -17,6 +17,7 @@ interface IDocumentViewerProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   onNumPagesLoad: (numPages: number) => void;
+  onPageRendered?: () => void;
 }
 
 export function DocumentViewer({
@@ -28,6 +29,7 @@ export function DocumentViewer({
   currentPage,
   onPageChange,
   onNumPagesLoad,
+  onPageRendered,
 }: IDocumentViewerProps) {
   if (uploadedFile.fileType === "image") {
     return (
@@ -59,6 +61,7 @@ export function DocumentViewer({
           currentPage={currentPage}
           onPageChange={onPageChange}
           onNumPagesLoad={onNumPagesLoad}
+          onPageRendered={onPageRendered}
         />
       </Suspense>
     );

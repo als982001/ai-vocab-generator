@@ -39,11 +39,12 @@ export default function HomePage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_numPages, setNumPages] = useState(0);
 
-  const { fileContainerRef, handleWordCardClick } = useImageScroll(words, {
-    fileType: uploadedFile?.fileType,
-    currentPage,
-    onPageChange: setCurrentPage,
-  });
+  const { fileContainerRef, handleWordCardClick, handlePageRendered } =
+    useImageScroll(words, {
+      fileType: uploadedFile?.fileType,
+      currentPage,
+      onPageChange: setCurrentPage,
+    });
 
   const handleFileUploadWithReset = (file: IUploadedFile | null) => {
     setCurrentPage(1);
@@ -116,6 +117,7 @@ export default function HomePage() {
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onNumPagesLoad={setNumPages}
+            onPageRendered={handlePageRendered}
           />
           <ResultPanel
             words={filteredWords}
