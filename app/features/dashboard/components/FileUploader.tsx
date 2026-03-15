@@ -120,8 +120,11 @@ export function FileUploader({
           {uploadedFile ? (
             <div
               ref={fileContainerRef}
-              style={{ border: "3px solid black" }}
-              className="flex-1 flex flex-col items-center justify-start md:justify-center gap-6 rounded-2xl bg-white shadow-md px-6 py-14 relative overflow-y-auto md:overflow-hidden"
+              className={`flex-1 flex flex-col rounded-2xl bg-white shadow-md relative ${
+                uploadedFile.fileType === "pdf"
+                  ? "p-0 overflow-y-auto"
+                  : "items-center justify-start md:justify-center gap-6 px-6 py-14 overflow-y-auto md:overflow-hidden"
+              }`}
             >
               {!isAnalyzing && (
                 <button
@@ -153,7 +156,11 @@ export function FileUploader({
                   </div>
                 </div>
               ) : (
-                <div style={{ backgroundColor: "pink" }}>
+                <div
+                  className={
+                    uploadedFile.fileType === "pdf" ? "flex-1 w-full" : ""
+                  }
+                >
                   <DocumentViewer
                     uploadedFile={uploadedFile}
                     words={words}
