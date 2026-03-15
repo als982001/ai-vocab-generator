@@ -36,8 +36,9 @@ export default function HomePage() {
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_numPages, setNumPages] = useState(0);
+  const [_numPages, setNumPages] = useState(0); // 추후 "3/10 페이지" 같은 총 페이지 수 표시에 활용 예정
 
   const { fileContainerRef, handleWordCardClick, handlePageRendered } =
     useImageScroll(words, {
