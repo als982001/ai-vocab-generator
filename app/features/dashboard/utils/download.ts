@@ -30,8 +30,8 @@ export function downloadWordsAsCsv({
 
   const header =
     language === "en"
-      ? "Word,IPA,Part of Speech,Meaning,CEFR(AI)"
-      : "Word,Reading,Meaning,Level";
+      ? "Word,IPA,Part of Speech,Meaning,CEFR(AI)" // 영어
+      : "Word,Reading,Meaning,Level"; // 일본어
   const rows = words.map((word) => {
     const level = word.level ?? "";
 
