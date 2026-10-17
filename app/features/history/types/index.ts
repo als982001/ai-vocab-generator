@@ -1,7 +1,8 @@
-import type { IWord } from "~/types";
+import type { IWord, Language } from "~/types";
 
 export interface IWordWithDate extends IWord {
   id: string;
+  language: Language;
   date: string;
   analysisId: string;
   createdAt: string;

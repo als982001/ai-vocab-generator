@@ -1,4 +1,4 @@
-import type { IWord } from "~/types";
+import type { IWord, Language } from "~/types";
 
 /**
  * CSV 필드 이스케이프 처리
@@ -15,15 +15,26 @@ function escapeCsvField(field: string): string {
 
 /**
  * 단어 목록을 UTF-8 BOM이 포함된 CSV 파일로 다운로드
+ * (영어는 IPA·품사 컬럼 포함, 등급은 AI 추정임을 헤더에 표기)
  */
-export function downloadWordsAsCsv(words: IWord[]): void {
+export function downloadWordsAsCsv(words: IWord[], language: Language): void {
   if (words.length === 0) return;
 
-  const header = "Word,Reading,Meaning,Level";
-  const rows = words.map(
-    (word) =>
-      `${escapeCsvField(word.word)},${escapeCsvField(word.reading)},${escapeCsvField(word.meaning)},${word.level}`
-  );
+  const header =
+    language === "en"
+      ? "Word,IPA,Part of Speech,Meaning,CEFR(AI)"
+      : "Word,Reading,Meaning,Level";
+  const rows = words.map((word) => {
+    const level = word.level ?? "";
+
+    // 영어
+    if (language === "en") {
+      return `${escapeCsvField(word.word)},${escapeCsvField(word.reading)},${escapeCsvField(word.part_of_speech ?? "")},${escapeCsvField(word.meaning)},${level}`;
+    }
+
+    // 일본어
+    return `${escapeCsvField(word.word)},${escapeCsvField(word.reading)},${escapeCsvField(word.meaning)},${level}`;
+  });
   const content = [header, ...rows].join("\n");
 
   // UTF-8 BOM 추가 (Excel 호환)
@@ -45,17 +56,30 @@ export function downloadWordsAsCsv(words: IWord[]): void {
 /**
  * 단어 목록을 UTF-8 인코딩된 TXT 파일로 다운로드
  */
-export function downloadWordsAsTxt(words: IWord[]): void {
+export function downloadWordsAsTxt(words: IWord[], language: Language): void {
   if (words.length === 0) return;
 
   const today = new Date().toLocaleDateString("ko-KR");
 
   const header = `================================\nSnap-Voca 단어장 (${today})\n================================\n\n`;
   const wordList = words
-    .map(
-      (word, index) =>
-        `${index + 1}. ${word.word} (${word.reading}) : ${word.meaning} [${word.level}]`
-    )
+    .map((word, index) => {
+      const level = word.level ?? "등급 미정";
+
+      // 영어
+      if (language === "en") {
+        const partOfSpeech = word.part_of_speech
+          ? ` (${word.part_of_speech})`
+          : "";
+
+        const reading = word.reading ? ` ${word.reading}` : "";
+
+        return `${index + 1}. ${word.word}${reading}${partOfSpeech} : ${word.meaning} [CEFR ${level}, AI 추정]`;
+      }
+
+      // 일본어
+      return `${index + 1}. ${word.word} (${word.reading}) : ${word.meaning} [${level}]`;
+    })
     .join("\n");
   const content = header + wordList;
 

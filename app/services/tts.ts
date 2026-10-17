@@ -1,17 +1,26 @@
+import type { Language } from "~/types";
+import { LANGUAGE_CONFIG } from "~/utils/language";
+
 /**
- * 일본어 TTS (Text-to-Speech) 재생
- * @param text - 재생할 텍스트 (일본어)
- * @param options - 재생 옵션 (rate, pitch 등)
- * @returns Promise<void> - 재생 완료 시 resolve, 실패 시 reject
+ * 언어별 TTS (Text-to-Speech) 재생
+ * @param text 재생할 텍스트
+ * @param language 텍스트의 언어 (음성 로케일 결정)
+ * @param options 재생 옵션 (rate, pitch 등)
+ * @return Promise<void> 재생 완료 시 resolve, 실패 시 reject
  */
-export const playTTS = (
-  text: string,
+export const playTTS = ({
+  text,
+  language,
+  options,
+}: {
+  text: string;
+  language: Language;
   options?: {
     rate?: number; // 0.1 ~ 10 (기본값: 0.8)
     pitch?: number; // 0 ~ 2 (기본값: 1)
     volume?: number; // 0 ~ 1 (기본값: 1)
-  }
-): Promise<void> => {
+  };
+}): Promise<void> => {
   return new Promise((resolve, reject) => {
     // 브라우저 지원 확인
     if (!window.speechSynthesis) {
@@ -23,19 +32,23 @@ export const playTTS = (
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
+    const { ttsLocale } = LANGUAGE_CONFIG[language];
+    const languagePrefix = ttsLocale.split("-")[0];
 
-    utterance.lang = "ja-JP";
+    utterance.lang = ttsLocale;
     utterance.rate = options?.rate ?? 0.8;
     utterance.pitch = options?.pitch ?? 1;
     utterance.volume = options?.volume ?? 1;
 
-    // 일본어 음성 선택 (음성 목록 로딩 대기)
+    // 해당 언어 음성 선택 (음성 목록 로딩 대기)
     const selectVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      const japaneseVoice = voices.find((voice) => voice.lang.startsWith("ja"));
+      const matchedVoice =
+        voices.find((voice) => voice.lang === ttsLocale) ??
+        voices.find((voice) => voice.lang.startsWith(languagePrefix));
 
-      if (japaneseVoice) {
-        utterance.voice = japaneseVoice;
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
       }
     };
 

@@ -1,11 +1,11 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import type { IWord } from "~/types";
+import type { IWord, Language } from "~/types";
 import { isLocalEnvironment } from "~/utils/env";
+import { normalizeWords } from "~/utils/word";
 
 import {
-  ANALYZE_DOCUMENT_PROMPT,
-  ANALYZE_IMAGE_PROMPT,
   GEMINI_3_FLASH_PREVIEW,
+  buildAnalyzePrompt,
 } from "../../shared/constants/prompt";
 
 const analyzeImageLocal = async (
@@ -16,7 +16,7 @@ const analyzeImageLocal = async (
     };
   },
   prompt: string
-): Promise<IWord[]> => {
+): Promise<unknown> => {
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
   try {
@@ -31,7 +31,7 @@ const analyzeImageLocal = async (
     // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거
     const cleanJson = text.replace(/```json|```/g, "").trim();
 
-    return JSON.parse(cleanJson) as IWord[];
+    return JSON.parse(cleanJson);
   } catch (error) {
     console.error(error);
     throw error;
@@ -54,8 +54,19 @@ const fileToGenerativePart = async (file: File) => {
   };
 };
 
-// 실제 AI 호출 함수
-export const analyzeDocument = async (file: File): Promise<IWord[]> => {
+/**
+ * 파일에서 선택한 언어의 단어를 추출 (로컬: Gemini 직접 호출, 배포: /api/analyze)
+ * @param file 업로드한 이미지 또는 PDF
+ * @param language 추출할 언어
+ * @return words 등급 정규화와 중복 제거를 마친 단어 목록
+ */
+export const analyzeDocument = async ({
+  file,
+  language,
+}: {
+  file: File;
+  language: Language;
+}): Promise<{ words: IWord[] }> => {
   if (!file.type) throw new Error("지원하지 않는 파일 형식입니다.");
 
   // 1. 파일을 Base64로 변환 (기존 함수 활용)
@@ -64,23 +75,29 @@ export const analyzeDocument = async (file: File): Promise<IWord[]> => {
 
   // 로컬 환경: 클라이언트에서 직접 Gemini API 호출
   if (isLocalEnvironment()) {
-    const prompt =
-      file.type === "application/pdf"
-        ? ANALYZE_DOCUMENT_PROMPT
-        : ANALYZE_IMAGE_PROMPT;
+    const { prompt } = buildAnalyzePrompt({
+      language,
+      fileType: file.type === "application/pdf" ? "pdf" : "image",
+    });
 
-    const result = await analyzeImageLocal(imagePart, prompt);
+    const rawWords = await analyzeImageLocal(imagePart, prompt);
 
-    return result;
+    return normalizeWords({ rawWords, language });
   }
 
   const response = await fetch("/api/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ imageBase64: base64Data, mimeType: file.type }),
+    body: JSON.stringify({
+      imageBase64: base64Data,
+      mimeType: file.type,
+      language,
+    }),
   });
 
   if (!response.ok) throw new Error("분석 실패");
 
-  return (await response.json()) as IWord[];
+  const rawWords: unknown = await response.json();
+
+  return normalizeWords({ rawWords, language });
 };

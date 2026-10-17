@@ -5,10 +5,11 @@ import {
 } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { WordCard } from "~/features/dashboard/components/WordCard";
-import type { IDisplayOptions, IWord } from "~/types";
+import type { IDisplayOptions, IWord, Language } from "~/types";
 
 interface IResultPanelProps {
   words: IWord[];
+  language: Language;
   displayOptions: IDisplayOptions;
   onDownloadTxt: () => void;
   onDownloadCsv: () => void;
@@ -21,6 +22,7 @@ interface IResultPanelProps {
 
 export function ResultPanel({
   words,
+  language,
   displayOptions,
   onDownloadTxt,
   onDownloadCsv,
@@ -34,7 +36,8 @@ export function ResultPanel({
     <div key={word.word} id={`word-card-${word.word}`}>
       <WordCard
         word={word}
-        showFurigana={displayOptions.showFurigana}
+        language={language}
+        displayOptions={displayOptions}
         isHovered={hoveredWord === word.word}
         isHighlighted={highlightedWord === word.word}
         onHover={(hovered) => onHover(hovered ? word.word : null)}

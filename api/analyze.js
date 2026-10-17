@@ -2,9 +2,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import {
-  ANALYZE_DOCUMENT_PROMPT,
-  ANALYZE_IMAGE_PROMPT,
   GEMINI_3_FLASH_PREVIEW,
+  SUPPORTED_LANGUAGES,
+  buildAnalyzePrompt,
 } from "../shared/constants/prompt.js";
 
 const ALLOWED_MIME_TYPES = [
@@ -25,7 +25,8 @@ export default async function handler(request, response) {
   }
 
   try {
-    const { imageBase64, mimeType } = request.body; // 프론트에서 받은 이미지
+    // language가 없으면 일본어로 처리 (언어 선택 이전 버전 클라이언트 호환)
+    const { imageBase64, mimeType, language = "ja" } = request.body; // 프론트에서 받은 이미지
 
     if (!imageBase64 || !mimeType) {
       return response
@@ -39,14 +40,18 @@ export default async function handler(request, response) {
         .json({ error: "지원하지 않는 파일 형식입니다." });
     }
 
+    if (!SUPPORTED_LANGUAGES.includes(language)) {
+      return response.status(400).json({ error: "지원하지 않는 언어입니다." });
+    }
+
     // 서버 환경변수는 VITE_ 안 붙여도 됨 (보안 안전)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
 
-    const prompt =
-      mimeType === "application/pdf"
-        ? ANALYZE_DOCUMENT_PROMPT
-        : ANALYZE_IMAGE_PROMPT;
+    const { prompt } = buildAnalyzePrompt({
+      language,
+      fileType: mimeType === "application/pdf" ? "pdf" : "image",
+    });
 
     // 이미지 객체 생성
     const imagePart = {

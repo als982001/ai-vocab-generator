@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { motion } from "framer-motion";
-import { History, Search, SlidersHorizontal } from "lucide-react";
+import { FileSearch, History, Search, SlidersHorizontal } from "lucide-react";
 import { AnimatedViewportItem } from "~/components/motion/AnimatedList";
 import { DownloadDropdown } from "~/components/shared/DownloadDropdown";
 import { FloatingActionButton } from "~/components/shared/FloatingActionButton";
@@ -16,7 +16,7 @@ import { DesktopWordCard } from "~/features/history/components/DesktopWordCard";
 import { FilterDropdown } from "~/features/history/components/FilterDropdown";
 import { MobileFilterSheet } from "~/features/history/components/MobileFilterSheet";
 import { MobileWordCard } from "~/features/history/components/MobileWordCard";
-import { SORT_OPTIONS } from "~/features/history/constants/sort";
+import { getSortOptions } from "~/features/history/constants/sort";
 import { useAnalysisHistory } from "~/features/history/hooks/useAnalysisHistory";
 import { useSearch } from "~/features/history/hooks/useSearch";
 import { useWordActions } from "~/features/history/hooks/useWordActions";
@@ -26,11 +26,12 @@ import { useWordListData } from "~/features/history/hooks/useWordListData";
 import type { SortOption } from "~/features/history/types";
 import type { IDisplayOptions } from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
+import { DEFAULT_DISPLAY_OPTIONS, LANGUAGE_CONFIG } from "~/utils/language";
 
 export default function HistoryPage() {
-  const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
-    showFurigana: true,
-  });
+  const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>(
+    DEFAULT_DISPLAY_OPTIONS
+  );
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -40,9 +41,11 @@ export default function HistoryPage() {
   // 필터 패널 상태 및 핸들러
   const {
     isFilterOpen,
+    selectedLanguage,
     selectedYear,
     selectedLevels,
     toggleFilter,
+    handleLanguageChange,
     handleYearClick,
     handleLevelClick,
     resetFilters,
@@ -64,22 +67,26 @@ export default function HistoryPage() {
   // Supabase에서 히스토리 조회
   const { data: historyData } = useAnalysisHistory();
 
-  const { allWords, filteredWords, availableYears } = useWordListData({
-    historyData,
-    sortBy,
-    selectedYear,
-    selectedLevels,
-    searchQuery,
-  });
+  const { allWords, filteredWords, availableYears, hasLanguageWords } =
+    useWordListData({
+      historyData,
+      sortBy,
+      selectedLanguage,
+      selectedYear,
+      selectedLevels,
+      searchQuery,
+    });
+
+  const { sortOptions } = getSortOptions({ language: selectedLanguage });
 
   const { handleDeleteWord, handleSaveEdit } = useWordActions(allWords);
 
   const handleDownloadTxt = () => {
-    downloadWordsAsTxt(filteredWords);
+    downloadWordsAsTxt(filteredWords, selectedLanguage);
   };
 
   const handleDownloadCsv = () => {
-    downloadWordsAsCsv(filteredWords);
+    downloadWordsAsCsv(filteredWords, selectedLanguage);
   };
 
   return (
@@ -92,6 +99,7 @@ export default function HistoryPage() {
       <SidebarDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        language={selectedLanguage}
         selectedLevels={selectedLevels}
         onLevelToggle={handleLevelClick}
         displayOptions={displayOptions}
@@ -101,8 +109,11 @@ export default function HistoryPage() {
       <MobileFilterSheet
         isOpen={isFilterOpen}
         onClose={toggleFilter}
+        sortOptions={sortOptions}
         sortBy={sortBy}
         onSortChange={setSortBy}
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={handleLanguageChange}
         availableYears={availableYears}
         selectedYear={selectedYear}
         onYearChange={handleYearClick}
@@ -113,7 +124,8 @@ export default function HistoryPage() {
 
       <div className="flex flex-1 h-full w-full overflow-hidden">
         <Sidebar
-          showJlptLevelOptions={false}
+          language={selectedLanguage}
+          showLevelOptions={false}
           selectedLevels={selectedLevels}
           onLevelToggle={handleLevelClick}
           displayOptions={displayOptions}
@@ -148,9 +160,13 @@ export default function HistoryPage() {
           <div className="md:hidden px-4 py-2 bg-white border-b border-gray-100 flex items-center gap-2">
             {/* Selected Filters */}
             <div className="flex-1 flex items-center gap-2 overflow-x-auto">
+              {/* Language */}
+              <span className="shrink-0 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
+                {LANGUAGE_CONFIG[selectedLanguage].label}
+              </span>
               {/* Sort Option */}
               <span className="shrink-0 px-3 py-1 bg-gray-200 text-text-primary text-xs font-medium rounded-full">
-                {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
+                {sortOptions.find((opt) => opt.value === sortBy)?.label}
               </span>
               {selectedYear && (
                 <span className="shrink-0 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
@@ -229,7 +245,7 @@ export default function HistoryPage() {
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
                       className="text-sm bg-transparent border-none p-0 pr-6 focus:ring-0 font-medium cursor-pointer text-text-primary outline-none"
                     >
-                      {SORT_OPTIONS.map((option) => (
+                      {sortOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
                         </option>
@@ -240,6 +256,8 @@ export default function HistoryPage() {
                   {/* Filters Dropdown */}
                   <FilterDropdown
                     isFilterOpen={isFilterOpen}
+                    selectedLanguage={selectedLanguage}
+                    onLanguageChange={handleLanguageChange}
                     availableYears={availableYears}
                     selectedYear={selectedYear}
                     selectedLevels={selectedLevels}
@@ -250,6 +268,24 @@ export default function HistoryPage() {
                   />
                 </div>
               </div>
+
+              {/* 선택한 언어의 저장 단어가 없을 때 안내 (조회 완료 후에만) */}
+              {historyData && !hasLanguageWords && (
+                <div className="flex flex-col items-center justify-center gap-4 text-center py-24">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                    <FileSearch className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="text-text-primary font-medium mb-1">
+                      저장된 {LANGUAGE_CONFIG[selectedLanguage].label} 단어가
+                      없습니다
+                    </p>
+                    <p className="text-text-secondary text-sm">
+                      필터에서 다른 언어를 선택해보세요
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Desktop Card Grid */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -276,7 +312,7 @@ export default function HistoryPage() {
                         onCancelEdit={cancelEdit}
                         onStartEdit={startEdit}
                         onDeleteWord={handleDeleteWord}
-                        showFurigana={displayOptions.showFurigana}
+                        displayOptions={displayOptions}
                       />
                     </AnimatedViewportItem>
                   );
