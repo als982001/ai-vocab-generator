@@ -42,8 +42,10 @@
 
 # 도메인 규칙 (리뷰 시 참고)
 
-- `IWord.word` (일본어 단어 문자열)는 분석 결과 내에서 중복되지 않음이 보장된다.
+- `IWord.word` (추출된 단어 문자열)는 분석 결과 내에서 중복되지 않음이 보장된다.
+  AI 응답을 `normalizeWords` (`app/utils/word.ts`)에서 중복 제거하기 때문이다 (영어는 대소문자 무시).
   따라서 `key={word.word}` 패턴은 안전하며, 중복 key 경고는 불필요하다.
+- 영어 등급(CEFR)은 AI가 추정한 값이다. 목록 밖 등급은 `null`(등급 미정)으로 정규화된다.
 
 # 깃 & 배포 전략 (Git & Deployment Strategy)
 

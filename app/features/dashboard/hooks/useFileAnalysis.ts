@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSaveAnalysis } from "~/features/dashboard/hooks/useSaveAnalysis";
 import { analyzeDocument } from "~/services/gemini";
-import type { IUploadedFile, IWord } from "~/types";
+import type { IUploadedFile, IWord, Language } from "~/types";
 
-export function useFileAnalysis() {
+export function useFileAnalysis({ language }: { language: Language }) {
   const { mutate: saveAnalysis } = useSaveAnalysis();
 
   const [uploadedFile, setUploadedFile] = useState<IUploadedFile | null>(null);
@@ -32,7 +32,10 @@ export function useFileAnalysis() {
 
       try {
         // 실제 Gemini API 호출
-        const analyzedWords = await analyzeDocument(uploadedNewFile.file);
+        const { words: analyzedWords } = await analyzeDocument({
+          file: uploadedNewFile.file,
+          language,
+        });
 
         setWords(analyzedWords);
         setEnableResultAnimation(true);
@@ -44,6 +47,7 @@ export function useFileAnalysis() {
           saveAnalysis({
             words: analyzedWords,
             imageName: uploadedNewFile.file.name,
+            language,
           });
         } else {
           toast.info("단어를 찾지 못했습니다.");

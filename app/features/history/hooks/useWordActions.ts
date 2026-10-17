@@ -5,7 +5,7 @@ import {
   useUpdateWord,
 } from "~/features/history/hooks/useWordMutations";
 import type { IEditingWord, IWordWithDate } from "~/features/history/types";
-import type { JlptLevel } from "~/types";
+import type { WordLevel } from "~/types";
 
 export function useWordActions(allWords: IWordWithDate[]) {
   const deleteWordMutation = useDeleteWord();
@@ -30,6 +30,7 @@ export function useWordActions(allWords: IWordWithDate[]) {
                       reading: targetWord.reading,
                       meaning: targetWord.meaning,
                       level: targetWord.level,
+                      part_of_speech: targetWord.part_of_speech,
                       box_2d: targetWord.box_2d,
                     },
                   },
@@ -48,7 +49,7 @@ export function useWordActions(allWords: IWordWithDate[]) {
   const handleSaveEdit = (
     editingWord: IEditingWord | null,
     editedMeaning: string,
-    editedLevel: JlptLevel,
+    editedLevel: WordLevel | null,
     onSuccess: () => void
   ) => {
     if (!editingWord || updateWordMutation.isPending) return;

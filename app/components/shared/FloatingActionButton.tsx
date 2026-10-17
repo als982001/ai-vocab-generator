@@ -77,8 +77,9 @@ export function FloatingActionButton({
   const menuButtonClass =
     "w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white";
 
+  // z-40: 드로어·필터 시트(z-50)가 열리면 그 아래로 가려지도록
   return (
-    <div ref={containerRef} className="md:hidden fixed bottom-8 right-6 z-50">
+    <div ref={containerRef} className="md:hidden fixed bottom-8 right-6 z-40">
       {onFileUpload && (
         <input
           ref={inputRef}

@@ -1,17 +1,30 @@
-import type { IWord } from "~/types";
+import type { IWord, Language, WordLevel } from "~/types";
 import type { IAnalysisRow, IWordRow } from "~/types/supabase";
 
 import { supabase } from "./supabase";
 
-// 분석 결과 저장 (analyses INSERT → words 다건 INSERT)
-export async function saveAnalysis(
-  userId: string,
-  words: IWord[],
-  imageName: string
-): Promise<IAnalysisRow> {
+/**
+ * 분석 결과 저장 (analyses INSERT → words 다건 INSERT)
+ * @param userId 로그인 사용자 id
+ * @param words 저장할 단어 목록
+ * @param imageName 업로드한 파일 이름
+ * @param language 추출 언어
+ * @return 생성된 analyses row
+ */
+export async function saveAnalysis({
+  userId,
+  words,
+  imageName,
+  language,
+}: {
+  userId: string;
+  words: IWord[];
+  imageName: string;
+  language: Language;
+}): Promise<IAnalysisRow> {
   const { data: analysis, error: analysisError } = await supabase
     .from("analyses")
-    .insert({ user_id: userId, image_name: imageName })
+    .insert({ user_id: userId, image_name: imageName, language })
     .select()
     .single();
 
@@ -24,6 +37,7 @@ export async function saveAnalysis(
     reading: word.reading,
     meaning: word.meaning,
     level: word.level,
+    part_of_speech: word.part_of_speech ?? null,
     box_2d: word.box_2d ?? null,
   }));
 
@@ -60,7 +74,7 @@ export async function deleteWord(wordId: string): Promise<void> {
 export async function updateWord(
   wordId: string,
   meaning: string,
-  level: string
+  level: WordLevel | null
 ): Promise<void> {
   const { error } = await supabase
     .from("words")
@@ -83,6 +97,7 @@ export async function restoreWord(
     reading: word.reading,
     meaning: word.meaning,
     level: word.level,
+    part_of_speech: word.part_of_speech ?? null,
     box_2d: word.box_2d ?? null,
   });
 

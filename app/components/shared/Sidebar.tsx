@@ -2,24 +2,30 @@ import { Link, useLocation } from "react-router";
 
 import { CloudUpload, History, LogOut } from "lucide-react";
 import { useAuth } from "~/contexts/AuthContext";
-import type { IDisplayOptions, JlptLevel } from "~/types";
-import { JLPT_LEVELS } from "~/utils/jlpt";
+import type { IDisplayOptions, Language, WordLevel } from "~/types";
+import { LANGUAGES, LANGUAGE_CONFIG } from "~/utils/language";
 import { getValidAvatarUrl } from "~/utils/url";
 
 interface ISidebarProps {
-  selectedLevels: JlptLevel[];
-  onLevelToggle: (level: JlptLevel) => void;
+  language: Language;
+  onLanguageChange?: (language: Language) => void; // 전달된 경우에만 언어 셀렉트 노출
+  isLanguageLocked?: boolean;
+  selectedLevels: WordLevel[];
+  onLevelToggle: (level: WordLevel) => void;
   displayOptions: IDisplayOptions;
-  showJlptLevelOptions?: boolean;
+  showLevelOptions?: boolean;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
   className?: string;
 }
 
 export function Sidebar({
+  language,
+  onLanguageChange,
+  isLanguageLocked = false,
   selectedLevels,
   onLevelToggle,
   displayOptions,
-  showJlptLevelOptions = true,
+  showLevelOptions = true,
   onDisplayOptionsChange,
   className = "",
 }: ISidebarProps) {
@@ -27,6 +33,8 @@ export function Sidebar({
   const location = useLocation();
 
   const { pathname } = location;
+
+  const languageConfig = LANGUAGE_CONFIG[language];
 
   return (
     <aside
@@ -98,13 +106,43 @@ export function Sidebar({
       </div>
       <div className="h-px w-full bg-border-color my-2"></div>
 
-      {showJlptLevelOptions && (
-        <div className="p-4">
+      {onLanguageChange && (
+        <div className="p-4 pb-0">
           <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-4">
-            JLPT Level
+            Language
+          </h3>
+          <div className="px-2">
+            <select
+              value={language}
+              onChange={(e) => onLanguageChange(e.target.value as Language)}
+              disabled={isLanguageLocked}
+              className="w-full h-10 px-3 bg-white border border-border-color rounded-xl text-sm font-bold text-text-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {LANGUAGES.map((languageOption) => (
+                <option key={languageOption} value={languageOption}>
+                  {LANGUAGE_CONFIG[languageOption].label}
+                </option>
+              ))}
+            </select>
+            {isLanguageLocked && (
+              <p className="mt-2 text-text-secondary text-xs leading-4">
+                파일을 제거하면 언어를 변경할 수 있어요
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showLevelOptions && (
+        <div className="p-4">
+          <h3
+            className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-4"
+            title={languageConfig.levelTooltip}
+          >
+            {languageConfig.levelTitle}
           </h3>
           <div className="flex flex-wrap gap-2 px-2">
-            {JLPT_LEVELS.map((level) => (
+            {languageConfig.levels.map((level) => (
               <button
                 key={level}
                 onClick={() => onLevelToggle(level)}
@@ -125,32 +163,35 @@ export function Sidebar({
         <h3 className="text-text-secondary tracking-wide uppercase font-bold text-xs leading-4 px-2 mb-2">
           Display Options
         </h3>
-        <div className="p-3 border border-border-color flex bg-white rounded-xl gap-4 justify-between items-center">
-          <div className="flex flex-col">
-            <p className="text-text-primary font-bold text-sm leading-5">
-              Show Furigana
-            </p>
-          </div>
+        {languageConfig.displayOptions.map(({ key, label }) => (
           <div
-            className={`w-10 h-6 flex items-center p-0.5 rounded-full cursor-pointer ${
-              displayOptions.showFurigana
-                ? "bg-primary"
-                : "bg-surface-highlight"
-            }`}
-            onClick={() => {
-              onDisplayOptionsChange({
-                ...displayOptions,
-                showFurigana: !displayOptions.showFurigana,
-              });
-            }}
+            key={key}
+            className="p-3 border border-border-color flex bg-white rounded-xl gap-4 justify-between items-center"
           >
+            <div className="flex flex-col">
+              <p className="text-text-primary font-bold text-sm leading-5">
+                {label}
+              </p>
+            </div>
             <div
-              className={`w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm transition-transform duration-200 ease ${
-                displayOptions.showFurigana ? "translate-x-4" : "translate-x-0"
+              className={`w-10 h-6 flex items-center p-0.5 rounded-full cursor-pointer ${
+                displayOptions[key] ? "bg-primary" : "bg-surface-highlight"
               }`}
-            ></div>
+              onClick={() => {
+                onDisplayOptionsChange({
+                  ...displayOptions,
+                  [key]: !displayOptions[key],
+                });
+              }}
+            >
+              <div
+                className={`w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm transition-transform duration-200 ease ${
+                  displayOptions[key] ? "translate-x-4" : "translate-x-0"
+                }`}
+              ></div>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
 
       <div className="mt-auto p-4">

@@ -14,10 +14,18 @@ import {
   downloadWordsAsCsv,
   downloadWordsAsTxt,
 } from "~/features/dashboard/utils/download";
-import type { IDisplayOptions, IUploadedFile, JlptLevel } from "~/types";
+import type {
+  IDisplayOptions,
+  IUploadedFile,
+  Language,
+  WordLevel,
+} from "~/types";
 import { PAGE_TRANSITION, PAGE_TRANSITION_DURATION } from "~/utils/animation";
+import { DEFAULT_DISPLAY_OPTIONS, DEFAULT_LANGUAGE } from "~/utils/language";
 
 export default function HomePage() {
+  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
+
   const {
     uploadedFile,
     isAnalyzing,
@@ -25,14 +33,14 @@ export default function HomePage() {
     enableResultAnimation,
     setEnableResultAnimation,
     handleFileUpload,
-  } = useFileAnalysis();
+  } = useFileAnalysis({ language });
 
   const { highlightedWord, handleWordClick } = useHighlightWord();
 
-  const [selectedLevels, setSelectedLevels] = useState<JlptLevel[]>([]);
-  const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>({
-    showFurigana: true,
-  });
+  const [selectedLevels, setSelectedLevels] = useState<WordLevel[]>([]);
+  const [displayOptions, setDisplayOptions] = useState<IDisplayOptions>(
+    DEFAULT_DISPLAY_OPTIONS
+  );
   const [hoveredWord, setHoveredWord] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,15 +62,25 @@ export default function HomePage() {
     handleFileUpload(file);
   };
 
+  // 파일이 있는 동안(분석 중 포함)은 언어 변경 불가, X로 제거하면 해제
+  const isLanguageLocked = uploadedFile !== null;
+
+  const handleLanguageChange = (newLanguage: Language) => {
+    if (isLanguageLocked) return;
+
+    setLanguage(newLanguage);
+    setSelectedLevels([]); // 언어마다 등급 체계가 달라 기존 선택은 무효
+  };
+
   const handleDownloadTxt = () => {
-    downloadWordsAsTxt(words);
+    downloadWordsAsTxt({ words, language });
   };
 
   const handleDownloadCsv = () => {
-    downloadWordsAsCsv(words);
+    downloadWordsAsCsv({ words, language });
   };
 
-  const handleLevelToggle = (level: JlptLevel) => {
+  const handleLevelToggle = (level: WordLevel) => {
     setEnableResultAnimation(false);
 
     setSelectedLevels((prev) =>
@@ -74,7 +92,9 @@ export default function HomePage() {
     () =>
       selectedLevels.length === 0
         ? words
-        : words.filter((word) => selectedLevels.includes(word.level)),
+        : words.filter(
+            (word) => word.level !== null && selectedLevels.includes(word.level)
+          ),
     [words, selectedLevels]
   );
 
@@ -85,6 +105,9 @@ export default function HomePage() {
       <SidebarDrawer
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        language={language}
+        onLanguageChange={handleLanguageChange}
+        isLanguageLocked={isLanguageLocked}
         selectedLevels={selectedLevels}
         onLevelToggle={handleLevelToggle}
         displayOptions={displayOptions}
@@ -93,6 +116,9 @@ export default function HomePage() {
 
       <div className="flex flex-col md:flex-row flex-1 h-full w-full overflow-hidden">
         <Sidebar
+          language={language}
+          onLanguageChange={handleLanguageChange}
+          isLanguageLocked={isLanguageLocked}
           selectedLevels={selectedLevels}
           onLevelToggle={handleLevelToggle}
           displayOptions={displayOptions}
@@ -122,6 +148,7 @@ export default function HomePage() {
           />
           <ResultPanel
             words={filteredWords}
+            language={language}
             displayOptions={displayOptions}
             onDownloadTxt={handleDownloadTxt}
             onDownloadCsv={handleDownloadCsv}

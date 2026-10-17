@@ -1,27 +1,32 @@
-import { Calendar, Check, GraduationCap } from "lucide-react";
-import { SORT_OPTIONS } from "~/features/history/constants/sort";
+import { Calendar, Check, GraduationCap, Languages } from "lucide-react";
 import type { SortOption } from "~/features/history/types";
-import type { JlptLevel } from "~/types";
-import { JLPT_LEVELS } from "~/utils/jlpt";
+import type { Language, WordLevel } from "~/types";
+import { LANGUAGES, LANGUAGE_CONFIG } from "~/utils/language";
 
 interface IMobileFilterSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  sortOptions: { value: SortOption; label: string }[];
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
+  selectedLanguage: Language;
+  onLanguageChange: (language: Language) => void;
   availableYears: number[];
   selectedYear: number | null;
   onYearChange: (year: number) => void;
-  selectedLevels: JlptLevel[];
-  onLevelChange: (level: JlptLevel) => void;
+  selectedLevels: WordLevel[];
+  onLevelChange: (level: WordLevel) => void;
   onReset: () => void;
 }
 
 export function MobileFilterSheet({
   isOpen,
   onClose,
+  sortOptions,
   sortBy,
   onSortChange,
+  selectedLanguage,
+  onLanguageChange,
   availableYears,
   selectedYear,
   onYearChange,
@@ -29,6 +34,8 @@ export function MobileFilterSheet({
   onLevelChange,
   onReset,
 }: IMobileFilterSheetProps) {
+  const { levels, levelTitle } = LANGUAGE_CONFIG[selectedLanguage];
+
   return (
     <div
       className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ${
@@ -61,7 +68,7 @@ export function MobileFilterSheet({
               Sort By
             </h3>
             <div className="space-y-1">
-              {SORT_OPTIONS.map((option) => (
+              {sortOptions.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => onSortChange(option.value)}
@@ -79,6 +86,31 @@ export function MobileFilterSheet({
                         : "text-transparent"
                     }`}
                   />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Language Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Languages className="w-[18px] h-[18px] text-gray-400" />
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                Language
+              </h3>
+            </div>
+            <div className="flex gap-3">
+              {LANGUAGES.map((language) => (
+                <button
+                  key={language}
+                  onClick={() => onLanguageChange(language)}
+                  className={`flex-1 py-3 px-4 border-2 rounded-2xl font-bold transition-all ${
+                    selectedLanguage === language
+                      ? "border-primary bg-primary text-white"
+                      : "border-gray-200 text-gray-500 hover:border-gray-300"
+                  }`}
+                >
+                  {LANGUAGE_CONFIG[language].label}
                 </button>
               ))}
             </div>
@@ -109,16 +141,16 @@ export function MobileFilterSheet({
             </div>
           </div>
 
-          {/* JLPT Level Section */}
+          {/* Level Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <GraduationCap className="w-5 h-5 text-gray-400" />
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                JLPT Level
+                {levelTitle}
               </h3>
             </div>
             <div className="flex justify-between items-center">
-              {JLPT_LEVELS.map((level) => (
+              {levels.map((level) => (
                 <button
                   key={level}
                   onClick={() => onLevelChange(level)}
