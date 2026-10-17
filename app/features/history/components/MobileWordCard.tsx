@@ -1,13 +1,20 @@
 import { Volume2 } from "lucide-react";
 import type { IWordWithDate } from "~/features/history/types";
 import { playTTS } from "~/services/tts";
-import { LANGUAGE_CONFIG } from "~/utils/language";
+import type { IDisplayOptions } from "~/types";
+import { LANGUAGE_CONFIG, getWordVisibility } from "~/utils/language";
 
 interface IMobileWordCardProps {
   word: IWordWithDate;
+  displayOptions: IDisplayOptions;
 }
 
-export function MobileWordCard({ word }: IMobileWordCardProps) {
+export function MobileWordCard({ word, displayOptions }: IMobileWordCardProps) {
+  const { showReading, showPartOfSpeech } = getWordVisibility({
+    language: word.language,
+    displayOptions,
+  });
+
   return (
     <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm transition-all duration-200 active:scale-[0.98]">
       {/* Card Header */}
@@ -29,7 +36,10 @@ export function MobileWordCard({ word }: IMobileWordCardProps) {
           <h2 className="text-3xl font-bold text-text-primary mb-1">
             <ruby>
               {word.word}
-              <rt className="text-sm text-text-secondary font-normal">
+              {/* invisible로 자리를 유지해 토글 시 카드 높이가 바뀌지 않도록 */}
+              <rt
+                className={`text-sm text-text-secondary font-normal ${showReading ? "visible" : "invisible"}`}
+              >
                 {word.reading}
               </rt>
             </ruby>
@@ -39,14 +49,16 @@ export function MobileWordCard({ word }: IMobileWordCardProps) {
             <h2 className="text-3xl font-bold text-text-primary">
               {word.word}
             </h2>
-            <p className="text-sm text-text-secondary mb-1">
-              {word.reading}
-              {word.part_of_speech && (
-                <span className="ml-2 px-1.5 py-0.5 rounded bg-gray-100 text-xs">
+            <div className="flex items-center gap-2 mb-1 text-sm text-text-secondary">
+              <span className={showReading ? "visible" : "invisible"}>
+                {word.reading}
+              </span>
+              {showPartOfSpeech && word.part_of_speech && (
+                <span className="px-1.5 py-0.5 rounded bg-gray-100 text-xs">
                   {word.part_of_speech}
                 </span>
               )}
-            </p>
+            </div>
           </>
         )}
         <p className="text-lg text-text-secondary">{word.meaning}</p>

@@ -324,7 +324,10 @@ export default function HistoryPage() {
               <div className="md:hidden flex flex-col gap-4">
                 {filteredWords.map((word, index) => (
                   <AnimatedViewportItem key={index}>
-                    <MobileWordCard word={word} />
+                    <MobileWordCard
+                      word={word}
+                      displayOptions={displayOptions}
+                    />
                   </AnimatedViewportItem>
                 ))}
               </div>

@@ -72,16 +72,17 @@ export function DesktopWordCard({
 
       {/* Card Body */}
       <div className="flex flex-col items-center text-center my-auto w-full">
-        <p
-          className={`text-xs text-text-secondary mb-1 ${showReading ? "visible" : "invisible"}`}
-        >
-          {word.reading}
+        {/* 읽기와 품사를 형제로 둬야 읽기를 숨겨도 품사가 같이 숨지 않음 */}
+        <div className="flex items-center justify-center gap-2 mb-1 text-xs text-text-secondary">
+          <span className={showReading ? "visible" : "invisible"}>
+            {word.reading}
+          </span>
           {showPartOfSpeech && word.part_of_speech && (
-            <span className="ml-2 px-1.5 py-0.5 rounded bg-gray-100 text-[10px]">
+            <span className="px-1.5 py-0.5 rounded bg-gray-100 text-[10px]">
               {word.part_of_speech}
             </span>
           )}
-        </p>
+        </div>
 
         <h3 className="text-4xl font-bold text-text-primary mb-4">
           {word.word}
