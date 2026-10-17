@@ -1,13 +1,17 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Sidebar } from "~/components/shared/Sidebar";
-import type { IDisplayOptions, JlptLevel } from "~/types";
+import type { IDisplayOptions, Language, WordLevel } from "~/types";
 
 interface ISidebarDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedLevels: JlptLevel[];
-  onLevelToggle: (level: JlptLevel) => void;
+  language: Language;
+  onLanguageChange?: (language: Language) => void;
+  isLanguageLocked?: boolean;
+  selectedLevels: WordLevel[];
+  onLevelToggle: (level: WordLevel) => void;
+  showLevelOptions?: boolean;
   displayOptions: IDisplayOptions;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
 }
@@ -15,8 +19,12 @@ interface ISidebarDrawerProps {
 export function SidebarDrawer({
   isOpen,
   onClose,
+  language,
+  onLanguageChange,
+  isLanguageLocked,
   selectedLevels,
   onLevelToggle,
+  showLevelOptions,
   displayOptions,
   onDisplayOptionsChange,
 }: ISidebarDrawerProps) {
@@ -52,8 +60,12 @@ export function SidebarDrawer({
               </button>
 
               <Sidebar
+                language={language}
+                onLanguageChange={onLanguageChange}
+                isLanguageLocked={isLanguageLocked}
                 selectedLevels={selectedLevels}
                 onLevelToggle={onLevelToggle}
+                showLevelOptions={showLevelOptions}
                 displayOptions={displayOptions}
                 onDisplayOptionsChange={onDisplayOptionsChange}
               />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import type { IEditingWord, IWordWithDate } from "~/features/history/types";
-import type { JlptLevel } from "~/types";
+import type { WordLevel } from "~/types";
 
 /**
  * 단어 편집 모드를 관리하는 커스텀 훅
@@ -12,7 +12,7 @@ import type { JlptLevel } from "~/types";
 export function useWordEdit() {
   const [editingWord, setEditingWord] = useState<IEditingWord | null>(null);
   const [editedMeaning, setEditedMeaning] = useState("");
-  const [editedLevel, setEditedLevel] = useState<JlptLevel>("N5");
+  const [editedLevel, setEditedLevel] = useState<WordLevel | null>(null);
 
   /** 편집 모드 시작 - 선택한 단어의 현재 값으로 초기화 */
   const startEdit = (word: IWordWithDate) => {
@@ -29,7 +29,7 @@ export function useWordEdit() {
   const cancelEdit = () => {
     setEditingWord(null);
     setEditedMeaning("");
-    setEditedLevel("N5");
+    setEditedLevel(null);
   };
 
   /** 편집 완료 후 편집 대상만 초기화 (저장 성공 시 사용) */

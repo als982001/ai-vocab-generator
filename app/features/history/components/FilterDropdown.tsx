@@ -3,32 +3,39 @@ import {
   Calendar,
   ChevronDown,
   GraduationCap,
+  Languages,
   SlidersHorizontal,
 } from "lucide-react";
-import type { JlptLevel } from "~/types";
-import { JLPT_LEVELS } from "~/utils/jlpt";
+import type { Language, WordLevel } from "~/types";
+import { LANGUAGES, LANGUAGE_CONFIG } from "~/utils/language";
 
 interface IFilterDropdownProps {
   isFilterOpen: boolean;
+  selectedLanguage: Language;
   availableYears: number[];
   selectedYear: number | null;
-  selectedLevels: JlptLevel[];
+  selectedLevels: WordLevel[];
+  onLanguageChange: (language: Language) => void;
   onYearChange: (year: number) => void;
-  onLevelChange: (level: JlptLevel) => void;
+  onLevelChange: (level: WordLevel) => void;
   onReset: () => void;
   onToggle: () => void;
 }
 
 export function FilterDropdown({
   isFilterOpen,
+  selectedLanguage,
   availableYears,
   selectedYear,
   selectedLevels,
+  onLanguageChange,
   onYearChange,
   onLevelChange,
   onReset,
   onToggle,
 }: IFilterDropdownProps) {
+  const { levels, levelTitle } = LANGUAGE_CONFIG[selectedLanguage];
+
   return (
     <div className="relative">
       <button
@@ -55,6 +62,32 @@ export function FilterDropdown({
             style={{ transformOrigin: "top right" }}
             className="absolute right-0 top-full mt-2 w-72 bg-white border border-border-color rounded-xl shadow-xl p-5 flex flex-col gap-5 z-50"
           >
+            {/* Language Section */}
+            <div>
+              <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
+                <Languages className="w-4 h-4 text-text-secondary" />
+                Language
+              </h4>
+              <div className="flex gap-2">
+                {LANGUAGES.map((language) => (
+                  <button
+                    key={language}
+                    onClick={() => onLanguageChange(language)}
+                    className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-lg border transition-colors ${
+                      selectedLanguage === language
+                        ? "bg-primary text-white border-transparent shadow-sm"
+                        : "border-border-color text-text-secondary hover:bg-surface-highlight"
+                    }`}
+                  >
+                    {LANGUAGE_CONFIG[language].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="h-px bg-border-color"></div>
+
             {/* Created At Section */}
             <div>
               <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
@@ -81,14 +114,14 @@ export function FilterDropdown({
             {/* Divider */}
             <div className="h-px bg-border-color"></div>
 
-            {/* JLPT Level Section */}
+            {/* Level Section */}
             <div>
               <h4 className="text-xs font-semibold text-text-primary mb-3 flex items-center gap-2">
                 <GraduationCap className="w-4 h-4 text-text-secondary" />
-                JLPT Level
+                {levelTitle}
               </h4>
               <div className="flex flex-wrap gap-2">
-                {JLPT_LEVELS.map((level) => (
+                {levels.map((level) => (
                   <button
                     key={level}
                     onClick={() => onLevelChange(level)}
