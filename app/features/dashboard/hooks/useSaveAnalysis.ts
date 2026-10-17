@@ -18,7 +18,7 @@ export function useSaveAnalysis() {
     mutationFn: ({ words, imageName, language }: ISaveAnalysisParams) => {
       if (!user) throw new Error("User must be authenticated");
 
-      return saveAnalysis(user.id, words, imageName, language);
+      return saveAnalysis({ userId: user.id, words, imageName, language });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.analysisHistory });

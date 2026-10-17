@@ -82,11 +82,11 @@ export default function HistoryPage() {
   const { handleDeleteWord, handleSaveEdit } = useWordActions(allWords);
 
   const handleDownloadTxt = () => {
-    downloadWordsAsTxt(filteredWords, selectedLanguage);
+    downloadWordsAsTxt({ words: filteredWords, language: selectedLanguage });
   };
 
   const handleDownloadCsv = () => {
-    downloadWordsAsCsv(filteredWords, selectedLanguage);
+    downloadWordsAsCsv({ words: filteredWords, language: selectedLanguage });
   };
 
   return (
@@ -102,6 +102,7 @@ export default function HistoryPage() {
         language={selectedLanguage}
         selectedLevels={selectedLevels}
         onLevelToggle={handleLevelClick}
+        showLevelOptions={false}
         displayOptions={displayOptions}
         onDisplayOptionsChange={setDisplayOptions}
       />

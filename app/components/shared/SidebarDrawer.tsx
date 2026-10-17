@@ -11,6 +11,7 @@ interface ISidebarDrawerProps {
   isLanguageLocked?: boolean;
   selectedLevels: WordLevel[];
   onLevelToggle: (level: WordLevel) => void;
+  showLevelOptions?: boolean;
   displayOptions: IDisplayOptions;
   onDisplayOptionsChange: (options: IDisplayOptions) => void;
 }
@@ -23,6 +24,7 @@ export function SidebarDrawer({
   isLanguageLocked,
   selectedLevels,
   onLevelToggle,
+  showLevelOptions,
   displayOptions,
   onDisplayOptionsChange,
 }: ISidebarDrawerProps) {
@@ -63,6 +65,7 @@ export function SidebarDrawer({
                 isLanguageLocked={isLanguageLocked}
                 selectedLevels={selectedLevels}
                 onLevelToggle={onLevelToggle}
+                showLevelOptions={showLevelOptions}
                 displayOptions={displayOptions}
                 onDisplayOptionsChange={onDisplayOptionsChange}
               />

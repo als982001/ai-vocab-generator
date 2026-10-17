@@ -73,11 +73,11 @@ export default function HomePage() {
   };
 
   const handleDownloadTxt = () => {
-    downloadWordsAsTxt(words, language);
+    downloadWordsAsTxt({ words, language });
   };
 
   const handleDownloadCsv = () => {
-    downloadWordsAsCsv(words, language);
+    downloadWordsAsCsv({ words, language });
   };
 
   const handleLevelToggle = (level: WordLevel) => {

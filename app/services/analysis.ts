@@ -3,13 +3,25 @@ import type { IAnalysisRow, IWordRow } from "~/types/supabase";
 
 import { supabase } from "./supabase";
 
-// 분석 결과 저장 (analyses INSERT → words 다건 INSERT)
-export async function saveAnalysis(
-  userId: string,
-  words: IWord[],
-  imageName: string,
-  language: Language
-): Promise<IAnalysisRow> {
+/**
+ * 분석 결과 저장 (analyses INSERT → words 다건 INSERT)
+ * @param userId 로그인 사용자 id
+ * @param words 저장할 단어 목록
+ * @param imageName 업로드한 파일 이름
+ * @param language 추출 언어
+ * @return 생성된 analyses row
+ */
+export async function saveAnalysis({
+  userId,
+  words,
+  imageName,
+  language,
+}: {
+  userId: string;
+  words: IWord[];
+  imageName: string;
+  language: Language;
+}): Promise<IAnalysisRow> {
   const { data: analysis, error: analysisError } = await supabase
     .from("analyses")
     .insert({ user_id: userId, image_name: imageName, language })

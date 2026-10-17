@@ -16,8 +16,16 @@ function escapeCsvField(field: string): string {
 /**
  * 단어 목록을 UTF-8 BOM이 포함된 CSV 파일로 다운로드
  * (영어는 IPA·품사 컬럼 포함, 등급은 AI 추정임을 헤더에 표기)
+ * @param words 다운로드할 단어 목록
+ * @param language 단어 목록의 언어 (컬럼 구성 결정)
  */
-export function downloadWordsAsCsv(words: IWord[], language: Language): void {
+export function downloadWordsAsCsv({
+  words,
+  language,
+}: {
+  words: IWord[];
+  language: Language;
+}): void {
   if (words.length === 0) return;
 
   const header =
@@ -55,8 +63,16 @@ export function downloadWordsAsCsv(words: IWord[], language: Language): void {
 
 /**
  * 단어 목록을 UTF-8 인코딩된 TXT 파일로 다운로드
+ * @param words 다운로드할 단어 목록
+ * @param language 단어 목록의 언어 (행 포맷 결정)
  */
-export function downloadWordsAsTxt(words: IWord[], language: Language): void {
+export function downloadWordsAsTxt({
+  words,
+  language,
+}: {
+  words: IWord[];
+  language: Language;
+}): void {
   if (words.length === 0) return;
 
   const today = new Date().toLocaleDateString("ko-KR");
