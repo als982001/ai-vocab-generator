@@ -1,0 +1,26 @@
+[
+  {
+    "word": "work",
+    "reading": "/wɜːrk/",
+    "meaning": "작동하다",
+    "level": "A1",
+    "part_of_speech": "verb",
+    "box_2d": [247, 570, 367, 711]
+  },
+  {
+    "word": "thing",
+    "reading": "/θɪŋ/",
+    "meaning": "물건",
+    "level": "A1",
+    "part_of_speech": "noun",
+    "box_2d": [247, 413, 367, 557]
+  },
+  {
+    "word": "sorry",
+    "reading": "/ˈsɑːri/",
+    "meaning": "미안한",
+    "level": "A1",
+    "part_of_speech": "adjective",
+    "box_2d": [460, 159, 580, 305]
+  }
+]
