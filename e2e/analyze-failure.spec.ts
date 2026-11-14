@@ -51,18 +51,19 @@ test("업로드 → 분석 중 잠금 → 분석 실패 → 에러 안내 · 저
   await expect(page.locator('[id^="word-card-"]')).toHaveCount(0);
   await expect(page.getByText("아직 분석된 단어가 없습니다")).toBeVisible();
 
-  // 7. 실패 결과가 저장되지 않았는지
-  // 저장 호출은 성공 토스트와 같은 분기에 있어, 에러 토스트가 보인 시점이면 이미 결정돼 있다
-  expect(analysesPosts).toHaveLength(0);
-  expect(wordsPosts).toHaveLength(0);
-
-  // 8. 실패 후에도 파일이 남아 있어 잠금 유지
+  // 7. 실패 후에도 파일이 남아 있어 잠금 유지
   await expect(languageSelect).toBeDisabled();
   await expect(page.getByText(LOCK_HINT)).toBeVisible();
 
-  // 9. 파일 제거 → 잠금 해제 (다시 시도할 수 있는 상태)
+  // 8. 파일 제거 → 잠금 해제 (다시 시도할 수 있는 상태)
   await page.getByRole("button", { name: "파일 제거" }).click();
 
   await expect(languageSelect).toBeEnabled();
   await expect(page.getByText(LOCK_HINT)).toBeHidden();
+
+  // 9. 실패 결과가 저장되지 않았는지
+  // 즉시 평가되는 부정 단언이라 맨 끝에 둔다. 실패 분기에 비동기 저장 회귀가 생겨도
+  // 앞선 단계들을 거치는 동안 요청이 mock에 도착할 시간이 생겨 거짓 통과를 줄인다
+  expect(analysesPosts).toHaveLength(0);
+  expect(wordsPosts).toHaveLength(0);
 });
