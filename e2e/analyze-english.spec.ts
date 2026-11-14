@@ -1,7 +1,11 @@
 import { basename } from "node:path";
 
 import { E2E_USER_ID } from "./support/auth";
-import { E2E_ANALYSIS_ID, isGeminiRequest } from "./support/network";
+import {
+  E2E_ANALYSIS_ID,
+  getGeminiPromptText,
+  isGeminiRequest,
+} from "./support/network";
 import {
   ENGLISH_SAMPLE_PATH,
   ENGLISH_WORDS,
@@ -43,7 +47,16 @@ test("영어 선택 → 업로드 → 분석 중 잠금 → 결과 표시 → �
   await fileInput.setInputFiles(ENGLISH_SAMPLE_PATH);
 
   // 5. 응답을 붙잡은 상태에서 잠금 확인
-  await geminiRequestPromise;
+  const geminiRequest = await geminiRequestPromise;
+
+  // 선택한 언어가 분석 요청(프롬프트)까지 전달됐는지.
+  // soft: 실패해도 흐름을 이어가 아래 level 단언까지 같이 보고한다
+  // 이미지 base64가 실패 메시지를 덮지 않도록 텍스트 part(프롬프트)만 비교한다
+  const { promptText } = getGeminiPromptText({
+    body: geminiRequest.postDataJSON(),
+  });
+
+  expect.soft(promptText).toContain("extract English vocabulary");
 
   await expect(languageSelect).toBeDisabled();
   await expect(page.getByText(LOCK_HINT)).toBeVisible();
@@ -75,6 +88,11 @@ test("영어 선택 → 업로드 → 분석 중 잠금 → 결과 표시 → �
 
   expect(savedWords.map((row) => row.word)).toEqual(
     ENGLISH_WORDS.map(({ word }) => word)
+  );
+
+  // 영어 등급(CEFR) 정규화를 거쳤는지. "ja"로 정규화되면 CEFR 등급이 null로 바뀐다
+  expect(savedWords.map((row) => row.level)).toEqual(
+    ENGLISH_WORDS.map(({ level }) => level)
   );
 
   for (const row of savedWords) {

@@ -40,8 +40,28 @@ export function isGeminiRequest({ request }: { request: Request }): {
 }
 
 /**
+ * Gemini generateContent 요청 본문에서 텍스트 part(프롬프트)만 이어 붙인다.
+ * @param body postDataJSON()으로 파싱한 요청 본문
+ * @return promptText 텍스트 part를 줄바꿈으로 이은 문자열 (없으면 빈 문자열)
+ */
+export function getGeminiPromptText({ body }: { body: unknown }): {
+  promptText: string;
+} {
+  const contents = (body as { contents?: { parts?: { text?: unknown }[] }[] })
+    ?.contents;
+
+  const texts = (contents ?? [])
+    .flatMap((content) => content.parts ?? [])
+    .map((part) => part.text)
+    .filter((text): text is string => typeof text === "string");
+
+  return { promptText: texts.join("\n") };
+}
+
+/**
  * 처리하지 않은 외부 요청을 모두 차단하고 기록한다.
  * 개별 mock보다 먼저 등록해야 한다 (나중에 등록한 route가 우선).
+ * @param context 가드를 걸 브라우저 컨텍스트
  * @return blockedUrls 차단된 URL 목록 (teardown에서 비어 있어야 함)
  */
 export async function installLeakGuard({
@@ -74,7 +94,9 @@ export async function installLeakGuard({
 
 /**
  * Gemini generateContent 호출을 mock한다. gate가 풀릴 때까지 응답을 붙잡는다.
+ * @param context mock을 걸 브라우저 컨텍스트
  * @param words 모델이 돌려줄 단어 배열 (JSON 문자열로 감싸 응답)
+ * @return gate 붙잡은 응답을 풀어주는 gate (release 호출 시 응답)
  */
 export async function mockGemini({
   context,
@@ -114,6 +136,7 @@ export async function mockGemini({
 
 /**
  * Supabase REST 저장 요청을 mock하고 POST 본문을 기록한다.
+ * @param context mock을 걸 브라우저 컨텍스트
  * @return analysesPosts, wordsPosts 기록된 요청 본문
  */
 export async function mockSupabase({ context }: { context: BrowserContext }) {

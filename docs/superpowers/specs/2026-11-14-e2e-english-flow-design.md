@@ -32,11 +32,11 @@
 2. "영어" 선택 → select 값 `en`, "CEFR Level" 노출
 3. Gemini 요청 대기와 Supabase 저장 대기를 **업로드 전에** 등록
 4. 영어 샘플 PNG 업로드
-5. Gemini 요청 도착 확인 후, 응답을 붙잡은 상태에서: select `disabled`, 잠금 안내 문구, "이미지 분석 중..." 노출
+5. Gemini 요청 도착 확인 후, 요청 프롬프트에 `extract English vocabulary` 포함(soft), 응답을 붙잡은 상태에서: select `disabled`, 잠금 안내 문구, "이미지 분석 중..." 노출
 6. 응답 해제 → 픽스처 단어 3개와 각 뜻 노출, "분석을 성공했습니다." 토스트
 7. 저장 내용 검증
    - `analyses` POST 1회: `language === "en"`, `user_id === 테스트 사용자 ID`, `image_name === 업로드 파일명`
-   - `words` POST 1회: 단어 3개, 모든 행의 `analysis_id === analyses mock 응답 id`, `user_id === 테스트 사용자 ID`
+   - `words` POST 1회: 단어 3개, 등급이 픽스처 CEFR 값과 일치(영어 정규화 확인), 모든 행의 `analysis_id === analyses mock 응답 id`, `user_id === 테스트 사용자 ID`
 8. 결과 후에도 select `disabled` 유지
 9. "파일 제거" 클릭 → select 활성화, 잠금 안내 문구 사라짐
 
