@@ -2,7 +2,8 @@
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.e2e.json" }
   ],
   "compilerOptions": {
     "resolveJsonModule": true, // ★ 이 줄이 있어야 json 파일을 import 할 수 있음

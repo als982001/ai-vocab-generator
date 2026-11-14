@@ -114,6 +114,7 @@ export function Sidebar({
           <div className="px-2">
             <select
               value={language}
+              aria-label="추출 언어"
               onChange={(e) => onLanguageChange(e.target.value as Language)}
               disabled={isLanguageLocked}
               className="w-full h-10 px-3 bg-white border border-border-color rounded-xl text-sm font-bold text-text-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
