@@ -128,6 +128,8 @@ export function FileUploader({
             >
               {!isAnalyzing && (
                 <button
+                  type="button"
+                  aria-label="파일 제거"
                   onClick={handleRemoveImage}
                   className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
                 >
@@ -188,7 +190,7 @@ export function FileUploader({
                   : "border-gray-300 hover:border-primary"
               }`}
             >
-              <input {...getInputProps()} />
+              <input {...getInputProps()} aria-label="파일 업로드" />
               <div className="absolute inset-0 bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
               <div className="z-10 flex flex-col items-center gap-4">
                 <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center text-text-primary mb-2 group-hover:scale-110 transition-transform duration-300">
