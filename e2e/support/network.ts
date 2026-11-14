@@ -92,18 +92,23 @@ export async function installLeakGuard({
   return { blockedUrls };
 }
 
+export type GeminiResponseMode = "success" | "error";
+
 /**
  * Gemini generateContent 호출을 mock한다. gate가 풀릴 때까지 응답을 붙잡는다.
  * @param context mock을 걸 브라우저 컨텍스트
  * @param words 모델이 돌려줄 단어 배열 (JSON 문자열로 감싸 응답)
+ * @param response "success"면 단어 응답, "error"면 500 에러 응답
  * @return gate 붙잡은 응답을 풀어주는 gate (release 호출 시 응답)
  */
 export async function mockGemini({
   context,
   words,
+  response,
 }: {
   context: BrowserContext;
   words: unknown;
+  response: GeminiResponseMode;
 }) {
   const gate = createGate();
 
@@ -111,6 +116,22 @@ export async function mockGemini({
     (url) => url.hostname === GEMINI_HOST,
     async (route) => {
       await gate.promise;
+
+      // SDK(0.24.1)는 재시도하지 않아 500 한 번이면 바로 실패 분기로 간다
+      if (response === "error") {
+        await route.fulfill({
+          status: 500,
+          contentType: "application/json",
+          body: JSON.stringify({
+            error: {
+              code: 500,
+              message: "Internal error encountered.",
+              status: "INTERNAL",
+            },
+          }),
+        });
+        return;
+      }
 
       await route.fulfill({
         status: 200,
