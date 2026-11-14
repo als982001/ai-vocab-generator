@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { seedAuthSession } from "./auth";
 import {
+  type GeminiResponseMode,
   type IGate,
   installLeakGuard,
   mockGemini,
@@ -37,13 +38,24 @@ interface IMocks {
   wordsPosts: Record<string, unknown>[][];
 }
 
-export const test = base.extend<{ mocks: IMocks }>({
+interface IFixtureOptions {
+  geminiResponse: GeminiResponseMode;
+}
+
+export const test = base.extend<IFixtureOptions & { mocks: IMocks }>({
+  // 실패 시나리오는 파일 상단에서 test.use({ geminiResponse: "error" })로 전환
+  geminiResponse: ["success", { option: true }],
+
   // auto: 모든 테스트가 가드·세션·mock을 거치게 강제
   mocks: [
-    async ({ context }, use) => {
+    async ({ context, geminiResponse }, use) => {
       // 순서 중요: 누수 가드를 먼저 등록해야 개별 mock이 우선한다
       const { blockedUrls } = await installLeakGuard({ context });
-      const { gate } = await mockGemini({ context, words: ENGLISH_WORDS });
+      const { gate } = await mockGemini({
+        context,
+        words: ENGLISH_WORDS,
+        response: geminiResponse,
+      });
       const { analysesPosts, wordsPosts } = await mockSupabase({ context });
 
       await seedAuthSession({ context });
