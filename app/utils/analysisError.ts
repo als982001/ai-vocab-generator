@@ -93,7 +93,8 @@ export function getKindFromHttpErrorCode({ code }: { code: unknown }): {
 /**
  * 상류(Gemini) HTTP 오류를 실패 원인으로 바꿈 (로컬 경로에서 SDK ApiError를 받을 때)
  * - 400: 파일 처리 불가 메시지일 때만 client. API 키 메시지·그 외 400(요청·스키마 문제)은 server
- * - 그 외 상태: getKindFromHttpStatus
+ * - 그 외 상태(413·415·422 포함): server. 서버 경로(api/analyze.js getUpstreamHttpError)와 같은 기준
+ *   (getKindFromHttpStatus는 우리 서버·Vercel 응답용이라 상류 상태 코드에는 쓰지 않는다)
  * @param status 상류 HTTP 상태 코드
  * @param message 상류 오류 메시지 (SDK ApiError.message = 상류 오류 본문 JSON)
  * @return kind 실패 원인
@@ -105,7 +106,7 @@ export function getKindFromUpstreamError({
   status: number;
   message: string;
 }): { kind: AnalysisErrorKind } {
-  if (status !== 400) return getKindFromHttpStatus({ status });
+  if (status !== 400) return { kind: "server" };
 
   const hasMarker = (markers: readonly string[]) => {
     return markers.some((marker) => {
