@@ -126,16 +126,15 @@ export function FileUploader({
                     : "items-center justify-start md:justify-center gap-6 px-6 py-14 overflow-y-auto md:overflow-hidden"
               }`}
             >
-              {!isAnalyzing && (
-                <button
-                  type="button"
-                  aria-label="파일 제거"
-                  onClick={handleRemoveImage}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
-                >
-                  <X className="w-5 h-5 text-text-primary" />
-                </button>
-              )}
+              {/* 분석 중에도 노출: 제거가 곧 분석 취소 수단이다 */}
+              <button
+                type="button"
+                aria-label="파일 제거"
+                onClick={handleRemoveImage}
+                className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
+              >
+                <X className="w-5 h-5 text-text-primary" />
+              </button>
               {isAnalyzing ? (
                 <div className="flex flex-col items-center gap-4">
                   <Loader2 className="w-16 h-16 text-primary animate-spin" />

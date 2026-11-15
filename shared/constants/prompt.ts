@@ -14,18 +14,9 @@ const ENGLISH_FIELDS = `
 - part_of_speech: One of noun, verb, adjective, adverb, pronoun, preposition, conjunction, interjection, phrase
 - level: Estimated CEFR level, exactly one of A1, A2, B1, B2, C1, C2`;
 
-const IMAGE_EXAMPLES = {
-  ja: `[{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "box_2d": [150, 200, 300, 400]}]`,
-  en: `[{"word": "cat", "reading": "/kæt/", "meaning": "고양이", "part_of_speech": "noun", "level": "A1", "box_2d": [150, 200, 300, 400]}]`,
-};
-
-const DOCUMENT_EXAMPLES = {
-  ja: `[{"word": "猫", "reading": "ねこ", "meaning": "고양이", "level": "N5", "page": 1, "box_2d": [150, 200, 300, 400]}]`,
-  en: `[{"word": "cat", "reading": "/kæt/", "meaning": "고양이", "part_of_speech": "noun", "level": "A1", "page": 1, "box_2d": [150, 200, 300, 400]}]`,
-};
-
 /**
  * 언어와 파일 종류에 맞는 Gemini 분석 프롬프트를 생성
+ * 응답 형식(JSON 배열·필드 타입)은 responseJsonSchema가 강제하므로 프롬프트에는 필드 의미만 둔다
  * @param language 추출할 언어 ("ja" | "en")
  * @param fileType 업로드 파일 종류 ("image" | "pdf")
  * @return prompt Gemini에 전달할 프롬프트 문자열
@@ -48,16 +39,12 @@ export function buildAnalyzePrompt({
     return {
       prompt: `
 Analyze this document (image or PDF) and extract ${languageName} vocabulary.
-Return the result as a STRICT JSON array without markdown code blocks.
 ${duplicateRule}
 Each item should have:${fields}
 - page: The page number where this word appears (Integer, 1-indexed. If it's a single image, return 1).
 - box_2d: The exact bounding box of where this word appears on that specific page.
   Format: [y_min, x_min, y_max, x_max] as normalized coordinates from 0 to 1000,
   where (0,0) is top-left corner and (1000,1000) is bottom-right corner of the page.
-
-Example format:
-${DOCUMENT_EXAMPLES[language]}
 `,
     };
   }
@@ -65,15 +52,11 @@ ${DOCUMENT_EXAMPLES[language]}
   return {
     prompt: `
 Analyze this image and extract ${languageName} vocabulary.
-Return the result as a STRICT JSON array without markdown code blocks.
 ${duplicateRule}
 Each item should have:${fields}
 - box_2d: The exact bounding box of where this word appears in the image.
   Format: [y_min, x_min, y_max, x_max] as normalized coordinates from 0 to 1000,
   where (0,0) is top-left corner and (1000,1000) is bottom-right corner.
-
-Example format:
-${IMAGE_EXAMPLES[language]}
 `,
   };
 }

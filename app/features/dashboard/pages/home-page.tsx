@@ -30,6 +30,7 @@ export default function HomePage() {
     uploadedFile,
     isAnalyzing,
     words,
+    provisionalWords,
     enableResultAnimation,
     setEnableResultAnimation,
     handleFileUpload,
@@ -88,14 +89,19 @@ export default function HomePage() {
     );
   };
 
+  // 결과 패널만 스트리밍 중 잠정 단어를 보여준다.
+  // 오버레이·스크롤·FAB 개수·다운로드는 검증을 마친 최종 words만 쓴다
+  const resultWords = isAnalyzing ? provisionalWords : words;
+  const isStreaming = isAnalyzing && provisionalWords.length > 0;
+
   const filteredWords = useMemo(
     () =>
       selectedLevels.length === 0
-        ? words
-        : words.filter(
+        ? resultWords
+        : resultWords.filter(
             (word) => word.level !== null && selectedLevels.includes(word.level)
           ),
-    [words, selectedLevels]
+    [resultWords, selectedLevels]
   );
 
   return (
@@ -157,6 +163,7 @@ export default function HomePage() {
             onWordCardClick={handleWordCardClick}
             highlightedWord={highlightedWord}
             enableAnimation={enableResultAnimation}
+            isStreaming={isStreaming}
           />
         </motion.div>
       </div>

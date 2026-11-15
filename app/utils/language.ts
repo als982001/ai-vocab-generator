@@ -5,13 +5,15 @@ import type {
   WordLevel,
 } from "~/types";
 
+import { CEFR_LEVELS, JLPT_LEVELS } from "../../shared/constants/wordSchema";
+
 export const DEFAULT_LANGUAGE: Language = "ja";
 
 export const LANGUAGE_CONFIG: Record<Language, ILanguageConfig> = {
   ja: {
     label: "일본어",
     levelTitle: "JLPT Level",
-    levels: ["N5", "N4", "N3", "N2", "N1"],
+    levels: [...JLPT_LEVELS],
     ttsLocale: "ja-JP",
     fontClassName: "font-japanese",
     displayOptions: [{ key: "showFurigana", label: "Show Furigana" }],
@@ -20,7 +22,7 @@ export const LANGUAGE_CONFIG: Record<Language, ILanguageConfig> = {
     label: "영어",
     levelTitle: "CEFR Level (AI 추정)",
     levelTooltip: "AI가 추정한 등급",
-    levels: ["A1", "A2", "B1", "B2", "C1", "C2"],
+    levels: [...CEFR_LEVELS],
     ttsLocale: "en-US",
     fontClassName: "",
     displayOptions: [
