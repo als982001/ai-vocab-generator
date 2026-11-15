@@ -117,7 +117,8 @@ export async function mockGemini({
     async (route) => {
       await gate.promise;
 
-      // SDK(0.24.1)는 재시도하지 않아 500 한 번이면 바로 실패 분기로 간다
+      // @google/genai는 httpOptions.retryOptions를 주지 않으면 재시도하지 않아
+      // 500 한 번이면 바로 실패 분기로 간다
       if (response === "error") {
         await route.fulfill({
           status: 500,

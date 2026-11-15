@@ -1,5 +1,5 @@
 // api/analyze.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 import {
   GEMINI_3_FLASH_PREVIEW,
@@ -45,8 +45,11 @@ export default async function handler(request, response) {
     }
 
     // 서버 환경변수는 VITE_ 안 붙여도 됨 (보안 안전)
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
+    // 새 SDK 기본값은 v1. 이전 SDK(0.24.1)와 같은 v1beta 엔드포인트를 유지한다
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: { apiVersion: "v1beta" },
+    });
 
     const { prompt } = buildAnalyzePrompt({
       language,
@@ -61,8 +64,11 @@ export default async function handler(request, response) {
       },
     };
 
-    const result = await model.generateContent([prompt, imagePart]);
-    const text = result.response.text();
+    const result = await ai.models.generateContent({
+      model: GEMINI_3_FLASH_PREVIEW,
+      contents: [prompt, imagePart],
+    });
+    const text = result.text ?? "";
     const cleanJson = text.replace(/```json|```/g, "").trim();
 
     return response.status(200).json(JSON.parse(cleanJson));

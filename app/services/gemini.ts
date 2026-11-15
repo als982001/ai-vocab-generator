@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import type { IWord, Language } from "~/types";
 import { isLocalEnvironment } from "~/utils/env";
 import { normalizeWords } from "~/utils/word";
@@ -17,16 +17,20 @@ const analyzeImageLocal = async (
   },
   prompt: string
 ): Promise<unknown> => {
-  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+  // 새 SDK 기본값은 v1. 이전 SDK(0.24.1)와 같은 v1beta 엔드포인트를 유지한다
+  const ai = new GoogleGenAI({
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY,
+    httpOptions: { apiVersion: "v1beta" },
+  });
 
   try {
-    // Gemini 1.5 Flash 모델 선택 (빠르고 저렴함)
-    const model = genAI.getGenerativeModel({ model: GEMINI_3_FLASH_PREVIEW });
+    const response = await ai.models.generateContent({
+      model: GEMINI_3_FLASH_PREVIEW,
+      contents: [prompt, imagePart],
+    });
 
-    // AI에게 요청 전송
-    const result = await model.generateContent([prompt, imagePart]);
-    const response = result.response;
-    const text = response.text();
+    // 새 SDK의 text는 메서드가 아니라 getter (텍스트 part가 없으면 undefined)
+    const text = response.text ?? "";
 
     // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거
     const cleanJson = text.replace(/```json|```/g, "").trim();
