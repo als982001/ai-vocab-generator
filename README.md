@@ -1,6 +1,6 @@
 # 📸 Snap-Voca (AI 단어장 생성기)
 
-이미지 또는 PDF에서 일본어 단어를 추출하여 한국어 번역과 발음(후리가나)이 포함된 단어장을 자동으로 생성합니다.
+이미지 또는 PDF에서 일본어·영어 단어를 추출하여 한국어 번역과 발음(후리가나·IPA)이 포함된 단어장을 자동으로 생성합니다.
 
 | Type             | Link                                                              |
 | :--------------- | :---------------------------------------------------------------- |
@@ -16,7 +16,8 @@
 - **Styling:** Tailwind CSS
 - **Backend:** Supabase (Auth + PostgreSQL)
 - **Server State:** TanStack Query (React Query)
-- **AI:** Google Gemini 2.5 Flash API
+- **AI:** Google Gemini 3 Flash (preview) · `@google/genai` SDK (Structured Outputs, Streaming)
+- **Validation:** Zod (AI 응답 런타임 검증)
 - **UI Libraries:** Lucide React, Sonner (Toast), React Dropzone, Framer Motion
 - **PDF:** react-pdf (PDF.js 기반 캔버스 렌더링)
 - **Other:** Web Speech API (TTS)
@@ -86,6 +87,19 @@
 - **단어 클릭 시 페이지 이동**: 우측 단어 카드 클릭 시 해당 단어가 위치한 PDF 페이지로 자동 이동 및 스크롤
 - **PC/모바일 모두 지원**: PDF 업로드 및 뷰어가 데스크톱과 모바일 환경 모두에서 정상 동작
 
+#### v0.8.0 추가 기능
+
+- **추출 언어 선택**: 일본어/영어 중 추출할 언어를 선택 (분석 중에는 잠기고, 파일을 제거하면 다시 변경 가능)
+- **영어 단어 추출**: 영어 단어를 기본형으로 추출하고 IPA 발음, 품사, CEFR 등급(A1~C2, AI 추정)을 함께 표시
+- **표시 옵션**: 영어는 IPA·품사, 일본어는 후리가나 표시를 켜고 끌 수 있음
+
+#### v0.9.0 추가 기능
+
+- **실시간 결과 표시**: 분석이 끝나기 전에도 추출된 단어부터 하나씩 결과 패널에 표시 ("단어 수신 중… N개")
+- **분석 취소**: 분석 중에도 파일 제거·교체 가능. 이전 요청은 즉시 취소되고 결과에 섞이지 않음
+- **오류 안내 세분화**: 응답 형식 오류·응답 중단·네트워크·요청 거부·서버 오류를 구분해 안내
+- **응답 안정성 향상**: 응답 형식을 API 설정(Structured Outputs)으로 강제하고, 잘못된 값은 보정하거나 제외
+
 ### 📚 히스토리 페이지 (`/history`)
 
 과거에 분석한 모든 단어를 카드 형태로 확인하고 관리합니다.
@@ -133,8 +147,8 @@
 
 ### 4. AI 파일 분석 & 시각화
 
-- **Google Gemini 2.5 Flash API** 연동: OCR + 번역 + 레벨 판정을 한 번의 API 호출로 처리
-- **이미지/PDF 분기 처리**: 파일 타입에 따라 `ANALYZE_IMAGE_PROMPT` / `ANALYZE_DOCUMENT_PROMPT` 자동 선택
+- **Google Gemini 3 Flash** 연동: OCR + 번역 + 레벨 판정을 한 번의 API 호출로 처리
+- **언어·파일 분기 처리**: 추출 언어(일본어/영어)와 파일 타입(이미지/PDF)에 따라 `buildAnalyzePrompt`로 프롬프트 생성
 - **좌표 기반 오버레이**: AI 응답에서 단어 좌표를 받아 이미지 또는 PDF 캔버스 위에 바운딩 박스 렌더링
 - **반응형 좌표 계산**: 창 크기 변경 시에도 박스 위치가 정확하게 유지되도록 구현
 
@@ -181,6 +195,14 @@
 - **선언적 상태 관리**: `isLoading`, `isError` 등으로 로딩/에러 UI를 선언적으로 처리
 - **자동 리페칭**: mutation 성공 시 `invalidateQueries`로 관련 데이터 자동 갱신
 
+### 10. AI 응답 구조화 출력 & 스트리밍 (v0.9.0)
+
+- **Structured Outputs**: `responseJsonSchema`로 응답 형식(필드·등급 enum·좌표 범위)을 API 설정에서 강제
+- **런타임 검증 (Zod)**: 응답이 배열이 아니면 거부, 잘못된 항목은 제외, 필드는 보정 (등급 목록 밖 → 등급 미정, 범위 밖 좌표 → 잘라내거나 제거)
+- **NDJSON 스트리밍**: 서버(Vercel Function)가 Gemini 응답을 줄 단위로 바로 전달, 클라이언트는 `ReadableStream`으로 읽으며 완성된 단어 객체만 증분 파싱
+- **저장 보장**: `done` + `STOP`으로 정상 완료되고 최종 검증을 통과한 결과만 한 번 저장
+- **요청 취소 & 늦은 응답 차단**: `AbortController` + 요청 번호(requestId)로 교체·제거된 요청의 결과·토스트·저장을 차단
+
 ## 💡 기술적 의사결정
 
 ### CSV 생성을 클라이언트에서 처리한 이유
@@ -207,5 +229,8 @@
 - [x] 클라우드 데이터 저장 (localStorage → Supabase PostgreSQL)
 - [x] TanStack Query 서버 상태 관리
 - [x] PDF 파일 업로드 및 분석 (react-pdf 뷰어)
+- [x] 영어 단어 추출 및 추출 언어 선택
+- [x] AI 응답 구조화 출력(Structured Outputs) 및 런타임 검증
+- [x] 분석 결과 스트리밍 및 요청 취소
 
 ## 📂 Directory Structure

@@ -87,6 +87,7 @@ export function FloatingActionButton({
           accept="image/*,.pdf"
           onChange={handleFileChange}
           className="hidden"
+          aria-label="새 파일 업로드"
         />
       )}
 

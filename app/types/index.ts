@@ -1,11 +1,26 @@
 import type { SUPPORTED_LANGUAGES } from "../../shared/constants/prompt";
+import type {
+  CEFR_LEVELS,
+  JLPT_LEVELS,
+} from "../../shared/constants/wordSchema";
+
+// 분석 스트림 이벤트 타입은 서버와 함께 쓰는 shared 정의를 그대로 노출한다
+export type {
+  AnalysisHttpErrorCode,
+  AnalysisStreamErrorCode,
+  AnalysisStreamEvent,
+  IAnalysisDoneEvent,
+  IAnalysisErrorEvent,
+  IAnalysisTextEvent,
+} from "../../shared/constants/analysisStream";
 
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
-export type JlptLevel = "N5" | "N4" | "N3" | "N2" | "N1";
+// 등급 목록은 Gemini 응답 스키마(enum)와 같은 상수에서 파생 → 두 곳이 어긋나지 않는다
+export type JlptLevel = (typeof JLPT_LEVELS)[number];
 
 // 영어 등급은 AI가 추정한 값이라 공인 등급이 아님
-export type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+export type CefrLevel = (typeof CEFR_LEVELS)[number];
 
 export type WordLevel = JlptLevel | CefrLevel;
 
@@ -17,6 +32,29 @@ export interface IWord {
   part_of_speech?: string; // 영어 전용
   box_2d?: number[]; // [ymin, xmin, ymax, xmax] (0~1000 scale)
   page?: number;
+}
+
+// 분석 실패 원인 분류 (사용자 안내 문구를 고르는 기준)
+// - format: 응답은 끝까지 받았지만 JSON/형식이 잘못됨
+// - incomplete: 응답을 끝까지 받지 못함 (중단, STOP 아닌 종료)
+// - network: 요청 자체가 나가지 못함
+// - client: 파일·요청이 거부됨 (4xx, 429 제외)
+// - server: 그 외 서버·상류 오류
+export type AnalysisErrorKind =
+  | "format"
+  | "incomplete"
+  | "network"
+  | "client"
+  | "server";
+
+// 스트리밍 중 지금까지 완성된 단어 (최종 결과 아님)
+export interface IAnalyzeProgress {
+  words: IWord[];
+}
+
+// 스트리밍 JSON 텍스트에서 최상위 배열의 객체 원소를 꺼내는 스캐너 (app/utils/jsonArrayScanner.ts)
+export interface IJsonArrayItemScanner {
+  push: ({ text }: { text: string }) => { items: unknown[] };
 }
 
 export interface IDisplayOptions {
