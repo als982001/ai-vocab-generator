@@ -1,14 +1,14 @@
-import type {
-  AnalysisErrorKind,
-  AnalysisHttpErrorCode,
-  AnalysisStreamErrorCode,
-} from "~/types";
-
 import {
   ANALYSIS_HTTP_ERROR_CODES,
   UPSTREAM_API_KEY_ERROR_MARKERS,
   UPSTREAM_FILE_PROCESSING_ERROR_MARKERS,
 } from "../../shared/constants/analysisStream";
+// 순수 테스트(e2e/analysis-error-kind.spec.ts)가 tsconfig.e2e로 불러오므로 `~` alias 대신 상대경로를 쓴다
+import type {
+  AnalysisErrorKind,
+  AnalysisHttpErrorCode,
+  AnalysisStreamErrorCode,
+} from "../types";
 
 // 분석 실패를 원인(kind)과 함께 전달하는 오류. 화면 문구는 kind로만 고른다
 export class AnalysisError extends Error {
