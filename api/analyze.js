@@ -6,6 +6,7 @@ import {
   SUPPORTED_LANGUAGES,
   buildAnalyzePrompt,
 } from "../shared/constants/prompt.js";
+import { buildWordResponseSchema } from "../shared/constants/wordSchema.js";
 
 const ALLOWED_MIME_TYPES = [
   "image/jpeg",
@@ -51,10 +52,10 @@ export default async function handler(request, response) {
       httpOptions: { apiVersion: "v1beta" },
     });
 
-    const { prompt } = buildAnalyzePrompt({
-      language,
-      fileType: mimeType === "application/pdf" ? "pdf" : "image",
-    });
+    const fileType = mimeType === "application/pdf" ? "pdf" : "image";
+
+    const { prompt } = buildAnalyzePrompt({ language, fileType });
+    const { schema } = buildWordResponseSchema({ language, fileType });
 
     // 이미지 객체 생성
     const imagePart = {
@@ -67,11 +68,15 @@ export default async function handler(request, response) {
     const result = await ai.models.generateContent({
       model: GEMINI_3_FLASH_PREVIEW,
       contents: [prompt, imagePart],
+      // 응답 형식을 API 설정으로 강제 (JSON 문법만 보장, 값 검증은 클라이언트 normalizeWords가 담당)
+      config: {
+        responseMimeType: "application/json",
+        responseJsonSchema: schema,
+      },
     });
-    const text = result.text ?? "";
-    const cleanJson = text.replace(/```json|```/g, "").trim();
 
-    return response.status(200).json(JSON.parse(cleanJson));
+    // 텍스트가 없으면(차단 등) 빈 문자열 → JSON.parse 실패 → 500
+    return response.status(200).json(JSON.parse(result.text ?? ""));
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: error.message });

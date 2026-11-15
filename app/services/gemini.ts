@@ -7,16 +7,22 @@ import {
   GEMINI_3_FLASH_PREVIEW,
   buildAnalyzePrompt,
 } from "../../shared/constants/prompt";
+import { buildWordResponseSchema } from "../../shared/constants/wordSchema";
 
-const analyzeImageLocal = async (
+const analyzeImageLocal = async ({
+  imagePart,
+  prompt,
+  responseSchema,
+}: {
   imagePart: {
     inlineData: {
       data: string;
       mimeType: string;
     };
-  },
-  prompt: string
-): Promise<unknown> => {
+  };
+  prompt: string;
+  responseSchema: Record<string, unknown>;
+}): Promise<{ rawWords: unknown }> => {
   // 새 SDK 기본값은 v1. 이전 SDK(0.24.1)와 같은 v1beta 엔드포인트를 유지한다
   const ai = new GoogleGenAI({
     apiKey: import.meta.env.VITE_GEMINI_API_KEY,
@@ -27,15 +33,17 @@ const analyzeImageLocal = async (
     const response = await ai.models.generateContent({
       model: GEMINI_3_FLASH_PREVIEW,
       contents: [prompt, imagePart],
+      // 응답 형식을 API 설정으로 강제 (JSON 문법만 보장, 값 검증은 normalizeWords가 담당)
+      config: {
+        responseMimeType: "application/json",
+        responseJsonSchema: responseSchema,
+      },
     });
 
-    // 새 SDK의 text는 메서드가 아니라 getter (텍스트 part가 없으면 undefined)
-    const text = response.text ?? "";
+    // 새 SDK의 text는 메서드가 아니라 getter (차단 등으로 텍스트가 없으면 undefined → 파싱 실패)
+    const rawWords: unknown = JSON.parse(response.text ?? "");
 
-    // 혹시라도 마크다운(```json ... ```)이 섞여올 경우를 대비해 제거
-    const cleanJson = text.replace(/```json|```/g, "").trim();
-
-    return JSON.parse(cleanJson);
+    return { rawWords };
   } catch (error) {
     console.error(error);
     throw error;
@@ -79,12 +87,16 @@ export const analyzeDocument = async ({
 
   // 로컬 환경: 클라이언트에서 직접 Gemini API 호출
   if (isLocalEnvironment()) {
-    const { prompt } = buildAnalyzePrompt({
-      language,
-      fileType: file.type === "application/pdf" ? "pdf" : "image",
-    });
+    const fileType = file.type === "application/pdf" ? "pdf" : "image";
 
-    const rawWords = await analyzeImageLocal(imagePart, prompt);
+    const { prompt } = buildAnalyzePrompt({ language, fileType });
+    const { schema } = buildWordResponseSchema({ language, fileType });
+
+    const { rawWords } = await analyzeImageLocal({
+      imagePart,
+      prompt,
+      responseSchema: schema,
+    });
 
     return normalizeWords({ rawWords, language });
   }

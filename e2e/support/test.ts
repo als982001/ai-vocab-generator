@@ -40,20 +40,30 @@ interface IMocks {
 
 interface IFixtureOptions {
   geminiResponse: GeminiResponseMode;
+  geminiWords: unknown;
+  geminiResponseText: string | null;
 }
 
 export const test = base.extend<IFixtureOptions & { mocks: IMocks }>({
   // 실패 시나리오는 파일 상단에서 test.use({ geminiResponse: "error" })로 전환
   geminiResponse: ["success", { option: true }],
 
+  // 검증 시나리오는 test.use로 모델 응답(단어 배열 또는 원문 텍스트)을 바꾼다
+  geminiWords: [ENGLISH_WORDS, { option: true }],
+  geminiResponseText: [null, { option: true }],
+
   // auto: 모든 테스트가 가드·세션·mock을 거치게 강제
   mocks: [
-    async ({ context, geminiResponse }, use) => {
+    async (
+      { context, geminiResponse, geminiWords, geminiResponseText },
+      use
+    ) => {
       // 순서 중요: 누수 가드를 먼저 등록해야 개별 mock이 우선한다
       const { blockedUrls } = await installLeakGuard({ context });
       const { gate } = await mockGemini({
         context,
-        words: ENGLISH_WORDS,
+        words: geminiWords,
+        responseText: geminiResponseText,
         response: geminiResponse,
       });
       const { analysesPosts, wordsPosts } = await mockSupabase({ context });

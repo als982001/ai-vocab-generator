@@ -1,11 +1,16 @@
 import type { SUPPORTED_LANGUAGES } from "../../shared/constants/prompt";
+import type {
+  CEFR_LEVELS,
+  JLPT_LEVELS,
+} from "../../shared/constants/wordSchema";
 
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
-export type JlptLevel = "N5" | "N4" | "N3" | "N2" | "N1";
+// 등급 목록은 Gemini 응답 스키마(enum)와 같은 상수에서 파생 → 두 곳이 어긋나지 않는다
+export type JlptLevel = (typeof JLPT_LEVELS)[number];
 
 // 영어 등급은 AI가 추정한 값이라 공인 등급이 아님
-export type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+export type CefrLevel = (typeof CEFR_LEVELS)[number];
 
 export type WordLevel = JlptLevel | CefrLevel;
 

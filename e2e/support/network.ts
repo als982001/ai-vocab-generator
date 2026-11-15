@@ -59,6 +59,21 @@ export function getGeminiPromptText({ body }: { body: unknown }): {
 }
 
 /**
+ * Gemini generateContent 요청 본문에서 generationConfig를 꺼낸다.
+ * @param body postDataJSON()으로 파싱한 요청 본문
+ * @return generationConfig 응답 형식 설정 (없으면 빈 객체)
+ */
+export function getGeminiGenerationConfig({ body }: { body: unknown }): {
+  generationConfig: Record<string, unknown>;
+} {
+  const generationConfig = (
+    body as { generationConfig?: Record<string, unknown> }
+  )?.generationConfig;
+
+  return { generationConfig: generationConfig ?? {} };
+}
+
+/**
  * 처리하지 않은 외부 요청을 모두 차단하고 기록한다.
  * 개별 mock보다 먼저 등록해야 한다 (나중에 등록한 route가 우선).
  * @param context 가드를 걸 브라우저 컨텍스트
@@ -98,16 +113,19 @@ export type GeminiResponseMode = "success" | "error";
  * Gemini generateContent 호출을 mock한다. gate가 풀릴 때까지 응답을 붙잡는다.
  * @param context mock을 걸 브라우저 컨텍스트
  * @param words 모델이 돌려줄 단어 배열 (JSON 문자열로 감싸 응답)
+ * @param responseText 모델 텍스트를 그대로 지정 (깨진 JSON 재현용, 있으면 words보다 우선)
  * @param response "success"면 단어 응답, "error"면 500 에러 응답
  * @return gate 붙잡은 응답을 풀어주는 gate (release 호출 시 응답)
  */
 export async function mockGemini({
   context,
   words,
+  responseText,
   response,
 }: {
   context: BrowserContext;
   words: unknown;
+  responseText: string | null;
   response: GeminiResponseMode;
 }) {
   const gate = createGate();
@@ -142,7 +160,7 @@ export async function mockGemini({
             {
               content: {
                 role: "model",
-                parts: [{ text: JSON.stringify(words) }],
+                parts: [{ text: responseText ?? JSON.stringify(words) }],
               },
               finishReason: "STOP",
               index: 0,

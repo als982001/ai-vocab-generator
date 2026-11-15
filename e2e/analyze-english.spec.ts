@@ -3,6 +3,7 @@ import { basename } from "node:path";
 import { E2E_USER_ID } from "./support/auth";
 import {
   E2E_ANALYSIS_ID,
+  getGeminiGenerationConfig,
   getGeminiPromptText,
   isGeminiRequest,
 } from "./support/network";
@@ -57,6 +58,24 @@ test("영어 선택 → 업로드 → 분석 중 잠금 → 결과 표시 → �
   });
 
   expect.soft(promptText).toContain("extract English vocabulary");
+
+  // 응답 형식을 프롬프트가 아니라 API 설정(Structured Outputs)으로 요구하는지.
+  // 영어 스키마는 CEFR enum과 part_of_speech를 포함해야 한다
+  const { generationConfig } = getGeminiGenerationConfig({
+    body: geminiRequest.postDataJSON(),
+  });
+  const schemaItems = (
+    generationConfig.responseJsonSchema as {
+      items?: { properties?: Record<string, { enum?: string[] }> };
+    }
+  )?.items;
+
+  expect.soft(new URL(geminiRequest.url()).pathname).toContain("/v1beta/");
+  expect.soft(generationConfig.responseMimeType).toBe("application/json");
+  expect
+    .soft(schemaItems?.properties?.level?.enum)
+    .toEqual(["A1", "A2", "B1", "B2", "C1", "C2"]);
+  expect.soft(schemaItems?.properties).toHaveProperty("part_of_speech");
 
   await expect(languageSelect).toBeDisabled();
   await expect(page.getByText(LOCK_HINT)).toBeVisible();
