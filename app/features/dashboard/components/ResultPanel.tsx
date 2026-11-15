@@ -1,4 +1,4 @@
-import { FileSearch } from "lucide-react";
+import { FileSearch, Loader2 } from "lucide-react";
 import {
   AnimatedList,
   AnimatedListItem,
@@ -18,6 +18,7 @@ interface IResultPanelProps {
   onWordCardClick?: (word: string) => void;
   highlightedWord?: string | null;
   enableAnimation?: boolean;
+  isStreaming?: boolean; // 분석 응답을 받는 중 (words는 아직 최종 결과가 아님)
 }
 
 export function ResultPanel({
@@ -31,7 +32,13 @@ export function ResultPanel({
   onWordCardClick,
   highlightedWord,
   enableAnimation = true,
+  isStreaming = false,
 }: IResultPanelProps) {
+  // 스트리밍 중 카드는 보기 전용 (클릭·호버가 최종 결과 기준 동작과 섞이지 않게)
+  const streamingListClass = isStreaming
+    ? "pointer-events-none opacity-80"
+    : "";
+
   const renderWordCard = (word: IWord) => (
     <div key={word.word} id={`word-card-${word.word}`}>
       <WordCard
@@ -58,8 +65,18 @@ export function ResultPanel({
           <h2 className="text-text-primary text-lg font-bold">
             Extracted Words
           </h2>
-          <p className="text-text-secondary text-xs mt-1">
-            Found {words.length} items from last scan
+          <p
+            className="text-text-secondary text-xs mt-1 flex items-center gap-1"
+            aria-live="polite"
+          >
+            {isStreaming ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+                단어 수신 중… {words.length}개
+              </>
+            ) : (
+              <>Found {words.length} items from last scan</>
+            )}
           </p>
         </div>
       </div>
@@ -79,15 +96,16 @@ export function ResultPanel({
             </div>
           </div>
         ) : enableAnimation ? (
-          <AnimatedList className="flex flex-col gap-3">
+          <AnimatedList className={`flex flex-col gap-3 ${streamingListClass}`}>
             {words.map((word) => (
-              <AnimatedListItem key={word.word}>
+              // 스트리밍으로 늦게 추가되는 카드도 등장하도록 각자 애니메이션
+              <AnimatedListItem key={word.word} animateOnMount>
                 {renderWordCard(word)}
               </AnimatedListItem>
             ))}
           </AnimatedList>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className={`flex flex-col gap-3 ${streamingListClass}`}>
             {words.map((word) => renderWordCard(word))}
           </div>
         )}
@@ -97,7 +115,7 @@ export function ResultPanel({
           wordCount={words.length}
           onDownloadTxt={onDownloadTxt}
           onDownloadCsv={onDownloadCsv}
-          disabled={words.length === 0}
+          disabled={words.length === 0 || isStreaming}
         />
         <div className="mt-3 text-center">
           <button className="text-text-secondary text-xs hover:text-text-primary underline">

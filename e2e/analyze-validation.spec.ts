@@ -4,7 +4,8 @@ import { isGeminiRequest } from "./support/network";
 import { ENGLISH_SAMPLE_PATH, expect, test } from "./support/test";
 
 const SUCCESS_TOAST = "분석을 성공했습니다.";
-const ERROR_TOAST = "파일 분석에 실패했습니다. 다시 시도해주세요.";
+// 응답을 끝까지 받았지만 형식이 잘못된 경우의 안내 (format)
+const ERROR_TOAST = "AI 응답 형식이 올바르지 않습니다. 다시 시도해주세요.";
 
 // 이미지 위 좌표 박스 (BoundingBoxOverlay가 그리는 요소)
 const BOUNDING_BOX_SELECTOR = "div.absolute.inset-0 > div.absolute.border-2";
